@@ -1,0 +1,230 @@
+/* Menu Affaires : enrôlement, liste et fiche d'une affaire. */
+
+:root {
+  --aff-ecart-cartes: 22px;     /* espace entre deux blocs */
+  --aff-ecart-parties: 16px;    /* espace entre deux parties */
+}
+
+.aff-carte { margin-bottom: var(--aff-ecart-cartes); }
+.aff-erreur { margin-top: 4px; font: 500 12.5px var(--police-app); color: #B42318; }
+.aff-pied { display: flex; justify-content: flex-end; margin-bottom: var(--aff-ecart-cartes); }
+
+/* Propositions de nature, matière et chambre d'après l'objet saisi */
+.aff-suggestions { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px; }
+.aff-suggestions:empty { display: none; }
+.aff-suggestions__titre { width: 100%; font: 600 12.5px var(--police-app); color: #0B3D2A; }
+.aff-suggestion { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 12px; border: 1px solid #B9D3C5; border-radius: 10px; background: #F3FAF6; cursor: pointer; text-align: left; font: 500 13px var(--police-app); color: #0B3D2A; }
+.aff-suggestion:hover { background: #DDF1E6; border-color: #00794C; }
+.aff-suggestion span { font-size: 12px; color: #4A5E54; }
+
+/* Date de première audience : prochaines audiences et date limite d'enrôlement */
+.aff-dates { padding-top: 0; }
+.aff-dates__note { margin-bottom: 6px; font: 500 12.5px var(--police-app); color: #4A5E54; }
+.aff-dates__liste { display: flex; flex-wrap: wrap; gap: 8px; }
+.aff-date { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 7px 12px; border: 1px solid #F2A65A; border-radius: 10px; background: #FFE3C2; cursor: pointer; text-align: left; font: 600 12.5px var(--police-app); color: #6B2C00; }
+.aff-date:hover { background: #FFD09B; border-color: #E8730C; }
+.aff-date span { font-size: 11.5px; font-weight: 500; color: #8A4A12; }
+.aff-date--fermee { background: #EEF0F3; border-color: #D5DAE1; color: #5B6678; }
+.aff-date--fermee span { color: #7A8496; }
+.aff-derogation { padding: 12px 14px; border-radius: 10px; background: #FFF6EC; border: 1px solid #F2C9A5; }
+
+/* Alerte de doublon */
+.aff-doublons { margin-bottom: var(--aff-ecart-cartes); padding: 14px 18px; border-radius: 12px; background: #FFE3CC; color: #6B3000; font-size: 14px; }
+.aff-doublons ul { margin: 6px 0 10px; padding-left: 20px; }
+.aff-doublons a { font-weight: 700; color: #8A3A00; }
+.aff-doublons--info { background: #E7F0FA; color: #1E3A5F; }
+.aff-confirmer { display: flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer; }
+
+/* Blocs du formulaire : l'affaire, les demandeurs, les défendeurs */
+.aff-bloc { margin-bottom: 18px; padding: 18px 20px 20px; border: 1px solid #DDE3EC; border-radius: 14px; background: #fff; --aff-couleur: #00794C; --aff-teinte: #E6F4EC; }
+.aff-bloc--defendeur { --aff-couleur: #C2540A; --aff-teinte: #FDEEDF; }
+.aff-bloc__tete { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #EDF0F5; }
+.aff-bloc__icone { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: var(--aff-teinte); color: var(--aff-couleur); font-size: 16px; }
+.aff-bloc__tete > div { flex: 1 1 auto; min-width: 0; text-align: left; }
+.aff-bloc__titre { margin: 0; text-align: left; font: 700 16px var(--police-app); color: #10241B; }
+.aff-bloc__sous { margin: 2px 0 0; text-align: left; font: 400 12.5px var(--police-app); color: #2f3b52; }
+.aff-bloc__ajout { margin-left: auto; flex: none; border: 1.5px solid var(--aff-couleur); background: #fff; color: var(--aff-couleur); border-radius: 10px; padding: 7px 14px; font: 700 13px var(--police-app); cursor: pointer; }
+.aff-bloc__ajout:hover { background: var(--aff-couleur); color: #fff; }
+
+/* Parties */
+.aff-liste { display: flex; flex-direction: column; gap: var(--aff-ecart-parties); counter-reset: partie; }
+.aff-partie { position: relative; counter-increment: partie; padding: 14px 18px 18px; border: 1px solid #E3E8F0; border-left: 5px solid var(--aff-couleur); border-radius: 12px; background: #FBFCFD; }
+.aff-partie__tete { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.aff-partie__titre { font: 700 13px var(--police-app); letter-spacing: .3px; color: var(--aff-couleur); text-transform: uppercase; }
+.aff-partie__num::before { content: counter(partie); }
+.aff-retirer { border: 0; background: none; color: #B42318; cursor: pointer; font-size: 15px; padding: 4px 8px; border-radius: 8px; }
+.aff-retirer:hover { background: #FDECEA; }
+
+/* Personne physique : nom, prénoms, naissance… ; autre : une dénomination (le domicile reste pour tous) */
+.aff-partie[data-type="physique"] .aff-autre, .aff-partie[data-type="autre"] .aff-physique { display: none; }
+.aff-partie[data-type="autre"] .aff-domicile { grid-column: span 12; }
+
+.aff-recente { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; padding: 8px 0; border-bottom: 1px solid #E5EAF1; font-size: 14px; }
+.aff-recente:last-child { border-bottom: 0; }
+
+/* Fiche d'une affaire */
+.aff-fiche { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px 24px; }
+.aff-fiche__etiquette { font: 600 12px var(--police-app); letter-spacing: .4px; text-transform: uppercase; color: #2f3b52; margin-bottom: 2px; }
+.aff-fiche__valeur { font: 500 14.5px var(--police-app); color: #10241B; overflow-wrap: anywhere; }
+.aff-fiche__large { grid-column: 1 / -1; }
+.aff-numero { font: 800 22px var(--police-app); color: #0B3D2A; }
+.aff-bandeau-annulee { margin-bottom: var(--aff-ecart-cartes); padding: 12px 16px; border-radius: 12px; background: #FDECEA; color: #8A1C12; font-size: 14px; }
+.aff-partie-fiche { padding: 12px 0; border-bottom: 1px solid #E5EAF1; }
+.aff-partie-fiche:last-child { border-bottom: 0; }
+.aff-partie-fiche small { display: block; margin-top: 2px; color: #2f3b52; font-size: 13px; }
+.modal-dialog.aff-modal { width: 520px; max-width: 94vw; }
+
+/* Numéro RG saisi à la main : interrupteur de jonction et alerte de doublon */
+.aff-interrupteur { display: inline-flex; align-items: center; gap: 12px; margin: 2px 0 0; cursor: pointer; }
+.aff-interrupteur input { position: absolute; opacity: 0; pointer-events: none; }
+.aff-interrupteur__piste { position: relative; flex: none; width: 46px; height: 26px; border-radius: 999px; background: #C8D0DC; transition: background .15s; }
+.aff-interrupteur__piste::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(16, 36, 27, .35); transition: transform .15s; }
+.aff-interrupteur input:checked + .aff-interrupteur__piste { background: #00794C; }
+.aff-interrupteur input:checked + .aff-interrupteur__piste::after { transform: translateX(20px); }
+.aff-interrupteur input:focus-visible + .aff-interrupteur__piste { box-shadow: 0 0 0 3px rgba(0, 121, 76, .3); }
+.aff-interrupteur__texte { font: 500 13.5px var(--police-app); color: #3F4D66; }
+.aff-interrupteur__texte b { color: #10241B; }
+.aff-alerte-numero:empty { display: none; }
+.aff-alerte-numero { margin-top: 10px; padding: 10px 14px; border-radius: 10px; font: 500 13.5px var(--police-app); }
+.aff-alerte-numero--erreur { background: #FDECEA; color: #8A1C12; font-weight: 600; }
+.aff-alerte-numero--info { background: #E7F0FA; color: #1E3A5F; }
+
+/* Fenêtre de saisie d'une affaire */
+.modal-dialog.aff-modal-large { width: min(1180px, calc(100vw - 24px)); max-width: none; }
+.aff-modal-large .modal-body { max-height: 74vh; overflow-y: auto; background: #F6F8FB; }
+
+/* « et 19 autres » : lien discret, champ affiché sur demande */
+.aff-autres__lien { border: 0; background: none; padding: 0; color: #00794C; font: 600 13px var(--police-app); cursor: pointer; }
+.aff-autres__lien:hover { text-decoration: underline; }
+.aff-autres[data-ferme] .aff-autres__champ { display: none; }
+.aff-autres:not([data-ferme]) .aff-autres__lien { display: none; }
+.aff-autres__champ { max-width: 320px; }
+
+/* Premier rang de champs : de l'air sous le trait de l'en-tête du bloc */
+.aff-bloc > .el-formgrid { padding-top: 6px; }
+.aff-bloc__tete { margin-bottom: 20px; }
+
+/* Encadré d'information (consigne en haut d'une fenêtre) */
+.aff-info { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 18px; padding: 12px 16px; border: 1px solid #BFD6F2; border-left: 4px solid #2F6FB5; border-radius: 10px; background: #EAF2FC; color: #1E3A5F; font: 500 13.5px/1.5 var(--police-app); }
+.aff-info i { flex: none; margin-top: 2px; font-size: 16px; color: #2F6FB5; }
+
+/* Choix du registre avant la saisie : civil, pénal, instruction */
+.aff-choix-liste { display: flex; flex-direction: column; gap: 10px; }
+.aff-choix-liste button { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1.5px solid #D5DCE6; border-radius: 14px; background: #fff; text-align: left; cursor: pointer; color: #10241B; transition: all .12s; }
+.aff-choix-liste button:hover { border-color: #00794C; background: #F1FAF5; }
+.aff-choix-liste button > i { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: #E6F4EC; color: #00794C; font-size: 18px; }
+.aff-choix-liste button b { display: block; font: 700 15px var(--police-app); }
+.aff-choix-liste button small { display: block; margin-top: 2px; font: 400 12.5px var(--police-app); color: #2f3b52; }
+
+/* Fiche d'une affaire : carte d'identité, tuiles, parties côte à côte */
+.aff-identite { padding: 22px 24px 24px; }
+.aff-identite__haut { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+.aff-identite__numero { display: flex; align-items: center; gap: 14px; }
+.aff-identite__puce { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 15px; background: linear-gradient(135deg, #00794C, #2FA46E); color: #fff; font-size: 22px; box-shadow: 0 6px 14px rgba(0, 121, 76, .28); }
+.aff-identite__etat { display: flex; gap: 8px; flex-wrap: wrap; }
+.aff-objet { display: flex; gap: 14px; margin-bottom: 20px; padding: 14px 18px; border-left: 4px solid #F28C28; border-radius: 0 12px 12px 0; background: #FFF7EE; }
+.aff-objet > i { flex: none; margin-top: 3px; font-size: 20px; color: #F2B879; }
+.aff-objet__texte { font: 600 16px/1.45 var(--police-app); color: #10241B; }
+.aff-objet__articles { margin-top: 6px; font: 500 13.5px var(--police-app); color: #6B3000; }
+.aff-tuiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.aff-tuile { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border: 1px solid #E3E8F0; border-radius: 12px; background: #FBFCFD; }
+
+.aff-tuile span { display: block; font: 600 11px var(--police-app); letter-spacing: .4px; text-transform: uppercase; color: #2f3b52; }
+.aff-tuile b { display: block; margin-top: 1px; font: 600 14px/1.3 var(--police-app); color: #10241B; overflow-wrap: anywhere; }
+.aff-tuile small { display: block; font: 400 12px var(--police-app); color: #2f3b52; }
+.aff-derogation-fiche { margin-top: 16px; padding: 10px 14px; border-radius: 10px; background: #FFF1DD; color: #6B4300; font-size: 13.5px; }
+.aff-derogation-fiche i { color: #C2540A; margin-right: 4px; }
+
+.aff-deux { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--aff-ecart-cartes); margin-bottom: var(--aff-ecart-cartes); align-items: start; }
+.aff-deux > .aff-carte { margin-bottom: 0; }
+@media (max-width: 1000px) { .aff-deux { grid-template-columns: minmax(0, 1fr); } }
+.aff-cote { --aff-couleur: #00794C; --aff-teinte: #E6F4EC; padding: 18px 18px 6px; border: 1px solid #DDE3EC; border-top: 4px solid var(--aff-couleur); border-radius: 14px; background: #fff; }
+.aff-cote--orange { --aff-couleur: #C2540A; --aff-teinte: #FDEEDF; }
+.aff-cote__tete { display: flex; align-items: center; justify-content: space-between; margin: 0 0 12px; }
+.aff-cote__tete h2 { margin: 0; font: 700 16px var(--police-app); color: var(--aff-couleur); }
+.aff-cote__nombre { display: grid; place-items: center; min-width: 26px; height: 26px; padding: 0 8px; border-radius: 999px; background: var(--aff-teinte); color: var(--aff-couleur); font: 700 13px var(--police-app); }
+.aff-cote__vide { margin-bottom: 14px; padding: 18px; border: 1.5px dashed #D5DCE6; border-radius: 12px; text-align: center; color: #4a566b; font-size: 13.5px; }
+.aff-personne { display: flex; gap: 12px; margin-bottom: 12px; padding: 12px 14px; border-radius: 12px; background: #FBFCFD; border: 1px solid #EDF0F5; }
+.aff-personne__avatar { flex: 0 0 40px; aspect-ratio: 1 / 1; box-sizing: border-box; padding: 0; line-height: 1; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--aff-teinte); color: var(--aff-couleur); font-size: 16px; }
+.aff-personne__corps { min-width: 0; flex: 1; }
+.aff-personne__nom { font-size: 15px; color: #10241B; }
+.aff-personne__ligne { margin-top: 4px; font: 400 13px/1.4 var(--police-app); color: #4A5E54; }
+.aff-personne__ligne i { width: 16px; margin-right: 6px; color: #4a566b; text-align: center; }
+.aff-personne__ligne.aff-detenu { color: #8A1C12; font-weight: 600; }
+.aff-personne__ligne.aff-detenu i { color: #B42318; }
+
+/* Fiche : icônes centrées dans leur boîte, intitulés en noir foncé */
+.aff-identite__puce, .aff-tuile__icone, .aff-personne__avatar { display: flex; align-items: center; justify-content: center; }
+.aff-identite__puce i, .aff-tuile__icone i, .aff-personne__avatar i { display: block; margin: 0; line-height: 1; text-align: center; }
+.aff-tuile__icone { flex: 0 0 36px; width: 36px; height: 36px; border-radius: 10px; background: #E6F4EC; color: #00794C; font-size: 15px; }
+.aff-tuile__texte { min-width: 0; }
+.aff-tuile__texte span { display: block; font: 700 11.5px var(--police-app); letter-spacing: .4px; text-transform: uppercase; color: #10241B; }
+.aff-tuile__texte b { display: block; margin-top: 2px; font: 600 14.5px/1.3 var(--police-app); color: #000; overflow-wrap: anywhere; }
+.aff-tuile__texte small { display: block; margin-top: 1px; font: 500 12.5px var(--police-app); color: #24342C; }
+.aff-identite .aff-fiche__etiquette, .aff-objet .aff-fiche__etiquette { font-weight: 700; color: #10241B; }
+.aff-numero { color: #000; }
+.aff-objet__texte { color: #000; }
+.aff-personne__nom, .aff-personne__nom b { color: #000; }
+.aff-personne__ligne { color: #1F2D26; }
+.aff-personne__ligne i { color: #4A5E54; }
+.aff-carte .el-card__title { color: #10241B; font-weight: 700; }
+.aff-carte .el-card__sub { color: #24342C; }
+.aff-partie-fiche, .aff-partie-fiche b { color: #10241B; }
+.aff-partie-fiche small { color: #24342C; }
+
+/* Fiche : nombre bien centré dans son rond, intitulés en vert foncé ou orange foncé, informations plus grandes */
+.aff-cote__nombre { display: flex; align-items: center; justify-content: center; padding: 0; min-width: 28px; height: 28px; line-height: 1; font-size: 13px; text-align: center; }
+.aff-cote__nombre { color: #0B3D2A; }
+.aff-cote--orange .aff-cote__nombre { color: #8A3A00; }
+.aff-cote__tete h2 { color: #0B3D2A; font-size: 17px; }
+.aff-cote--orange .aff-cote__tete h2 { color: #8A3A00; }
+.aff-tuile__texte span, .aff-identite .aff-fiche__etiquette { color: #0B3D2A; }
+.aff-objet .aff-fiche__etiquette { color: #8A3A00; }
+.aff-personne { gap: 14px; padding: 14px 16px; }
+.aff-personne__avatar { flex: 0 0 46px; width: 46px; height: 46px; font-size: 18px; }
+.aff-personne__nom { font-size: 17px; }
+.aff-personne__ligne { margin-top: 6px; font-size: 14.5px; }
+.aff-personne__ligne i { width: 18px; }
+
+/* Liste : date d'enregistrement et heure de saisie */
+.aff-date-liste { white-space: nowrap; }
+.aff-date-liste b { display: block; font: 600 13.5px var(--police-app); color: #10241B; }
+.aff-date-liste small { display: block; font: 500 11.5px var(--police-app); color: #24342C; }
+
+/* Nombre de personnes : rond plein, chiffre exactement au centre */
+.aff-cote__nombre, .aff-cote--orange .aff-cote__nombre { display: inline-block; box-sizing: border-box; width: 30px; min-width: 30px; height: 30px; padding: 0; border-radius: 50%; background: var(--aff-couleur); color: #fff; font: 700 14px/30px var(--police-app); text-align: center; vertical-align: middle; }
+
+/* Intitulés des tuiles : étiquette en papier déchiré (bords irréguliers), texte vert foncé */
+.aff-tuile__texte span {
+  display: inline-block; margin: -2px 0 3px -4px; padding: 4px 14px 4px 10px;
+  background: linear-gradient(180deg, #04722e 50%, #04722e 50%); color: #eef1f0;
+  clip-path: polygon(0% 18%, 2% 4%, 5% 14%, 9% 0%, 14% 10%, 20% 2%, 27% 12%, 34% 0%, 42% 9%, 50% 1%, 58% 11%, 66% 0%, 74% 10%, 82% 2%, 90% 12%, 96% 3%, 100% 16%, 98% 42%, 100% 66%, 97% 88%, 100% 100%, 92% 92%, 85% 100%, 77% 91%, 69% 100%, 60% 92%, 52% 100%, 44% 90%, 36% 100%, 28% 91%, 20% 100%, 12% 92%, 6% 100%, 2% 88%, 0% 70%, 3% 44%);
+  filter: drop-shadow(0 1px 0 rgba(11, 61, 42, .15));
+}
+.aff-objet .aff-fiche__etiquette {
+  display: inline-block; margin-bottom: 4px; padding: 4px 14px 4px 10px; background: linear-gradient(180deg, #FCE7CF 0%, #F6D4AE 100%); color: #8A3A00;
+  clip-path: polygon(0% 18%, 2% 4%, 5% 14%, 9% 0%, 14% 10%, 20% 2%, 27% 12%, 34% 0%, 42% 9%, 50% 1%, 58% 11%, 66% 0%, 74% 10%, 82% 2%, 90% 12%, 96% 3%, 100% 16%, 98% 42%, 100% 66%, 97% 88%, 100% 100%, 92% 92%, 85% 100%, 77% 91%, 69% 100%, 60% 92%, 52% 100%, 44% 90%, 36% 100%, 28% 91%, 20% 100%, 12% 92%, 6% 100%, 2% 88%, 0% 70%, 3% 44%);
+}
+
+/* Formulaires d'affaire : chaque rangée s'aligne par le haut (un champ plus haut que ses voisins ne décale plus leurs libellés) */
+.aff-bloc > .el-formgrid, .aff-partie > .el-formgrid { align-items: start; }
+
+/* Filtres de la liste des affaires */
+.aff-filtres { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 14px; padding: 16px 18px 6px; }
+.aff-filtres__champ { flex: 0 0 170px; min-width: 0; }
+.aff-filtres__champ--large { flex: 1 1 260px; max-width: 360px; }
+.aff-filtres__champ .form-label { margin-bottom: 4px; color: #0B3D2A; }
+.aff-filtres__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; padding-bottom: 1px; }
+.aff-suggestions-ligne { margin-top: -8px; } .aff-suggestions-ligne .aff-suggestions { margin-top: 0; }
+
+/* Détention : échéance du mandat de dépôt */
+.aff-detenu--proche { color: #A24B00; font-weight: 700; }
+.aff-detenu--depassee { color: #B42318; font-weight: 800; }
+.aff-lock { margin-left: 4px; color: #B42318; font-size: 12px; }
+
+/* Bouton « Marquer comme traité » : vert franc, distinct des boutons d'action courants */
+.el-iconbtn--green { background: #15803D; color: #fff; }
+.el-iconbtn--green:hover { background: #166534; color: #fff; }
+
+/* Tuiles de la fiche d'une affaire : léger dégradé vert */
+.aff-tuile { background: linear-gradient(135deg, #FFFFFF 40%, #EFF8F3 100%); }

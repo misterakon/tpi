@@ -1,0 +1,77 @@
+/*
+ * Feuille d'un acte de décision : la page A4 telle qu'elle s'imprime (marges, timbre à gauche de la première page, retrait de la qualité,
+ * factum sur toute la largeur, numéro de page). Les mesures viennent des réglages « Impression des actes » (script feuille-acte.js).
+ */
+
+.acte-zone { background: #E9EDF3; border-radius: 10px; padding: 14px 12px; overflow: auto; }
+/* Le cadre prend la taille de la feuille zoomée (centré s'il est plus petit que la zone, défilant s'il est plus grand). */
+.acte-cadre { margin: 0 auto; }
+.acte-pages { transform-origin: top left; }
+.acte-zoom { display: inline-flex; align-items: center; gap: 6px; }
+.acte-zoom button { border: 1px solid #B9D3C5; background: #fff; color: #0B3D2A; border-radius: 8px; width: 34px; height: 34px; font: 700 16px var(--police-app); cursor: pointer; line-height: 1; }
+.acte-zoom button.large { width: auto; padding: 0 12px; font-size: 13px; }
+.acte-zoom button:hover { background: #DDF1E6; border-color: #00794C; }
+.acte-zoom output { min-width: 52px; text-align: center; font: 600 13.5px var(--police-app); }
+
+/* La police de l'application (Inter) est posée sur les paragraphes : l'acte garde la sienne (réglée dans « Impression des actes »). */
+.acte-page p, .acte-page strong, .acte-page b, .acte-page u, .acte-page a, .acte-page li, .acte-page h3, .acte-page h4, .acte-page blockquote, .acte-page span, .acte-page div { font-family: inherit; }
+
+.acte-page { position: relative; box-sizing: border-box; width: 210mm; height: 297mm; margin: 0 0 14px; background: #fff; box-shadow: 0 2px 10px rgba(15, 42, 91, .18); overflow: hidden; color: #000; }
+
+/* La zone de texte : une fenêtre sur le flux, qui montre une colonne (une page) à la fois. */
+.acte-corps { position: absolute; overflow: hidden; }
+.acte-flux { column-gap: 0; column-fill: auto; orphans: 2; widows: 2; }
+.acte-flux p { margin: 0; text-align: justify; min-height: 1em; overflow-wrap: break-word; }
+.acte-flux p.ql-align-center { text-align: center; }
+.acte-flux p.ql-align-right { text-align: right; }
+.acte-flux p.ql-align-justify { text-align: justify; }
+.acte-flux h3, .acte-flux h4 { margin: 0; font-size: 1em; font-weight: 700; }
+.acte-flux ul, .acte-flux ol { margin: 0; padding-left: 1.6em; }
+.acte-flux blockquote { margin: 0 0 0 1.2em; }
+.acte-flux a { color: inherit; text-decoration: underline; }
+
+/* Le timbre : colonne de gauche de la première page, texte centré dans la hauteur du cadre. */
+.acte-timbre { position: absolute; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-start; padding: 1.8mm 2.5mm; font-weight: 700; text-align: center; line-height: 1.38; }
+/* Comme dans Word : lignes de 16,6 pt pour du 12 pt (mesuré sur le document), 8 pt après chaque paragraphe (les lignes vides comptent aussi).
+   Le texte part du haut du cadre : le timbre ne descend pas quand le nom d'une partie tient sur une ligne de moins. */
+.acte-timbre p { margin: 0 0 8pt; text-align: center; min-height: 1em; overflow-wrap: break-word; }
+
+/* Les deux traits du timbre : un pointillé sous la cour d'appel, un trait plein sous le numéro du RG. Ils ne prennent pas de place, comme les formes de Word. */
+.acte-timbre p:has(> .acte-trait) { min-height: 0; margin: 0; }
+.acte-trait { display: block; position: relative; top: -4pt; height: 0; margin: 0 auto; border-top: 1px solid #000; }
+.acte-trait--pointille { width: 86%; border-top-style: dashed; }
+.acte-trait--plein { width: 57%; }
+
+.acte-pied { position: absolute; left: 0; right: 0; bottom: 4mm; text-align: center; font-size: 12pt; }
+
+/* Couleurs de travail des documents Word : qualité en rouge, factum en bleu. */
+.acte-couleurs .acte-q, .acte-couleurs .acte-q *, .acte-couleurs .acte-timbre, .acte-couleurs .acte-timbre * { color: #FF0000; }
+.acte-couleurs .acte-f, .acte-couleurs .acte-f * { color: #2E74B5; }
+
+.acte-barre { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-bottom: 10px; font-size: 13.5px; }
+.acte-vide { padding: 40px; text-align: center; color: #5B6B86; }
+
+@media print {
+  .acte-zone { background: none; padding: 0; overflow: visible; }
+  .acte-pages { transform: none !important; width: auto !important; }
+  .acte-cadre { width: auto !important; height: auto !important; }
+  .acte-page { box-shadow: none; margin: 0; page-break-after: always; break-after: page; }
+}
+
+/* Champ pas encore rempli dans une décision en cours de rédaction : pastille à l'écran, pointillés à l'impression. */
+.acte-vide { background: #FFE3CC; color: #8A3A00; border-radius: 4px; padding: 0 4px; cursor: pointer; font-weight: 600; }
+.acte-vide:hover { background: #FFD0A8; }
+@media print { .acte-vide { background: none; color: transparent; border-bottom: 1px dotted #000; } }
+
+/* Le texte de l'acte est noir et le gras reste bien du gras : le thème de l'application règle une couleur, un interlettrage et fait de « strong » un bloc. */
+.acte-page, .acte-page p, .acte-page li, .acte-page h3, .acte-page h4, .acte-page blockquote, .acte-page span, .acte-page strong, .acte-page b, .acte-page u { color: #000; letter-spacing: normal; }
+.acte-page strong, .acte-page b { display: inline; font-weight: 700; }
+.acte-couleurs .acte-q, .acte-couleurs .acte-q * , .acte-couleurs .acte-timbre, .acte-couleurs .acte-timbre * { color: #FF0000; }
+.acte-couleurs .acte-f, .acte-couleurs .acte-f * { color: #2E74B5; }
+.acte-page .acte-vide { color: #8A3A00; -webkit-text-stroke: 0; }
+/* À l'écran, un léger renfort des traits rend la police aussi dense que dans Word ; le gras est renforcé davantage. Réglable avec ces deux valeurs. */
+@media screen {
+  .acte-page { --acte-trait: .1px; --acte-trait-gras: .1px; }
+  .acte-flux, .acte-timbre { -webkit-text-stroke: var(--acte-trait) currentColor; }
+  .acte-flux strong, .acte-flux b, .acte-flux h3, .acte-flux h4, .acte-timbre { -webkit-text-stroke: var(--acte-trait-gras) currentColor; }
+}

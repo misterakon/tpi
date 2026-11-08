@@ -1,0 +1,5 @@
+@extends('errors.layout')
+@section('titre', "Accès refusé")
+@section('icone', 'error-403')
+@section('message', $exception->getMessage() ?: "Vous n'avez pas les droits nécessaires pour ouvrir cette page.")
+@section('aide', "Si vous pensez qu'il s'agit d'une erreur, contactez l'administrateur de l'application.")

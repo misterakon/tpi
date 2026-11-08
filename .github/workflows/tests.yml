@@ -1,0 +1,42 @@
+# Intégration continue : à chaque modification poussée (ou demande de fusion), tous les tests automatiques se lancent.
+# Si un test échoue, la modification est signalée comme « en échec » : on ne la met pas en service.
+name: Tests
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl, pdo_sqlite, sqlite3, gd, zip, xml, dom, fileinfo
+          coverage: none
+
+      - name: Garder les dépendances en cache
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Installer les dépendances
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Préparer l'application
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Lancer les tests (base SQLite en mémoire, voir phpunit.xml)
+        run: php -d memory_limit=-1 artisan test --compact

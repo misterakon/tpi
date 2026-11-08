@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Détecte le sous-dossier (/etache/ ou /eTache/) sans l'écrire en dur
+    RewriteCond %{REQUEST_URI}::$1 ^(.*?/)(.*)::\2$
+    RewriteRule ^(.*)$ - [E=BASE:%1]
+
+    # Si le fichier existe dans public/, on le sert directement
+    RewriteCond %{DOCUMENT_ROOT}%{ENV:BASE}public/$1 -f
+    RewriteRule ^(.*)$ public/$1 [END]
+
+    # Tout le reste passe par Laravel
+    RewriteRule ^ index.php [END]
+</IfModule>

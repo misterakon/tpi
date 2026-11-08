@@ -1,0 +1,22 @@
+/* Page « Modèles de décision » : édition d'un modèle (grille, onglets, panneau d'insertion), aperçu et variables propres. */
+
+/* Deux colonnes : les textes (8/12) et le panneau d'insertion (4/12), comme col-md-8 et col-md-4. */
+.mdl-grille { display: grid; grid-template-columns: minmax(0, 8fr) minmax(360px, 4fr); gap: 22px; align-items: start; }
+@media (max-width: 1100px) { .mdl-grille { grid-template-columns: 1fr; } }
+.mdl-colonne { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+/* Le panneau reste visible pendant qu'on écrit ; c'est son contenu qui défile, pour que toute la liste soit atteignable. */
+.mdl-panneau { position: sticky; top: 80px; }
+.mdl-panneau .el-card { display: flex; flex-direction: column; }
+.mdl-panneau .el-card__body { max-height: calc(100vh - 250px); overflow-y: auto; overscroll-behavior: contain; }
+.mdl-onglets { display: flex; gap: 8px; padding: 0 24px; }
+.mdl-onglet { border: 1px solid #B9D3C5; background: #fff; color: #0B3D2A; font: 600 14px var(--police-app); padding: 8px 18px; border-radius: 10px 10px 0 0; cursor: pointer; }
+.mdl-onglet.actif { background: #00794C; color: #fff; border-color: #00794C; }
+.mdl-groupe { margin: 12px 0 6px; font: 700 11.5px var(--police-app); letter-spacing: .6px; text-transform: uppercase; color: #00794C; }
+.mdl-chip { display: inline-block; margin: 0 6px 6px 0; padding: 4px 10px; border: 1px solid #B9D3C5; border-radius: 14px; background: #F5FAF7; color: #0B3D2A; font: 500 12.5px var(--police-app); cursor: pointer; text-align: left; }
+.mdl-chip:hover { background: #DDF1E6; border-color: #00794C; }
+.mdl-chip small { color: #5B6B86; font-weight: 400; }
+.mdl-feuille { background: #fff; border: 1px solid #DDE3EC; border-radius: 6px; padding: 28px 44px; line-height: 1.5; }
+.mdl-feuille p { margin: 0 0 6px; }
+.mdl-partie { margin: 0 0 6px; font: 700 11.5px var(--police-app); letter-spacing: .6px; text-transform: uppercase; color: #8A3A00; }
+.mdl-ligne { display: grid; grid-template-columns: 1.1fr 1.4fr .9fr 1.4fr 38px; gap: 8px; align-items: end; margin-bottom: 10px; }
+.mdl-flag { display: inline-block; margin: 3px 6px 0 0; padding: 2px 10px; border-radius: 12px; background: #FFE3CC; color: #8A3A00; font: 600 12.5px var(--police-app); }

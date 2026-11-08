@@ -1,0 +1,33 @@
+/* ==========================================================================
+   Transitions douces à l'ENTRÉE des pages et des blocs (jamais à la sortie : pas de vide entre deux pages).
+   Réservées aux pages les plus utilisées : on y ajoute la classe « tp-anime » sur la zone .el-page.
+   Sobre par conception : 0,5 s au plus, aucun mouvement pour qui a demandé « moins d'animations ».
+   ========================================================================== */
+
+@keyframes tp-entree { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes tp-fondu { from { opacity: 0; } to { opacity: 1; } }
+@keyframes tp-pop { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
+
+/* Les blocs de la page arrivent l'un après l'autre. Les blocs « hidden » (remplis après chargement des chiffres) s'animent au moment où ils apparaissent. */
+.tp-anime > * { animation: tp-entree .5s cubic-bezier(.2, .7, .2, 1) both; }
+.tp-anime > *:nth-child(2) { animation-delay: .06s; } .tp-anime > *:nth-child(3) { animation-delay: .12s; } .tp-anime > *:nth-child(4) { animation-delay: .18s; }
+.tp-anime > *:nth-child(5) { animation-delay: .24s; } .tp-anime > *:nth-child(6) { animation-delay: .3s; } .tp-anime > *:nth-child(n + 7) { animation-delay: .36s; }
+
+/* Tuiles de chiffres : apparition en cascade, léger effet de ressort. */
+.tp-anime .au-kpi { animation: tp-pop .5s cubic-bezier(.2, .9, .3, 1.2) both; }
+.tp-anime .au-kpi:nth-child(2) { animation-delay: .08s; } .tp-anime .au-kpi:nth-child(3) { animation-delay: .16s; } .tp-anime .au-kpi:nth-child(4) { animation-delay: .24s; }
+.tp-anime .au-kpi:nth-child(5) { animation-delay: .32s; } .tp-anime .au-kpi:nth-child(n + 6) { animation-delay: .4s; }
+
+/* Lignes de listes et cartes : légère cascade. */
+.tp-anime .ac-aud, .tp-anime .ac-carte, .tp-anime .ac-retard, .tp-anime .ac-suites__liste li { animation: tp-fondu .45s ease-out both; }
+.tp-anime .ac-aud:nth-child(2), .tp-anime .ac-carte:nth-child(2), .tp-anime .ac-suites__liste li:nth-child(2) { animation-delay: .07s; }
+.tp-anime .ac-aud:nth-child(3), .tp-anime .ac-carte:nth-child(3), .tp-anime .ac-suites__liste li:nth-child(3) { animation-delay: .14s; }
+.tp-anime .ac-aud:nth-child(n + 4), .tp-anime .ac-carte:nth-child(n + 4), .tp-anime .ac-suites__liste li:nth-child(n + 4) { animation-delay: .21s; }
+
+/* Au survol : les tuiles se soulèvent doucement. */
+.tp-anime .au-kpi { transition: transform .22s ease, box-shadow .22s ease; }
+.tp-anime .au-kpi:hover { transform: translateY(-4px); box-shadow: 0 16px 34px rgba(15, 42, 91, .16); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tp-anime > *, .tp-anime .au-kpi, .tp-anime .ac-aud, .tp-anime .ac-carte, .tp-anime .ac-retard, .tp-anime .ac-suites__liste li { animation: none !important; }
+}

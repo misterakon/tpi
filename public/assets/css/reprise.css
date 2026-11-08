@@ -1,0 +1,147 @@
+/* Reprise de l'existant : assistant en trois étapes (modèle, fichier, vérification), préfixe imp-. */
+.imp-page {
+  --imp-vert: #00794C; --imp-vert-fonce: #0B3D2A; --imp-orange: #E8730C; --imp-orange-clair: #FFE3C2; --imp-rouge: #C0392B; --imp-gris: #6B778C;
+  --imp-trait: #DDE3EC; --imp-fond: #F3F7F5;
+}
+.imp-page [hidden] { display: none !important; }
+
+/* Les icônes (Font Awesome) sont centrées par le conteneur : plus de décalage dans les ronds, les pastilles et les tuiles. */
+.imp-page .imp-centre { display: flex !important; align-items: center; justify-content: center; box-sizing: border-box; padding: 0 !important; line-height: 1 !important; text-align: center; }
+.imp-page .imp-centre i, .imp-page .imp-centre i::before { display: block; width: 1em; margin: 0 !important; padding: 0 !important; line-height: 1 !important; text-align: center; }
+
+/* ---------- Étapes ---------- */
+.imp-stepper { list-style: none; margin: 0; padding: 4px 0; display: flex; align-items: flex-start; }
+.imp-step { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; color: var(--imp-gris); }
+.imp-step::after { content: ''; position: absolute; top: 19px; left: calc(50% + 28px); right: calc(-50% + 28px); height: 3px; border-radius: 2px; background: var(--imp-trait); transition: background .3s; }
+.imp-step:last-child::after { display: none; }
+.imp-step__rond { position: relative; z-index: 1; width: 40px; height: 40px; border-radius: 50%; font: 800 15px var(--police-app); background: var(--imp-trait); color: inherit; transition: background .3s, box-shadow .3s, color .3s; }
+.imp-step__ok { display: none; }
+.imp-step__libelle { margin-top: 8px; font: 700 13.5px var(--police-app); }
+.imp-step__aide { margin-top: 2px; font: 500 12px var(--police-app); opacity: .85; }
+.imp-stepper[data-etape="1"] .imp-step:nth-child(1), .imp-stepper[data-etape="2"] .imp-step:nth-child(2), .imp-stepper[data-etape="3"] .imp-step:nth-child(3) { color: #8A3A00; }
+.imp-stepper[data-etape="1"] .imp-step:nth-child(1) .imp-step__rond, .imp-stepper[data-etape="2"] .imp-step:nth-child(2) .imp-step__rond, .imp-stepper[data-etape="3"] .imp-step:nth-child(3) .imp-step__rond { background: var(--imp-orange); color: #fff; box-shadow: 0 0 0 5px rgba(232, 115, 12, .2); }
+.imp-stepper[data-etape="2"] .imp-step:nth-child(1), .imp-stepper[data-etape="3"] .imp-step:nth-child(-n+2), .imp-stepper[data-etape="4"] .imp-step { color: var(--imp-vert); }
+.imp-stepper[data-etape="2"] .imp-step:nth-child(1) .imp-step__rond, .imp-stepper[data-etape="3"] .imp-step:nth-child(-n+2) .imp-step__rond, .imp-stepper[data-etape="4"] .imp-step .imp-step__rond { background: var(--imp-vert); color: #fff; box-shadow: none; }
+.imp-stepper[data-etape="2"] .imp-step:nth-child(1)::after, .imp-stepper[data-etape="3"] .imp-step:nth-child(-n+2)::after, .imp-stepper[data-etape="4"] .imp-step::after { background: var(--imp-vert); }
+.imp-stepper[data-etape="2"] .imp-step:nth-child(1) .imp-step__ok, .imp-stepper[data-etape="3"] .imp-step:nth-child(-n+2) .imp-step__ok, .imp-stepper[data-etape="4"] .imp-step .imp-step__ok { display: block; }
+.imp-stepper[data-etape="2"] .imp-step:nth-child(1) .imp-step__num, .imp-stepper[data-etape="3"] .imp-step:nth-child(-n+2) .imp-step__num, .imp-stepper[data-etape="4"] .imp-step .imp-step__num { display: none; }
+
+/* ---------- Cartes ---------- */
+.imp-carte { margin-bottom: 20px; border-radius: 16px; overflow: hidden; }
+.imp-carte__tete { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 18px 24px; border-bottom: 1px solid var(--imp-trait); }
+.imp-num { flex: none; width: 38px; height: 38px; border-radius: 12px; font: 800 15px var(--police-app); color: #fff !important; background: var(--imp-vert); }
+.imp-carte__titre { margin: 0; font: 800 17px var(--police-app); color: var(--imp-vert-fonce); }
+.imp-carte__sous { margin: 2px 0 0; font: 500 13px var(--police-app); color: #3F4D66; }
+.imp-carte__corps { padding: 24px; }
+.imp-aide { margin: 8px 0 0; font: 500 12.5px var(--police-app); color: #3F4D66; }
+.imp-btn-lg { padding: 11px 24px !important; font-size: 15px !important; font-weight: 700 !important; border-radius: 10px !important; }
+.imp-page button:disabled, .imp-page .el-btn[disabled] { opacity: .5; cursor: not-allowed; filter: grayscale(.35); }
+
+/* ---------- 1. Modèle ---------- */
+.imp-modele { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.imp-modele__visuel { flex: none; width: 78px; height: 78px; border-radius: 20px; font-size: 36px; color: #fff; background: linear-gradient(135deg, #00613D, #1A9A68); box-shadow: 0 8px 20px rgba(0, 121, 76, .28); }
+.imp-modele__corps { flex: 1 1 360px; min-width: 0; }
+.imp-modele__texte { margin: 0 0 12px; font: 500 14px/1.55 var(--police-app); color: #24342C; }
+.imp-onglets { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.imp-onglets li { display: flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 8px; font: 600 12.5px var(--police-app); background: var(--imp-fond); border: 1px solid var(--imp-trait); }
+.imp-onglets i { color: var(--imp-orange); }
+.imp-colonnes { margin-top: 20px; }
+.imp-colonnes h6 { margin: 0 0 8px; font: 800 13px var(--police-app); color: var(--imp-vert-fonce); text-transform: uppercase; letter-spacing: .4px; }
+.imp-colonnes ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.imp-colonnes li { padding: 4px 11px; border-radius: 999px; background: #E6F4EC; color: var(--imp-vert-fonce); font: 600 12px var(--police-app); }
+.imp-colonnes li.imp-facultatif { background: #EEF1F5; color: #3F4D66; }
+
+/* ---------- 2. Fichier ---------- */
+.imp-formulaire { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+.imp-champ { flex: 1 1 240px; min-width: 0; }
+.imp-champ--large { flex: 3 1 420px; }
+.imp-etiquette { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font: 700 13px var(--police-app); color: var(--imp-vert-fonce); }
+.imp-etiquette i { color: var(--imp-orange); }
+.imp-depot { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; min-height: 160px; padding: 22px; cursor: pointer; border-radius: 14px; border: 2px dashed #B9D3C5; background: var(--imp-fond); transition: background .2s, border-color .2s, transform .2s; }
+.imp-depot:hover, .imp-depot:focus-within { background: #E6F4EC; border-color: var(--imp-vert); }
+.imp-depot--survol { background: #D8EEE2; border-color: var(--imp-vert); transform: scale(1.01); }
+.imp-depot__input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.imp-depot__icone { width: 64px; height: 64px; border-radius: 50%; font-size: 26px; color: var(--imp-vert); background: #fff; box-shadow: 0 4px 14px rgba(0, 121, 76, .18); }
+.imp-depot__titre { font: 800 15px var(--police-app); color: var(--imp-vert-fonce); word-break: break-all; }
+.imp-depot__titre u { color: var(--imp-orange); text-underline-offset: 3px; }
+.imp-depot__sous { font: 500 12.5px var(--police-app); color: #3F4D66; }
+.imp-depot--rempli { border-style: solid; border-color: var(--imp-vert); background: #E6F4EC; }
+.imp-depot--erreur { border-style: solid; border-color: var(--imp-rouge); background: #FDECEA; }
+.imp-depot--erreur .imp-depot__icone { color: var(--imp-rouge); }
+.imp-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--imp-trait); }
+.imp-actions .imp-aide { margin: 0; flex: 1 1 280px; }
+
+/* ---------- Progression ---------- */
+.imp-barre { position: relative; height: 30px; border-radius: 15px; overflow: hidden; background: #E8EDF3; }
+.imp-barre__rempli { height: 100%; width: 0; border-radius: 15px; background-color: var(--imp-vert); background-image: linear-gradient(45deg, rgba(255, 255, 255, .25) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .25) 50%, rgba(255, 255, 255, .25) 75%, transparent 75%); background-size: 1.25rem 1.25rem; animation: imp-bandes 1s linear infinite; transition: width .35s ease, background-color .3s ease; }
+.imp-barre__rempli.imp-fini { background-image: none; animation: none; }
+.imp-barre__rempli.imp-erreur { background-color: var(--imp-rouge); background-image: none; animation: none; }
+.imp-barre__texte { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 800 13.5px var(--police-app); color: #fff; text-shadow: 0 0 3px rgba(0, 0, 0, .55); }
+@keyframes imp-bandes { from { background-position: 1.25rem 0; } to { background-position: 0 0; } }
+.imp-operation { margin: 16px 0 4px; font: 500 15px var(--police-app); }
+.imp-compteur { margin-left: 6px; color: #3F4D66; }
+.imp-etapes { list-style: none; margin: 16px 0 0; padding: 16px 0 0; display: grid; gap: 8px; border-top: 1px solid var(--imp-trait); }
+.imp-etape { display: flex; align-items: center; gap: 10px; font: 500 13.5px var(--police-app); color: var(--imp-gris); }
+.imp-etape__icone { flex: none; width: 22px; height: 22px; border-radius: 50%; font-size: 12px; background: #EEF1F5; }
+.imp-etape--fait { color: var(--imp-vert); }
+.imp-etape--fait .imp-etape__icone { background: var(--imp-vert); color: #fff; }
+.imp-etape--cours { color: #24342C; font-weight: 700; }
+.imp-etape--cours .imp-etape__icone { background: var(--imp-orange); color: #fff; }
+.imp-etape--cours .imp-etape__icone i { animation: imp-tourne 1s linear infinite; }
+@keyframes imp-tourne { to { transform: rotate(360deg); } }
+
+/* ---------- 3. Vérification ---------- */
+.imp-verdict { display: flex; gap: 14px; align-items: center; padding: 16px 18px; border-radius: 14px; font: 500 14px/1.5 var(--police-app); }
+.imp-verdict__icone { flex: none; width: 42px; height: 42px; border-radius: 50%; font-size: 20px; color: #fff !important; }
+.imp-verdict--ok { background: #E6F4EC; border: 1px solid #A9D6BF; } .imp-verdict--ok .imp-verdict__icone { background: var(--imp-vert); }
+.imp-verdict--erreur { background: #FDECEA; border: 1px solid #F2B8B0; } .imp-verdict--erreur .imp-verdict__icone { background: var(--imp-rouge); }
+.imp-verdict--info { background: #FFF1DD; border: 1px solid #F5D3A4; } .imp-verdict--info .imp-verdict__icone { background: var(--imp-orange); }
+
+.imp-kpis { display: flex; flex-wrap: wrap; gap: 12px; margin: 18px 0 22px; }
+.imp-kpi { position: relative; flex: 1 1 160px; min-width: 160px; display: flex; flex-direction: column; gap: 2px; padding: 14px 16px 14px 20px; border-radius: 14px; overflow: hidden; background: var(--imp-fond); border: 1px solid var(--imp-trait); }
+.imp-kpi::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--imp-gris); }
+.imp-kpi--vert::before { background: var(--imp-vert); } .imp-kpi--orange::before { background: var(--imp-orange); } .imp-kpi--rouge::before { background: var(--imp-rouge); } .imp-kpi--rouge { background: #FDF2F0; }
+.imp-kpi__icone { position: absolute; right: 12px; top: 12px; width: 32px; height: 32px; border-radius: 50%; font-size: 15px; color: var(--imp-gris); background: rgba(107, 119, 140, .12); }
+.imp-kpi--vert .imp-kpi__icone { color: var(--imp-vert); background: rgba(0, 121, 76, .12); } .imp-kpi--orange .imp-kpi__icone { color: var(--imp-orange); background: rgba(232, 115, 12, .14); } .imp-kpi--rouge .imp-kpi__icone { color: var(--imp-rouge); background: rgba(192, 57, 43, .12); }
+.imp-kpi__valeur { display: block; font: 800 28px/1.1 var(--police-app); font-variant-numeric: tabular-nums; color: #10241B; }
+.imp-kpi__libelle { font: 700 12.5px var(--police-app); color: #3F4D66; }
+
+.imp-barre-outils { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.imp-seg { display: inline-block; max-width: 100%; padding: 3px; border-radius: 12px; background: var(--imp-fond); border: 1px solid var(--imp-trait); }
+.imp-seg__btn { display: inline-flex; align-items: center; gap: 6px; margin: 2px; padding: 7px 14px; border: 0; border-radius: 9px; cursor: pointer; font: 700 13px var(--police-app); color: #24342C; background: transparent; transition: background .2s, color .2s; }
+.imp-seg__btn:hover { background: #E6F4EC; }
+.imp-seg__btn.imp-actif { color: #fff; background: var(--imp-vert); box-shadow: 0 2px 8px rgba(0, 121, 76, .35); }
+.imp-seg__nb { display: inline-block; min-width: 24px; padding: 1px 7px; border-radius: 999px; font-size: 11.5px; text-align: center; background: var(--imp-trait); color: #24342C; }
+.imp-seg__btn.imp-actif .imp-seg__nb { background: rgba(255, 255, 255, .28); color: #fff; }
+
+.imp-table-cadre { max-height: 560px; overflow: auto; border: 1px solid var(--imp-trait); border-radius: 12px; }
+.imp-table { width: 100%; border-collapse: separate; border-spacing: 0; font: 500 13px var(--police-app); }
+.imp-table th { position: sticky; top: 0; z-index: 2; padding: 11px 12px; text-align: left; font: 700 12px var(--police-app); letter-spacing: .02em; text-transform: uppercase; white-space: nowrap; color: #fff !important; background: var(--imp-vert-fonce) !important; }
+.imp-table td { padding: 10px 12px; vertical-align: top; border-bottom: 1px solid #E8EDF3; overflow-wrap: anywhere; }
+.imp-table tbody tr:nth-child(even) td { background: #FAFBFC; }
+.imp-table tbody tr:hover td { background: #F1FAF5; }
+.imp-table .imp-ligne--erreur td { background: #FDF2F0; } .imp-table .imp-ligne--erreur td:first-child { box-shadow: inset 4px 0 0 var(--imp-rouge); }
+.imp-table .imp-ligne--nouvelle td:first-child { box-shadow: inset 4px 0 0 var(--imp-vert); }
+.imp-table .imp-ligne--doublon td:first-child { box-shadow: inset 4px 0 0 var(--imp-orange); }
+.imp-table td:nth-child(5), .imp-table td:nth-child(6) { min-width: 200px; } .imp-table td:nth-child(8) { min-width: 280px; }
+.imp-num-ligne { font-weight: 800; font-variant-numeric: tabular-nums; }
+.imp-pill { display: inline-block; padding: 3px 11px; border-radius: 999px; font: 700 11.5px var(--police-app); white-space: nowrap; color: #fff !important; }
+.imp-pill--erreur { background: var(--imp-rouge); } .imp-pill--nouvelle { background: var(--imp-vert); } .imp-pill--doublon { background: var(--imp-orange); }
+.imp-msg { display: flex; gap: 7px; align-items: flex-start; margin-bottom: 3px; line-height: 1.4; }
+.imp-msg i { margin-top: 3px; }
+.imp-msg--erreur { color: var(--imp-rouge); font-weight: 700; } .imp-msg--doublon { color: #A24B00; } .imp-msg--avert { color: #A24B00; }
+.imp-vide { padding: 36px 12px; text-align: center; color: var(--imp-gris); }
+.imp-vide i { display: block; margin-bottom: 8px; font-size: 28px; }
+
+.imp-fin { display: flex; align-items: center; justify-content: flex-end; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+
+@media (max-width: 767px) { .imp-step__aide { display: none; } .imp-carte__corps { padding: 18px; } }
+
+/* Les coches des étapes terminées : masquées par défaut, visibles seulement sur les étapes franchies (priorité sur le centrage des icônes). */
+.imp-page .imp-step__rond .imp-step__ok { display: none !important; }
+.imp-page .imp-stepper[data-etape="2"] .imp-step:nth-child(1) .imp-step__ok,
+.imp-page .imp-stepper[data-etape="3"] .imp-step:nth-child(-n+2) .imp-step__ok,
+.imp-page .imp-stepper[data-etape="4"] .imp-step .imp-step__ok { display: block !important; }
+.imp-page .imp-stepper[data-etape="2"] .imp-step:nth-child(1) .imp-step__num,
+.imp-page .imp-stepper[data-etape="3"] .imp-step:nth-child(-n+2) .imp-step__num,
+.imp-page .imp-stepper[data-etape="4"] .imp-step .imp-step__num { display: none !important; }

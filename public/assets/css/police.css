@@ -1,0 +1,49 @@
+/* =====================================================================
+   Police de l'application : Inter (licence libre SIL OFL, voir
+   public/assets/fonts/inter/LICENSE.txt).
+
+   - Fournie avec l'application (aucun appel à Internet) : même aspect sur
+     ordinateur, tablette et téléphone, même hors ligne.
+   - Quatre graisses : 400 (normal), 500 (moyen), 600 (semi-gras), 700 (gras),
+     celles que le thème utilise.
+   - Une seule valeur à changer ici (--police-app) pour toute l'application.
+   - En cas de chargement raté, le navigateur prend la police du système (Segoe UI, San Francisco, Roboto).
+   - Chiffres de largeur fixe dans les tableaux (colonnes de numéros et de dates bien alignées).
+
+   Les actes imprimés (décisions) auront leur propre police, à définir plus tard :
+   ils ne dépendent pas de ce fichier.
+
+   À charger APRÈS style.css. Le thème d'origine utilise les variables
+   --font-rubik et --font-roboto : on les redirige vers la police choisie.
+   ===================================================================== */
+
+/* « latin » couvre le français (accents, œ, €, guillemets) ; « latin-ext » ne se charge que si un
+   caractère rare l'exige (noms propres, lettres africaines étendues). */
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url('../fonts/inter/inter-latin-400-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url('../fonts/inter/inter-latin-500-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url('../fonts/inter/inter-latin-600-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; font-display: swap; src: url('../fonts/inter/inter-latin-700-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url('../fonts/inter/inter-latin-ext-400-normal.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url('../fonts/inter/inter-latin-ext-500-normal.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url('../fonts/inter/inter-latin-ext-600-normal.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; font-display: swap; src: url('../fonts/inter/inter-latin-ext-700-normal.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+:root {
+  --police-app: 'Inter', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  --font-rubik: var(--police-app);
+  --font-roboto: var(--police-app);
+}
+
+body,
+h1, h2, h3, h4, h5, h6, p, a, li, td, th, label, small, strong, b, blockquote,
+input, select, textarea, button,
+.btn, .form-control, .form-select, .dropdown-menu, .modal-content, .card, .page-body, .page-header,
+.swal-modal, .swal-title, .swal-text, .swal-button, .swal2-popup, .swal2-title, .swal2-html-container, .swal2-styled {
+  font-family: var(--police-app);
+}
+
+/* Chiffres de même largeur dans les tableaux et les champs de nombres : les colonnes s'alignent. */
+.el-num, table.el-tbl td, table.el-tbl th, .dataTables_info, input[type="number"], input[type="date"] {
+  font-variant-numeric: tabular-nums;
+}

@@ -1,0 +1,74 @@
+/*
+  Pages publiques d'eLouange : logo (toutes les pages) et fond mélodie (toutes les pages sauf le paiement).
+  Ce fichier est un vrai fichier CSS, et non un style écrit dans la page : les pages publiques sont servies avec
+  des en-têtes de sécurité stricts qui ignorent les styles écrits directement dans le HTML.
+*/
+
+/* ───────── Logo eLouange (toutes les pages) ───────── */
+.wrap .brand-logo {
+  display: block;
+  width: fit-content;
+  margin: 4px auto 16px;
+}
+.wrap .brand-logo a { display: block; }
+.wrap .brand-logo img {
+  display: block;
+  height: 74px !important;
+  width: auto !important;
+  max-width: min(280px, 72vw) !important;
+}
+
+/* ───────── Fond des pages d'information : dégradé orange → blanc → vert + clé de sol de chaque côté ───────── */
+.scene.scene--app {
+  position: fixed !important;
+  inset: 0 !important;
+  overflow: hidden !important;
+  background-color: #ffffff !important;
+  background-image:
+    radial-gradient(900px 620px at 0% 0%, rgba(242, 138, 30, .50), transparent 62%),
+    radial-gradient(900px 660px at 100% 100%, rgba(46, 158, 91, .50), transparent 62%),
+    radial-gradient(760px 520px at 100% 0%, rgba(46, 158, 91, .14), transparent 62%),
+    radial-gradient(760px 520px at 0% 100%, rgba(242, 138, 30, .14), transparent 62%),
+    linear-gradient(135deg, #fff6e9 0%, #ffffff 50%, #eefaf2 100%) !important;
+  background-size: auto !important;
+  background-position: 0 0 !important;
+  background-repeat: no-repeat !important;
+}
+
+/* On masque tout ce que le fond d'origine dessine (formes, grille, illustration) */
+.scene.scene--app > * { display: none !important; }
+
+.scene.scene--app::before,
+.scene.scene--app::after {
+  --clef-largeur: clamp(190px, 21vw, 330px);
+  content: '' !important;
+  display: block !important;
+  position: absolute !important;
+  inset: auto !important;
+  top: 50% !important;
+  width: var(--clef-largeur) !important;
+  height: calc(var(--clef-largeur) * 1.4665) !important;
+  background: url('../images/login/fond_melodie3.png') center / contain no-repeat !important;
+  filter: drop-shadow(0 18px 26px rgba(30, 40, 30, .20));
+  opacity: 1 !important;
+  pointer-events: none;
+}
+.scene.scene--app::before {
+  right: calc(50% + 250px) !important;
+  left: auto !important;
+  transform: translateY(-50%) rotate(-6deg) !important;
+}
+.scene.scene--app::after {
+  left: calc(50% + 250px) !important;
+  right: auto !important;
+  transform: translateY(-50%) scaleX(-1) rotate(-6deg) !important;
+}
+
+@media (max-width: 1000px) {
+  .scene.scene--app::before,
+  .scene.scene--app::after { opacity: .5 !important; }
+}
+@media (max-width: 760px) {
+  .scene.scene--app::before,
+  .scene.scene--app::after { display: none !important; }
+}

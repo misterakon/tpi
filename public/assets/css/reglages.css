@@ -1,0 +1,89 @@
+/* Écran Réglages (resources/views/reglages/reglages.blade.php) */
+/* ---- Bandeau ---- */
+.rg-entete { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; padding: 20px 24px; margin-bottom: 18px; border-left: 4px solid #7B6BE0; }
+.rg-entete__titre { margin: 0 0 4px; font-weight: 700; font-size: 16px; }
+.rg-entete__titre i { color: #7B6BE0; margin-right: 6px; }
+.rg-entete__aide { margin: 0; max-width: 640px; color: #5B6B84; font-size: 13px; }
+.rg-entete__outils { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.rg-recherche { position: relative; }
+.rg-recherche i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #8A94A6; font-size: 13px; }
+.rg-recherche input { width: 260px; max-width: 100%; padding: 8px 12px 8px 34px; border: 1px solid rgba(91,107,132,.35); border-radius: 999px; background: transparent; color: inherit; font-size: 14px; }
+.rg-recherche input:focus { outline: 0; border-color: #7B6BE0; box-shadow: 0 0 0 3px rgba(123,107,224,.18); }
+.rg-compteur { padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; background: rgba(46,125,91,.14); color: #2E7D5B; }
+.rg-compteur--actif { background: rgba(199,125,10,.16); color: #C77D0A; }
+.rg-aucun { text-align: center; padding: 28px 0; color: #5B6B84; }
+
+/* ---- Modules ---- */
+.rg-module { margin-bottom: 14px; overflow: hidden; }
+.rg-module > summary { cursor: pointer; display: flex; align-items: center; gap: 16px; padding: 16px 22px; list-style: none; }
+.rg-module > summary::-webkit-details-marker { display: none; }
+.rg-module > summary:hover { background: rgba(91,107,132,.06); }
+.rg-icone { flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px; display: flex !important; align-items: center; justify-content: center; text-align: center; line-height: 1; font-size: 19px; color: var(--rg-c); background: color-mix(in srgb, var(--rg-c) 14%, transparent); }
+.rg-icone i { display: block; margin: 0; padding: 0; line-height: 1; width: auto; }
+.rg-resume { flex: 1; display: block !important; min-width: 0; }
+.rg-titre { display: block !important; font-weight: 700; font-size: 16px; }
+.rg-desc { display: block !important; color: #5B6B84; font-size: 13px; }
+.rg-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.rg-nb { font-size: 12px; color: #8A94A6; }
+.rg-badge-modif { padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; color: #C77D0A; background: rgba(199,125,10,.16); }
+.rg-chevron { color: #8A94A6; transition: transform .2s ease; }
+.rg-module[open] .rg-chevron { transform: rotate(180deg); }
+.rg-corps { padding: 4px 22px 22px; border-top: 1px solid rgba(91,107,132,.18); }
+
+/* ---- Lignes de réglage ---- */
+.rg-ligne { display: flex; gap: 28px; padding: 16px 12px 16px 14px; border-bottom: 1px solid rgba(91,107,132,.14); border-left: 3px solid transparent; }
+.rg-ligne:last-of-type { border-bottom: 0; }
+.rg-ligne--modifie { border-left-color: #C77D0A; background: linear-gradient(90deg, rgba(199,125,10,.07), transparent 40%); }
+.rg-gauche { flex: 1 1 52%; min-width: 0; }
+.rg-droite { flex: 1 1 48%; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 8px; }
+.rg-libelle { font-weight: 600; margin: 0 0 2px; }
+.rg-tag { margin-left: 8px; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: #C77D0A; background: rgba(199,125,10,.16); vertical-align: middle; }
+.rg-aide { margin: 2px 0; color: #5B6B84; font-size: 13px; }
+.rg-defaut { margin: 4px 0 0; color: #8A94A6; font-size: 12px; }
+.rg-defaut i { margin-right: 4px; }
+.rg-erreur { margin: 6px 0 0; color: #A73B34; font-size: 13px; font-weight: 600; }
+
+/* ---- Interrupteur ---- */
+.rg-switch { display: inline-flex; align-items: center; gap: 12px; cursor: pointer; user-select: none; }
+.rg-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+.rg-slider { display: block !important; position: relative; flex-shrink: 0; width: 48px; height: 26px; border-radius: 999px; background: #B8C0CC; transition: background .2s ease; }
+.rg-slider::before { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.3); transition: transform .2s ease; }
+.rg-switch input:checked + .rg-slider { background: #2E7D5B; }
+.rg-switch input:checked + .rg-slider::before { transform: translateX(22px); }
+.rg-switch input:focus-visible + .rg-slider { box-shadow: 0 0 0 3px rgba(46,125,91,.3); }
+/* Texte de l'état : un seul des deux est affiché, par le contenu du ::after (aucun masquage d'élément) */
+.rg-etat { display: inline-block !important; min-width: 78px; font-size: 13px; font-weight: 600; color: #8A94A6; }
+.rg-etat::after { content: "Désactivé"; }
+.rg-switch input:checked ~ .rg-etat { color: #2E7D5B; }
+.rg-switch input:checked ~ .rg-etat::after { content: "Activé"; }
+
+/* ---- Pastilles à cocher (profils, types, délais) ---- */
+.rg-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.rg-chip { position: relative; cursor: pointer; user-select: none; }
+.rg-chip input { position: absolute; opacity: 0; width: 0; height: 0; }
+.rg-chip span { display: inline-block; padding: 6px 14px; border: 1px solid rgba(91,107,132,.4); border-radius: 999px; font-size: 13px; transition: all .15s ease; }
+.rg-chip:hover span { border-color: var(--rg-c); }
+.rg-chip input:checked + span { color: #fff; background: var(--rg-c); border-color: var(--rg-c); }
+.rg-chip input:focus-visible + span { box-shadow: 0 0 0 3px color-mix(in srgb, var(--rg-c) 30%, transparent); }
+.rg-chip--fixe { cursor: not-allowed; opacity: .8; }
+.rg-chip small { margin-left: 4px; opacity: .85; }
+
+/* ---- Champs ---- */
+.rg-nombre { display: flex; align-items: center; gap: 8px; }
+.rg-nombre input { width: 130px; }
+.rg-droite select, .rg-droite input[type=text] { max-width: 100%; width: 100%; }
+
+.rg-retablir { background: none; border: 0; padding: 0; color: #2B6CB0; font-size: 12px; cursor: pointer; }
+.rg-retablir:hover { text-decoration: underline; }
+.rg-pied { display: flex; justify-content: flex-end; padding-top: 16px; }
+
+/* ---- Historique ---- */
+.rg-historique { margin-top: 22px; padding: 18px 22px; }
+.rg-historique__titre { font-weight: 700; margin-bottom: 10px; }
+.rg-historique__titre i { margin-right: 6px; color: #5B6B84; }
+
+@media (max-width: 800px) {
+  .rg-ligne { flex-direction: column; gap: 10px; }
+  .rg-meta { display: none; }
+  .rg-recherche input { width: 100%; }
+}

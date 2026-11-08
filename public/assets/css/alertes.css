@@ -1,0 +1,87 @@
+/* Alertes et notifications : cloche de l'en-tête, page « Mes notifications », suivi des alertes. Vert, orange, blanc ; police Inter. */
+
+.al-page { --al-info: #3B76B8; --al-attention: #E8710A; --al-critique: #B42318; }
+
+/* ------------------------------------------------------------ cartes d'alerte */
+.al-liste { display: flex; flex-direction: column; gap: 12px; }
+.al-carte { position: relative; display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 16px 18px 16px 24px; border-radius: 18px; background: #fff; border: 1px solid var(--au-ligne, #E3E9F0); box-shadow: 0 6px 22px rgba(15, 42, 91, .05); transition: box-shadow .2s; }
+.al-carte:hover { box-shadow: 0 14px 30px -16px rgba(0, 80, 50, .4); }
+.al-carte::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 7px; border-radius: 17px 0 0 17px; background: var(--al-c); }
+.al-carte--info { --al-c: #3B76B8; --al-fond: #E8F1FB; --al-texte: #1F4E85; }
+.al-carte--attention { --al-c: #E8710A; --al-fond: #FFF1E2; --al-texte: #8A3A00; }
+.al-carte--critique { --al-c: #B42318; --al-fond: #FDECEA; --al-texte: #8E1B10; }
+.al-carte.is-lue { background: #FBFCFB; }
+.al-carte.is-lue .al-titre { font-weight: 600; }
+.al-carte.is-resolue::before { background: #00794C; }
+.al-ico { width: 54px; height: 54px; border-radius: 16px; background: var(--al-fond); color: var(--al-c); display: flex !important; align-items: center; justify-content: center; font-size: 21px; }
+.al-carte.is-resolue .al-ico { background: #E4F3EB; color: #00794C; }
+.al-corps { min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.al-ligne1 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.al-niveau { display: inline-flex !important; align-items: center; gap: 6px; padding: 3px 11px; border-radius: 999px; background: var(--al-fond); color: var(--al-texte); font: 700 12px/1.3 var(--police-app, 'Inter', sans-serif); text-transform: uppercase; letter-spacing: .4px; }
+.al-type { font: 600 13px var(--police-app, 'Inter', sans-serif); color: var(--au-mute, #2F3A52); }
+.al-nouvelle { width: 9px; height: 9px; border-radius: 50%; background: var(--al-c); box-shadow: 0 0 0 4px var(--al-fond); }
+.al-titre { font: 700 15.5px/1.4 var(--police-app, 'Inter', sans-serif); color: var(--au-ink, #0F1B33); overflow-wrap: anywhere; }
+.al-action { display: flex; gap: 8px; align-items: baseline; font: 600 14px/1.4 var(--police-app, 'Inter', sans-serif); color: #0B3D2A; } .al-action i { color: #00794C; font-size: 13px; }
+.al-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font: 500 13px/1.4 var(--police-app, 'Inter', sans-serif); color: var(--au-mute, #2F3A52); }
+.al-meta span { display: inline-flex !important; align-items: center; gap: 6px; } .al-meta i { color: #4B5870; font-size: 12px; }
+.al-meta .al-retard { padding: 2px 10px; border-radius: 999px; background: #FDECEA; color: #8E1B10; font-weight: 700; } .al-meta .al-retard i { color: #B42318; }
+.al-meta .al-ok { padding: 2px 10px; border-radius: 999px; background: #E4F3EB; color: #0B3D2A; font-weight: 700; } .al-meta .al-ok i { color: #00794C; }
+.al-meta .al-just { padding: 2px 10px; border-radius: 999px; background: #E3E6FB; color: #2B3592; font-weight: 700; } .al-meta .al-just i { color: #2B3592; }
+.al-meta .al-orphelin { padding: 2px 10px; border-radius: 999px; background: #FFF1E2; color: #8A3A00; font-weight: 700; }
+.al-motif { margin-top: 2px; padding: 8px 12px; border-radius: 10px; background: #F2F4FD; border: 1px solid #D9DEF7; font: 500 13px/1.45 var(--police-app, 'Inter', sans-serif); color: #1F2A44; }
+.al-motif b { color: #2B3592; }
+.al-actions { display: flex; flex-direction: column; gap: 8px; align-items: stretch; min-width: 170px; }
+.al-actions .au-btn { justify-content: center; white-space: nowrap; }
+.al-vide { padding: 44px 20px; text-align: center; color: var(--au-mute, #2F3A52); font: 600 15px var(--police-app, 'Inter', sans-serif); } .al-vide i { display: block; margin-bottom: 10px; font-size: 34px; color: #00794C; }
+@media (max-width: 900px) { .al-carte { grid-template-columns: 46px minmax(0, 1fr); } .al-actions { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; } .al-ico { width: 46px; height: 46px; } }
+
+/* ------------------------------------------------------------ bandeau d'état du moteur d'alertes */
+.al-moteur { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-radius: 14px; background: #EAF4EE; border: 1px solid #B9D3C5; color: #0B3D2A; font: 600 13.5px/1.45 var(--police-app, 'Inter', sans-serif); }
+.al-moteur i { font-size: 16px; color: #00794C; }
+.al-moteur.is-alerte { background: #FDECEA; border-color: #F0B4AD; color: #8E1B10; } .al-moteur.is-alerte i { color: #B42318; }
+.al-moteur.is-jamais { background: #FFF1E2; border-color: #F2C9A5; color: #8A3A00; } .al-moteur.is-jamais i { color: #E8710A; }
+
+/* ------------------------------------------------------------ cloche de l'en-tête */
+.cloche .notification-box { position: relative; }
+.cloche__nb { position: absolute; top: -10px; right: -8px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: #f00909; color: #fff; font: 700 10px/16px var(--police-app, Inter, sans-serif); text-align: center; box-shadow: 0 0 0 1.5px #fff; pointer-events: none; }
+.cloche__nb[hidden] { display: none; }
+.cloche__nb.is-nouveau { animation: cloche-pulse 1.4s ease-in-out 3; }
+@keyframes cloche-pulse { 50% { transform: scale(1.25); } }
+.cloche .cloche__liste { width: 380px; max-width: 92vw; padding: 0; overflow: hidden; }
+.cloche__tete { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid #E3E9F0; font: 700 15px var(--police-app, 'Inter', sans-serif); color: #0F1B33; }
+.cloche__tete button { border: 0; background: none; padding: 0; color: #00794C; font: 600 12.5px var(--police-app, 'Inter', sans-serif); cursor: pointer; text-decoration: underline; }
+.cloche__items { list-style: none; margin: 0; padding: 0; max-height: 360px; overflow-y: auto; }
+.cloche__items li { border-bottom: 1px solid #EEF2F0; }
+.cloche__items a { display: flex; gap: 11px; padding: 11px 16px; color: #0F1B33; text-decoration: none; transition: background .15s; } .cloche__items a:hover { background: #F4FAF6; }
+.cloche__pt { flex: none; width: 10px; height: 10px; margin-top: 6px; border-radius: 50%; background: #E8710A; }
+.cloche__pt--info { background: #3B76B8; } .cloche__pt--critique { background: #B42318; }
+.cloche__t { font: 600 13.5px/1.4 var(--police-app, 'Inter', sans-serif); } .cloche__q { display: block; margin-top: 2px; font: 500 12px var(--police-app, 'Inter', sans-serif); color: #4B5870; }
+.cloche__vide { padding: 26px 16px; text-align: center; color: #2F3A52; font: 500 13.5px var(--police-app, 'Inter', sans-serif); }
+.cloche__pied { display: block; padding: 12px 16px; text-align: center; background: #F4FAF6; font: 700 13.5px var(--police-app, 'Inter', sans-serif); color: #00794C; text-decoration: none; } .cloche__pied:hover { background: #E4F3EB; color: #0B3D2A; }
+
+/* ------------------------------------------------------------ pages de paramétrage (règles, délais) */
+.al-puce { display: inline-block; margin: 2px 4px 2px 0; padding: 3px 10px; border-radius: 999px; background: #EAF4EE; border: 1px solid #B9D3C5; color: #0B3D2A; font: 600 12.5px/1.3 var(--police-app, 'Inter', sans-serif); }
+.al-canal { display: inline-flex !important; align-items: center; justify-content: center; width: 32px; height: 32px; margin-right: 6px; border-radius: 10px; background: #EAF4EE; color: #00794C; }
+.al-tbl__actions { white-space: nowrap; } .al-tbl__actions .au-iconbtn { margin-right: 6px; border: 0; cursor: pointer; }
+.au-iconbtn--rouge { background: #B42318; color: #fff; border-color: #B42318; box-shadow: 0 6px 12px -8px rgba(180, 35, 24, .7); } .au-iconbtn--rouge:hover { background: #B42318; color: #fff; }
+.al-interrupteur { position: relative; display: inline-block; width: 46px; height: 26px; margin: 0; cursor: pointer; }
+.al-interrupteur input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 2; }
+.al-interrupteur span { position: absolute; inset: 0; border-radius: 999px; background: #B8C2CC; transition: background .2s; }
+.al-interrupteur span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, .25); transition: transform .2s; }
+.al-interrupteur input:checked + span { background: #00794C; } .al-interrupteur input:checked + span::after { transform: translateX(20px); }
+.al-interrupteur input:focus-visible + span { outline: 3px solid rgba(0, 121, 76, .35); outline-offset: 2px; }
+.al-cases { display: flex; flex-wrap: wrap; gap: 8px 14px; } .al-cases--grille { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.al-case { display: flex; align-items: center; gap: 9px; margin: 0; padding: 8px 12px; border: 1px solid #DCE5E0; border-radius: 12px; background: #FBFDFC; font: 500 13.5px/1.35 var(--police-app, 'Inter', sans-serif); color: #1F2A44; cursor: pointer; }
+.al-case:hover { border-color: #00794C; background: #F2FAF6; } .al-case input { width: 17px; height: 17px; flex: none; accent-color: #00794C; }
+.al-case--interrupteur { background: #F4FAF6; }
+.al-controle__tete { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.al-controle__tete b { display: block; font: 700 16px var(--police-app, 'Inter', sans-serif); color: #0F1B33; } .al-controle__tete small { display: block; margin-top: 2px; font: 500 13px/1.45 var(--police-app, 'Inter', sans-serif); color: #2F3A52; max-width: 820px; }
+.al-agent { display: inline-flex !important; align-items: center; gap: 7px; margin: 2px 12px 2px 0; font: 600 13.5px/1.35 var(--police-app, 'Inter', sans-serif); } .al-agent em { font: 500 12px var(--police-app, 'Inter', sans-serif); font-style: normal; padding: 1px 8px; border-radius: 999px; }
+.al-agent.is-ok i { color: #00794C; } .al-agent.is-ok em { background: #E4F3EB; color: #0B3D2A; }
+.al-agent.is-ko i { color: #B42318; } .al-agent.is-ko em { background: #FDECEA; color: #8E1B10; }
+.al-note { margin: 0; display: flex; gap: 8px; align-items: baseline; font: 500 13px/1.5 var(--police-app, 'Inter', sans-serif); color: #2F3A52; } .al-note i { color: #3B76B8; }
+@media (max-width: 700px) { .al-cases--grille { grid-template-columns: 1fr; } }
+
+/* Le bouton de suppression est rouge (comme dans « Délais de procédure »), même si le vert de audiences.css est chargé après. */
+.au-iconbtn.au-iconbtn--rouge, .al-tbl__actions .au-iconbtn.au-iconbtn--rouge { background: #B42318; color: #fff; border-color: #B42318; box-shadow: 0 6px 12px -8px rgba(180, 35, 24, .7); }
+.au-iconbtn.au-iconbtn--rouge:hover { background: #B42318; color: #fff; }

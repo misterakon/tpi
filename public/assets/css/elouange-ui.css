@@ -1,0 +1,118 @@
+/* ==========================================================================
+   eLouange : chargements, transitions et connexion
+   Couleur d'accent : celle du thème (--theme-default), sinon un bleu par défaut.
+   ========================================================================== */
+
+:root {
+  --ea-c: #4a6cf7;   /* remplacée au chargement par la couleur du bouton principal du thème (elouange-ui.js) */
+  --ea-danger: #d32e04;
+  --ea-ok: #1f9d55;
+  --ea-veil: rgba(255, 255, 255, .86);
+  --ea-box-bg: #fff;
+  --ea-box-border: #cfd6e4;
+  --ea-text: #2b2f3a;
+}
+.dark-only {
+  --ea-veil: rgba(28, 30, 38, .88);
+  --ea-box-bg: #262932;
+  --ea-box-border: #3b4050;
+  --ea-text: #f1f3f8;
+}
+
+@keyframes ea-spin   { to { transform: rotate(360deg); } }
+@keyframes ea-in     { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes ea-out    { to   { opacity: 0; transform: translateY(-8px); } }
+@keyframes ea-shake  { 0%,100% { transform: none; } 20% { transform: translateX(-7px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
+@keyframes ea-pop    { 0% { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes ea-draw   { to { stroke-dashoffset: 0; } }
+@keyframes ea-pulse  { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+
+/* ---------- Loader des écrans de connexion : double anneau + cœur qui bat ---------- */
+@keyframes ea-core { 0%, 100% { transform: scale(.7); opacity: .65; } 50% { transform: scale(1.15); opacity: 1; } }
+@keyframes ea-line { 0% { transform: translateX(-100%); } 100% { transform: translateX(260%); } }
+
+.ea-spin { position: relative; width: 88px; height: 88px; }
+.ea-spin svg { width: 100%; height: 100%; overflow: visible; }
+.ea-spin circle { fill: none; stroke-linecap: round; transform-origin: 50% 50%; }
+.ea-spin__track { stroke: color-mix(in srgb, var(--ea-c) 14%, transparent); stroke-width: 6; }
+.ea-spin__arc  { stroke: var(--ea-c); stroke-width: 6; stroke-dasharray: 100 165; animation: ea-spin 1.1s cubic-bezier(.5, .15, .5, .85) infinite; filter: drop-shadow(0 0 6px color-mix(in srgb, var(--ea-c) 55%, transparent)); }
+.ea-spin__arc2 { stroke: #ffb347; stroke-width: 5; stroke-dasharray: 55 134; animation: ea-spin 1.6s linear infinite reverse; }
+.ea-spin__core { position: absolute; top: 50%; left: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff, var(--ea-c) 70%); box-shadow: 0 0 14px color-mix(in srgb, var(--ea-c) 60%, transparent); animation: ea-core 1.4s ease-in-out infinite; }
+
+.ea-line { position: relative; display: block; width: 120px; height: 3px; border-radius: 3px; overflow: hidden; background: color-mix(in srgb, var(--ea-c) 18%, transparent); }
+.ea-line::after { content: ""; position: absolute; inset: 0; width: 40%; border-radius: 3px; background: linear-gradient(90deg, transparent, var(--ea-c), transparent); animation: ea-line 1.3s ease-in-out infinite; }
+
+/* ---------- Barre de progression en haut de page ---------- */
+.ea-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 99999; pointer-events: none; opacity: 0; transition: opacity .25s; }
+.ea-progress.on { opacity: 1; }
+.ea-progress__bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--ea-c), #ffb347); box-shadow: 0 0 10px var(--ea-c); transition: width .4s ease; border-radius: 0 3px 3px 0; }
+
+/* ---------- Bouton en cours d'envoi ---------- */
+.btn.ea-loading { pointer-events: none; opacity: .95; cursor: progress; }
+.ea-spinner {
+  display: inline-block; width: 1em; height: 1em; margin-right: .55em; vertical-align: -.15em;
+  border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%;
+  animation: ea-spin .7s linear infinite;
+}
+
+/* ---------- Voile de chargement sur la carte de connexion ---------- */
+.login-main { position: relative; }
+.ea-veil {
+  position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+  background: radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--ea-c) 10%, var(--ea-veil)), var(--ea-veil) 72%);
+  -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); border-radius: inherit;
+  opacity: 0; visibility: hidden; transition: opacity .22s, visibility .22s;
+}
+.ea-veil.on { opacity: 1; visibility: visible; }
+.ea-veil__text { margin: 0; font-weight: 600; letter-spacing: .2px; color: var(--ea-text); text-align: center; animation: ea-pulse 1.6s ease-in-out infinite; }
+.ea-veil .ea-check { display: none; width: 62px; height: 62px; color: var(--ea-ok); }
+.ea-veil.ok .ea-spin, .ea-veil.ok .ea-line { display: none; }
+.ea-veil.ok .ea-check { display: block; animation: ea-pop .45s ease both; }
+.ea-veil.ok .ea-check path { stroke-dasharray: 40; stroke-dashoffset: 40; animation: ea-draw .45s .15s ease forwards; }
+.ea-veil.ok .ea-veil__text { animation: none; color: var(--ea-ok); }
+
+/* ---------- Transitions entre les étapes ---------- */
+.ea-enter { animation: ea-in .38s cubic-bezier(.2, .8, .2, 1) both; }
+.ea-leave { animation: ea-out .18s ease forwards; }
+.ea-shake { animation: ea-shake .42s ease; }
+
+/* ---------- Champs ---------- */
+.login-main .form-control:focus { border-color: var(--ea-c); box-shadow: 0 0 0 .2rem color-mix(in srgb, var(--ea-c) 18%, transparent); }
+.login-main .form-control.is-invalid { border-color: var(--ea-danger); }
+.login-main .form-control[readonly] { opacity: .7; }
+.ea-error { display: block; margin-top: .35rem; font-size: .84rem; color: var(--ea-danger); animation: ea-in .25s ease both; }
+.ea-error--center { text-align: center; }
+
+/* ---------- Messages (succès / info / erreur) ---------- */
+.ea-notice { display: flex; gap: .6rem; align-items: flex-start; padding: .7rem .9rem; margin-bottom: 1rem; border-radius: 10px; font-size: .9rem; line-height: 1.35;
+  background: color-mix(in srgb, var(--ea-ok) 10%, transparent); color: var(--ea-ok); border: 1px solid color-mix(in srgb, var(--ea-ok) 28%, transparent); animation: ea-in .3s ease both; }
+.ea-notice--error { background: color-mix(in srgb, var(--ea-danger) 9%, transparent); color: var(--ea-danger); border-color: color-mix(in srgb, var(--ea-danger) 28%, transparent); }
+.ea-notice i { margin-top: .12rem; }
+
+/* ---------- En-tête des écrans de connexion ---------- */
+.ea-badge { width: 62px; height: 62px; margin: 0 auto 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #fff;
+  background: linear-gradient(135deg, var(--ea-c), color-mix(in srgb, var(--ea-c) 55%, #ffb347)); box-shadow: 0 8px 22px color-mix(in srgb, var(--ea-c) 35%, transparent); animation: ea-pop .5s ease both; }
+.ea-title { letter-spacing: .2px; }
+
+/* ---------- Saisie du code : 6 cases ---------- */
+.ea-otp { display: flex; gap: 10px; justify-content: center; margin-top: .4rem; }
+.ea-otp input[data-otp-digit] {
+  width: 48px; height: 58px; padding: 0; text-align: center; font-size: 1.6rem; font-weight: 700; color: var(--ea-text);
+  background: var(--ea-box-bg); border: 1.5px solid var(--ea-box-border); border-radius: 12px; caret-color: var(--ea-c);
+  transition: border-color .15s, box-shadow .15s, transform .15s, background .15s; -moz-appearance: textfield;
+}
+.ea-otp input[data-otp-digit]:focus { outline: 0; border-color: var(--ea-c); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ea-c) 18%, transparent); transform: translateY(-2px); }
+.ea-otp input[data-otp-digit].filled { border-color: var(--ea-c); background: color-mix(in srgb, var(--ea-c) 6%, var(--ea-box-bg)); }
+.ea-otp.invalid input[data-otp-digit] { border-color: var(--ea-danger); }
+.ea-otp input[readonly] { opacity: .6; }
+@media (max-width: 420px) {
+  .ea-otp { gap: 7px; }
+  .ea-otp input[data-otp-digit] { width: 41px; height: 52px; font-size: 1.35rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ea-spin__arc, .ea-spin__arc2 { animation-duration: 3s !important; }
+  .ea-spin__core { animation: none !important; }
+  .ea-enter, .ea-leave, .ea-shake, .ea-badge, .ea-error, .ea-notice { animation: none !important; }
+  .ea-veil__text { animation: none !important; }
+}

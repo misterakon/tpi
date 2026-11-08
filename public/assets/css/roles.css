@@ -1,0 +1,365 @@
+/* Menu Audiences : rôles d'audience (liste, éditeur « feuille », planning des salles). Vert et orange, fond blanc. */
+
+:root {
+  --rl-vert: #00794C; --rl-vert-fonce: #0B3D2A; --rl-vert-clair: #E4F3EB; --rl-vert-bord: #B9D3C5;
+  --rl-orange: #E8710A; --rl-orange-fonce: #8A3A00; --rl-orange-clair: #FFEBD6; --rl-orange-bord: #F2C9A5;
+  --rl-rouge: #B42318; --rl-rouge-clair: #FDE7E4;
+  --rl-gris: #5B6B86; --rl-ligne: #DDE4EC;
+}
+
+/* Icônes toujours centrées dans leurs ronds et leurs carrés */
+.rl-kpi__icone i, .rl-iconbtn i, .rl-bloc__icone i, .rl-puce__jour i, .rl-note > i, .rl-versions__v i,
+.rl-mini i, .rl-astuce > i, .rl-carte > i { display: block; width: 1em; line-height: 1; text-align: center; }
+.rl-kpi__icone i::before, .rl-iconbtn i::before, .rl-bloc__icone i::before, .rl-note > i::before, .rl-astuce > i::before, .rl-carte > i::before { display: block; width: 1em; line-height: 1; }
+
+/* ------------------------------------------------------------------ liste */
+.rl-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+@media (max-width: 991px) { .rl-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .rl-kpis { grid-template-columns: 1fr; } }
+.rl-kpi { display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: var(--el-card, #fff); border: 1px solid var(--el-line, #E3E8F1); border-radius: 18px; box-shadow: var(--el-shadow); transition: transform .18s, box-shadow .18s; }
+.rl-kpi:hover { transform: translateY(-2px); }
+.rl-kpi b { display: block; font: 700 28px/1 var(--police-app); color: var(--el-ink, #0F1B33); }
+.rl-kpi small { display: block; margin-top: 5px; font: 500 13px var(--police-app); color: var(--rl-gris); }
+.rl-kpi__icone { width: 50px; height: 50px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: #fff; font-size: 20px; }
+.rl-kpi--vert .rl-kpi__icone { background: linear-gradient(135deg, #0B5A3A, #00A36C); }
+.rl-kpi--orange .rl-kpi__icone { background: linear-gradient(135deg, #C95A00, #F59A3B); }
+.rl-kpi--bleu .rl-kpi__icone { background: linear-gradient(135deg, #0B3D2A, #2E8B63); }
+.rl-kpi--rouge .rl-kpi__icone { background: linear-gradient(135deg, #8E1B10, #D9483B); }
+.rl-kpi--gris .rl-kpi__icone { background: linear-gradient(135deg, #7B8794, #A3ADB8); }
+
+.rl-preparer { margin-bottom: 20px; padding: 16px 18px; border: 1px dashed var(--rl-orange-bord); background: #FFF8F0; border-radius: 18px; }
+.rl-preparer__titre { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; font: 600 14px var(--police-app); color: var(--rl-orange-fonce); }
+.rl-preparer__titre i { display: block; width: 1em; line-height: 1; }
+.rl-preparer__liste { display: flex; flex-wrap: wrap; gap: 10px; }
+.rl-puce { display: inline-flex; align-items: center; gap: 12px; padding: 7px 14px 7px 8px; border: 1px solid var(--rl-orange-bord); border-radius: 999px; background: #fff; cursor: pointer; transition: all .15s; text-align: left; }
+.rl-puce:hover { border-color: var(--rl-orange); box-shadow: 0 6px 16px rgba(232, 113, 10, .22); transform: translateY(-1px); }
+.rl-puce__jour { width: 42px; height: 42px; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 50%; background: var(--rl-orange); color: #fff; font: 600 10px/1 var(--police-app); text-transform: uppercase; }
+.rl-puce__jour b { font: 700 16px/1.05 var(--police-app); }
+.rl-puce__texte { display: flex; flex-direction: column; line-height: 1.25; }
+.rl-puce__texte b { font: 600 13.5px var(--police-app); color: var(--el-ink, #0F1B33); }
+.rl-puce__texte small { font: 400 12px var(--police-app); color: var(--rl-gris); text-transform: capitalize; }
+.rl-puce > i { color: var(--rl-orange); font-size: 13px; width: 1em; line-height: 1; display: block; }
+
+.rl-outils { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.rl-filtre .form-select { height: 44px; min-width: 220px; border-radius: 12px; }
+a.el-pill { text-decoration: none; display: inline-flex; align-items: center; }
+a.el-pill.is-active, .el-pill.is-active { background: linear-gradient(135deg, #00794C, #12A06A); color: #fff; box-shadow: 0 6px 14px rgba(0, 121, 76, .3); }
+
+.rl-date { display: flex; align-items: center; gap: 12px; }
+.rl-date__j { width: 48px; height: 48px; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 14px; background: var(--rl-vert-clair); color: var(--rl-vert-fonce); }
+.rl-date__j b { font: 700 18px/1 var(--police-app); }
+.rl-date__j small { margin-top: 2px; font: 600 10px/1 var(--police-app); text-transform: uppercase; letter-spacing: .04em; }
+.rl-date__t { display: flex; flex-direction: column; line-height: 1.25; }
+.rl-date__t b { font: 600 14px var(--police-app); }
+.rl-date__t small { font: 400 12.5px var(--police-app); color: var(--rl-gris); }
+.rl-alerte { color: var(--rl-rouge); font-weight: 600; }
+.rl-alerte i { display: inline-block; width: 1em; line-height: 1; }
+.rl-actions { display: flex; gap: 6px; flex-wrap: nowrap; align-items: center; }
+.el-tbl--fixe .rl-actions { overflow: visible; }
+
+/* Boutons ronds de l'éditeur */
+.rl-iconbtn { width: 34px; height: 34px; flex: none; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 50%; background: #EEF1F4; color: #3F4D66; font-size: 13px; cursor: pointer; transition: background .15s, color .15s, transform .15s; text-decoration: none; }
+.rl-iconbtn:hover { background: #DDE3EA; color: #1F2A44; transform: translateY(-1px); }
+.rl-iconbtn--vert { background: var(--rl-vert-clair); color: var(--rl-vert); }
+.rl-iconbtn--vert:hover { background: var(--rl-vert); color: #fff; }
+.rl-iconbtn--bleu { background: #1E3A8A; color: #fff; }
+.rl-iconbtn--bleu:hover { background: #172554; color: #fff; }
+.rl-iconbtn--orange { background: var(--rl-orange-clair); color: var(--rl-orange); }
+.rl-iconbtn--orange:hover { background: var(--rl-orange); color: #fff; }
+.rl-iconbtn--rouge { background: var(--rl-rouge-clair); color: var(--rl-rouge); }
+.rl-iconbtn--rouge:hover { background: var(--rl-rouge); color: #fff; }
+
+/* ------------------------------------------------------------------ éditeur */
+.rl-mise-en-page { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 22px; align-items: start; }
+@media (max-width: 1280px) { .rl-mise-en-page { grid-template-columns: minmax(0, 1fr); } .rl-aside { order: -1; } }
+
+.rl-feuille { background: #fff; border: 1px solid var(--rl-ligne); border-radius: 6px; box-shadow: 0 1px 2px rgba(15, 42, 91, .06), 0 14px 38px rgba(15, 42, 91, .12); padding: 26px 28px 30px; color: #111; }
+.rl-feuille__entete { display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; gap: 12px; }
+.rl-feuille__salle { font: 700 14px var(--police-app); letter-spacing: .02em; }
+.rl-feuille__logo { display: block; height: 49px; width: auto; }
+.rl-feuille__titre { margin: 10px 0 18px; text-align: center; font: 700 16px/1.4 var(--police-app); letter-spacing: .01em; color: #111; }
+.rl-feuille__vide-tout { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 40px 20px; text-align: center; color: var(--rl-gris); }
+.rl-feuille__vide-tout i { font-size: 38px; color: var(--rl-vert-bord); display: block; width: 1em; line-height: 1; }
+.rl-feuille__vide-tout b { font: 600 16px var(--police-app); color: var(--el-ink, #0F1B33); }
+
+.rl-rubrique { margin-bottom: 18px; }
+.rl-rubrique__bandeau { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: linear-gradient(90deg, var(--rl-vert-clair), #F7FBF9); border: 1px solid var(--rl-vert-bord); border-bottom: 0; border-radius: 6px 6px 0 0; }
+.rl-rubrique__titre { flex: 1; display: flex; align-items: center; gap: 10px; font: 700 15px var(--police-app); letter-spacing: .04em; color: var(--rl-vert-fonce); }
+.rl-rubrique__titre i { display: block; width: 1.1em; line-height: 1; text-align: center; color: var(--rl-vert); }
+.rl-rubrique__compte { min-width: 26px; height: 26px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; background: var(--rl-vert); color: #fff; font: 600 12.5px/1 var(--police-app); }
+.rl-mini { display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px; border: 1px solid var(--rl-orange-bord); border-radius: 999px; background: #fff; color: var(--rl-orange-fonce); font: 600 12.5px var(--police-app); cursor: pointer; transition: all .15s; }
+.rl-mini:hover { background: var(--rl-orange); border-color: var(--rl-orange); color: #fff; }
+.rl-rubrique__vide { padding: 18px; border: 1px dashed var(--rl-vert-bord); border-radius: 0 0 6px 6px; text-align: center; font: 400 13.5px var(--police-app); color: var(--rl-gris); }
+
+.rl-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+.rl-table col.c-n { width: 52px; } .rl-table col.c-rg { width: 104px; } .rl-table col.c-dem, .rl-table col.c-def { width: 24%; } .rl-table col.c-obs { width: 15%; } .rl-table col.c-act { width: 116px; }
+.rl-table td { padding: 10px 11px; border: 1px solid #111; vertical-align: top; font: 400 13.5px/1.45 var(--police-app); word-wrap: break-word; overflow-wrap: anywhere; background: #fff; }
+.rl-table tr:hover td { background: #FBFDFC; }
+.rl-table tr.is-visee td { background: #FFF6EC; box-shadow: inset 0 0 0 2px var(--rl-orange); }
+.rl-table td.c-act { border: 0; border-left: 1px solid transparent; background: transparent !important; padding: 8px 0 0 10px; }
+.rl-num { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: var(--rl-vert-clair); color: var(--rl-vert-fonce); font: 700 12.5px/1 var(--police-app); }
+.rl-rg { font-weight: 700; white-space: nowrap; }
+.rl-rg--et { font-weight: 600; color: var(--rl-gris); }
+.rl-avocat { font-style: italic; color: #4A5E54; }
+.rl-vide { color: #9AA6B2; }
+.rl-suite { display: block; margin-top: 7px; padding: 4px 9px; border-radius: 8px; font: 600 11.5px/1.3 var(--police-app); background: var(--rl-orange-clair); color: var(--rl-orange-fonce); }
+.rl-suite i { display: inline-block; width: 1.1em; text-align: center; line-height: 1; }
+.rl-suite--delibere { background: #E3F0FF; color: #134B8E; } .rl-suite--juge { background: var(--rl-vert-clair); color: var(--rl-vert-fonce); } .rl-suite--radie, .rl-suite--joint, .rl-suite--desiste { background: #ECEFF3; color: #3F4D66; }
+.rl-actions--ligne { flex-wrap: wrap; gap: 5px; }
+.rl-table tr:hover .rl-actions--ligne, .rl-actions--ligne:focus-within { opacity: 1; }
+.rl-actions--ligne form { margin: 0; }
+.rl-actions--ligne .rl-iconbtn { width: 30px; height: 30px; font-size: 12px; }
+
+.rl-signature { margin: 26px 0 0 auto; width: max-content; max-width: 100%; text-align: left; font: 400 14px var(--police-app); }
+.rl-signature b { display: block; margin-top: 3px; font-weight: 700; }
+
+/* Colonne de droite */
+.rl-aside { display: flex; flex-direction: column; gap: 18px; position: sticky; top: 86px; }
+@media (max-width: 1280px) { .rl-aside { position: static; } }
+.rl-bloc { padding: 18px 20px; background: var(--el-card, #fff); border: 1px solid var(--el-line, #E3E8F1); border-radius: 18px; box-shadow: var(--el-shadow); }
+.rl-bloc__tete { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.rl-bloc__tete h3 { flex: 1; margin: 0; font: 600 16px var(--police-app); color: var(--el-ink, #0F1B33); }
+.rl-bloc__icone { width: 38px; height: 38px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--rl-vert-clair); color: var(--rl-vert); font-size: 16px; }
+.rl-bloc__icone--orange { background: var(--rl-orange-clair); color: var(--rl-orange); }
+.rl-bloc__icone--bleu { background: #E3F0FF; color: #1D5FB4; }
+.rl-liste { margin: 0 0 4px; }
+.rl-liste > div { display: flex; justify-content: space-between; gap: 14px; padding: 9px 0; border-top: 1px solid var(--el-line, #E3E8F1); font: 400 13.5px var(--police-app); }
+.rl-liste > div:first-child { border-top: 0; }
+.rl-liste dt { color: var(--rl-gris); font-weight: 500; flex: none; }
+.rl-liste dd { margin: 0; text-align: right; font-weight: 600; color: var(--el-ink, #0F1B33); }
+.rl-note { display: flex; gap: 11px; align-items: flex-start; margin-top: 12px; padding: 11px 13px; border-radius: 12px; font: 500 13px/1.45 var(--police-app); }
+.rl-note > i { flex: none; margin-top: 2px; font-size: 14px; }
+.rl-note--vert { background: var(--rl-vert-clair); color: var(--rl-vert-fonce); } .rl-note--orange { background: var(--rl-orange-clair); color: var(--rl-orange-fonce); }
+.rl-note--rouge { background: var(--rl-rouge-clair); color: #7A140B; } .rl-note--bleu { background: #E8F0FA; color: #1D4F91; }
+.rl-propositions { list-style: none; margin: 0 0 14px; padding: 0; }
+.rl-propositions li { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-top: 1px solid var(--el-line, #E3E8F1); font: 500 13.5px var(--police-app); }
+.rl-propositions li:first-child { border-top: 0; }
+.rl-propositions b { min-width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; background: var(--rl-orange); color: #fff; font: 700 13px/1 var(--police-app); }
+.rl-large { width: 100%; justify-content: center; margin-top: 4px; }
+.rl-aide { margin: 0 0 12px; font: 400 13px/1.5 var(--police-app); color: var(--rl-gris); }
+small.rl-aide { display: block; margin: 8px 0 0; }
+.rl-lien { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; padding: 0; border: 0; background: none; font: 600 13px var(--police-app); cursor: pointer; }
+.rl-lien i { display: block; width: 1em; line-height: 1; }
+.rl-lien--rouge { color: var(--rl-rouge); } .rl-lien--rouge:hover { text-decoration: underline; }
+.rl-sous-titre { margin: 18px 0 6px; font: 600 13px var(--police-app); text-transform: uppercase; letter-spacing: .05em; color: var(--rl-gris); }
+.rl-versions { list-style: none; margin: 0; padding: 0; }
+.rl-versions li { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--el-line, #E3E8F1); }
+.rl-versions__v { width: 34px; height: 34px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--rl-vert); color: #fff; font: 700 12px/1 var(--police-app); }
+.rl-versions__t { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.3; }
+.rl-versions__t b { font: 600 13px var(--police-app); }
+.rl-versions__t small { font: 400 12px var(--police-app); color: var(--rl-gris); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Fenêtres */
+.modal-dialog.aff-modal.aff-modal--large { width: 780px; max-width: 94vw; }
+.rl-astuce { display: flex; gap: 11px; align-items: flex-start; padding: 11px 13px; border-radius: 12px; background: var(--rl-orange-clair); color: var(--rl-orange-fonce); font: 500 13px/1.45 var(--police-app); }
+.rl-astuce > i { flex: none; margin-top: 2px; font-size: 14px; }
+.rl-separateur { display: flex; align-items: center; gap: 9px; padding-top: 6px; border-top: 1px solid var(--el-line, #E3E8F1); font: 600 14px var(--police-app); color: var(--rl-vert-fonce); }
+.rl-separateur i { display: block; width: 1em; line-height: 1; color: var(--rl-orange); }
+.rl-separateur small { font-weight: 400; color: var(--rl-gris); }
+.rl-interrupteur { display: flex; align-items: center; gap: 12px; margin: 0; cursor: pointer; }
+.rl-interrupteur input { position: absolute; opacity: 0; pointer-events: none; }
+.rl-interrupteur__piste { width: 46px; height: 26px; flex: none; position: relative; border-radius: 999px; background: #C8D0DA; transition: background .18s; }
+.rl-interrupteur__bouton { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .3); transition: transform .18s; }
+.rl-interrupteur input:checked + .rl-interrupteur__piste { background: var(--rl-vert); }
+.rl-interrupteur input:checked + .rl-interrupteur__piste .rl-interrupteur__bouton { transform: translateX(20px); }
+.rl-interrupteur input:focus-visible + .rl-interrupteur__piste { outline: 2px solid var(--rl-orange); outline-offset: 2px; }
+.rl-interrupteur b { display: block; font: 600 14px var(--police-app); }
+.rl-interrupteur small { display: block; font: 400 12.5px var(--police-app); color: var(--rl-gris); }
+
+/* ------------------------------------------------------------------ planning */
+.rl-planning__barre { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 22px; border-bottom: 1px solid var(--el-line, #E3E8F1); }
+.rl-planning__semaine { display: flex; flex-direction: column; align-items: center; line-height: 1.35; text-align: center; }
+.rl-planning__semaine b { font: 600 16px var(--police-app); }
+.rl-planning__semaine small, .rl-planning__semaine a { font: 500 12.5px var(--police-app); color: var(--rl-gris); }
+.rl-planning__semaine a { color: var(--rl-vert); font-weight: 600; }
+.rl-grille { width: 100%; table-layout: fixed; border-collapse: collapse; }
+.rl-grille th, .rl-grille td { border: 1px solid var(--el-line, #E3E8F1); vertical-align: top; padding: 8px; }
+.rl-grille thead th { text-align: center; background: #F7FAF8; font: 600 13px var(--police-app); }
+.rl-grille__j { display: block; color: var(--rl-vert-fonce); }
+.rl-grille__d { display: block; margin-top: 2px; font: 500 12px var(--police-app); color: var(--rl-gris); }
+.rl-grille__f { display: block; margin-top: 4px; font: 600 11px/1.3 var(--police-app); color: var(--rl-orange-fonce); }
+.rl-grille__f i { display: inline-block; width: 1.1em; text-align: center; line-height: 1; }
+.rl-grille th.is-aujourdhui, .rl-grille td.is-aujourdhui { background: #F1FAF5; }
+.rl-grille thead th.is-aujourdhui { background: var(--rl-vert); } .rl-grille thead th.is-aujourdhui .rl-grille__j, .rl-grille thead th.is-aujourdhui .rl-grille__d { color: #fff; }
+.rl-grille td.is-ferme, .rl-grille th.is-ferme { background-image: repeating-linear-gradient(135deg, transparent 0 8px, rgba(232, 113, 10, .08) 8px 16px); }
+.rl-grille__salle { background: #F7FAF8; text-align: left !important; font: 600 13.5px var(--police-app); }
+.rl-grille__salle > i { display: inline-block; width: 1.2em; margin-right: 6px; text-align: center; line-height: 1; color: var(--rl-vert); }
+.rl-grille td { min-height: 84px; height: 84px; }
+.rl-carte { display: flex; align-items: center; gap: 9px; width: 100%; margin: 0 0 7px; padding: 8px 10px; border: 1px solid transparent; border-radius: 12px; text-align: left; text-decoration: none; font-family: var(--police-app); cursor: pointer; transition: transform .15s, box-shadow .15s; }
+.rl-carte:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(15, 42, 91, .14); }
+.rl-carte__heure { flex: none; padding: 4px 8px; border-radius: 8px; background: rgba(255, 255, 255, .75); font: 700 12px/1 var(--police-app); }
+.rl-carte__texte { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
+.rl-carte__texte b { font: 600 12.5px var(--police-app); white-space: normal; overflow-wrap: anywhere; }
+.rl-carte__texte small { font: 400 11.5px var(--police-app); white-space: normal; }
+.rl-carte > i { flex: none; font-size: 13px; }
+.rl-carte--publie { background: var(--rl-vert-clair); border-color: var(--rl-vert-bord); color: var(--rl-vert-fonce); }
+.rl-carte--brouillon { background: var(--rl-orange-clair); border-color: var(--rl-orange-bord); color: var(--rl-orange-fonce); }
+.rl-carte--conflit { background: var(--rl-rouge-clair); border-color: #F0A9A1; color: #7A140B; }
+.rl-carte--prevue { background: #fff; border: 1.5px dashed var(--rl-vert-bord); color: var(--rl-gris); }
+.rl-carte--prevue:hover { border-color: var(--rl-vert); color: var(--rl-vert-fonce); background: #F7FBF9; }
+.rl-legende { display: flex; flex-wrap: wrap; gap: 20px; padding: 14px 22px; border-top: 1px solid var(--el-line, #E3E8F1); font: 500 12.5px var(--police-app); color: var(--rl-gris); }
+.rl-legende span { display: inline-flex; align-items: center; gap: 8px; }
+.rl-pastille { width: 14px; height: 14px; border-radius: 4px; display: inline-block; border: 1px solid transparent; }
+.rl-pastille--publie { background: var(--rl-vert-clair); border-color: var(--rl-vert-bord); } .rl-pastille--brouillon { background: var(--rl-orange-clair); border-color: var(--rl-orange-bord); }
+.rl-pastille--prevue { background: #fff; border: 1.5px dashed var(--rl-vert-bord); } .rl-pastille--conflit { background: var(--rl-rouge-clair); border-color: #F0A9A1; }
+@media (max-width: 900px) { .rl-grille { display: block; overflow-x: auto; } .rl-grille { min-width: 0; } }
+
+/* Le gabarit impose un affichage aux <span> : on le reprend explicitement pour les pastilles, ppastilles de date et colonnes de texte. */
+.rl-kpi .rl-kpi__icone, .rl-bloc__tete .rl-bloc__icone, .rl-num, .rl-rubrique__compte, .rl-versions__v, .rl-carte__heure {
+  display: inline-flex !important; align-items: center !important; justify-content: center !important; padding: 0 !important; line-height: 1 !important; text-align: center !important; box-sizing: border-box;
+}
+.rl-rubrique__compte { padding: 0 8px !important; }
+.rl-carte__heure { padding: 4px 8px !important; }
+.rl-date__j, .rl-puce__jour { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; padding: 0 !important; line-height: 1 !important; }
+.rl-puce__texte, .rl-date__t, .rl-carte__texte, .rl-versions__t { display: flex !important; flex-direction: column !important; }
+.rl-rubrique__titre { display: flex !important; align-items: center !important; gap: 10px !important; }
+.rl-interrupteur__piste { display: block !important; } .rl-interrupteur__bouton { display: block !important; }
+.rl-table .rl-num { width: 30px; height: 30px; }
+.rl-table td { overflow-wrap: break-word; }
+.rl-table col.c-n { width: 54px; } .rl-table col.c-rg { width: 96px; } .rl-table col.c-dem, .rl-table col.c-def { width: 22%; } .rl-table col.c-obs { width: 13%; } .rl-table col.c-act { width: 104px; }
+
+/* ------------------------------------------------------------------ dégradés très légers sur les tuiles */
+.rl-kpi--vert { background: linear-gradient(135deg, #fff 35%, #E8F6EE 100%); }
+.rl-kpi--orange { background: linear-gradient(135deg, #fff 35%, #FFF0E0 100%); }
+.rl-kpi--bleu { background: linear-gradient(135deg, #fff 35%, #E6F2EC 100%); }
+.rl-kpi--rouge { background: linear-gradient(135deg, #fff 35%, #FDEAE7 100%); }
+.rl-kpi--gris { background: linear-gradient(135deg, #fff 35%, #EFF2F5 100%); }
+
+/* ------------------------------------------------------------------ liste : barre d'outils */
+.rl-outils { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px; flex: 1 1 auto; }
+.rl-filtre { margin: 0; flex: 0 1 260px; min-width: 200px; }
+.rl-filtre .select2-container { width: 100% !important; --s2-h: 44px; }
+.rl-filtre .select2-container .select2-selection { height: 44px; border-radius: 12px; }
+.rl-filtre .select2-container .select2-selection__rendered { line-height: 42px; }
+.rl-filtre .select2-container .select2-selection__arrow { height: 42px; }
+.rl-outils .el-search { flex: 0 1 280px; max-width: 280px !important; margin: 0 !important; }
+
+/* ------------------------------------------------------------------ planning */
+.rl-planning { transition: opacity .15s; }
+.rl-planning.is-chargement { opacity: .55; pointer-events: none; }
+.rl-planning__barre { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; padding: 18px 22px; background: linear-gradient(135deg, #fff 30%, #F1F9F5 100%); border-bottom: 1px solid var(--el-line, #E3E8F1); }
+.rl-nav { height: 40px; min-width: 40px; padding: 0 12px; display: inline-flex !important; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; background: var(--rl-vert-clair); color: var(--rl-vert-fonce); font: 600 13px var(--police-app); text-decoration: none; transition: background .15s, color .15s; }
+.rl-nav:hover { background: var(--rl-vert); color: #fff; }
+.rl-nav i { display: block; width: 1em; line-height: 1; text-align: center; }
+.rl-planning__semaine { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.rl-planning__semaine > b { font: 700 18px var(--police-app); color: #0F1B33; }
+.rl-planning__puces { display: flex !important; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.rl-puce-info { display: inline-flex !important; align-items: center; gap: 7px; padding: 5px 12px; border-radius: 999px; font: 600 12.5px/1 var(--police-app); }
+.rl-puce-info i { display: block; width: 1em; line-height: 1; text-align: center; }
+.rl-puce-info--vert { background: var(--rl-vert-clair); color: var(--rl-vert-fonce); } .rl-puce-info--orange { background: var(--rl-orange-clair); color: #7A3200; }
+.rl-puce-info--rouge { background: var(--rl-rouge-clair); color: #7A140B; } .rl-puce-info--gris { background: #EDF0F3; color: #2E3A4D; }
+.rl-planning__droite { display: flex; align-items: center; gap: 10px; }
+.rl-aller { display: inline-flex !important; align-items: center; gap: 8px; height: 40px; margin: 0; padding: 0 12px; border: 1.5px solid var(--rl-vert-bord); border-radius: 999px; background: #fff; color: var(--rl-vert); cursor: pointer; }
+.rl-aller i { display: block; width: 1em; line-height: 1; }
+.rl-aller input { border: 0; outline: 0; background: transparent; font: 600 13px var(--police-app); color: #0F1B33; width: 128px; padding: 0; }
+
+.rl-grille { width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 0; }
+.rl-grille th, .rl-grille td { border-right: 1px solid #DDE4EC; border-bottom: 1px solid #DDE4EC; vertical-align: top; padding: 10px; }
+.rl-grille thead th { text-align: center; padding: 12px 8px; background: linear-gradient(180deg, #F4FAF7, #EAF5EF); }
+.rl-grille__coin { text-align: left !important; font: 700 14px var(--police-app) !important; color: #0B3D2A; }
+.rl-grille__coin i { display: inline-block; width: 1.2em; margin-right: 6px; text-align: center; line-height: 1; color: var(--rl-vert); }
+.rl-grille__j { display: block; font: 700 15px var(--police-app); color: #0F1B33; }
+.rl-grille__d { display: block; margin-top: 3px; font: 600 13px var(--police-app); color: #3F4D66; }
+.rl-grille__f { display: block; margin-top: 5px; font: 600 11.5px/1.3 var(--police-app); color: #7A3200; }
+.rl-grille th.is-aujourdhui { background: linear-gradient(180deg, #00A36C, #00794C) !important; }
+.rl-grille th.is-aujourdhui .rl-grille__j, .rl-grille th.is-aujourdhui .rl-grille__d { color: #fff; }
+.rl-grille td.is-aujourdhui { background: #F1FAF5; }
+.rl-grille td { height: 92px; }
+.rl-grille__salle { background: linear-gradient(90deg, #F4FAF7, #fff); text-align: left; vertical-align: middle !important; padding: 12px 14px !important; }
+.rl-salle { display: flex !important; align-items: center; gap: 12px; }
+.rl-salle__ico { width: 40px; height: 40px; flex: none; display: inline-flex !important; align-items: center; justify-content: center; padding: 0 !important; border-radius: 50%; background: linear-gradient(135deg, #0B5A3A, #00A36C); color: #fff; font-size: 16px; line-height: 1; }
+.rl-salle__ico i { display: block; width: 1em; line-height: 1; text-align: center; }
+.rl-salle__txt { display: flex !important; flex-direction: column; min-width: 0; line-height: 1.3; }
+.rl-salle__txt b { font: 700 14px var(--police-app); color: #0F1B33; overflow-wrap: anywhere; }
+.rl-salle__txt small { margin-top: 2px; font: 500 12px var(--police-app); color: #3F4D66; }
+
+.rl-carte { padding: 9px 11px; border-radius: 14px; gap: 10px; }
+.rl-carte__heure { background: #fff !important; color: #000; border: 1px solid rgba(0, 0, 0, .12); font: 700 14px/1 var(--police-app) !important; padding: 6px 9px !important; border-radius: 10px; }
+.rl-carte__texte b { font: 700 14px/1.25 var(--police-app) !important; color: #000; }
+.rl-carte__texte small { font: 500 12.5px/1.3 var(--police-app) !important; color: #2B3548; margin-top: 2px; }
+.rl-carte > i { color: #1F2A44; }
+.rl-carte--publie { background: linear-gradient(135deg, #E4F3EB, #D3ECDF); border-color: #8CC3A6; color: #000; }
+.rl-carte--brouillon { background: linear-gradient(135deg, #FFEBD6, #FFDDB8); border-color: #E9A863; color: #000; }
+.rl-carte--conflit { background: linear-gradient(135deg, #FDE7E4, #F9CFC9); border-color: #E58A82; color: #000; }
+.rl-carte--prevue { background: #fff; border: 1.5px dashed #6FAF92; color: #000; }
+.rl-carte--prevue:hover { background: #F1FAF5; border-color: var(--rl-vert); }
+.rl-carte--prevue > i { color: var(--rl-vert); }
+
+.rl-legende { display: flex; flex-wrap: wrap; gap: 14px 26px; padding: 16px 22px; background: linear-gradient(135deg, #fff 30%, #F4FAF7 100%); border-top: 1px solid var(--el-line, #E3E8F1); font: 600 14px var(--police-app); color: #0F1B33; }
+.rl-legende span { display: inline-flex !important; align-items: center; gap: 9px; }
+.rl-pastille { width: 18px; height: 18px; border-radius: 6px; }
+.rl-pastille--publie { background: #D3ECDF; border: 1.5px solid #8CC3A6; } .rl-pastille--brouillon { background: #FFDDB8; border: 1.5px solid #E9A863; }
+.rl-pastille--prevue { background: #fff; border: 1.5px dashed #6FAF92; } .rl-pastille--conflit { background: #F9CFC9; border: 1.5px solid #E58A82; }
+.rl-pastille--ferme { background: repeating-linear-gradient(135deg, #fff 0 4px, #F6C998 4px 8px); border: 1.5px solid #E9A863; }
+@media (max-width: 900px) { .rl-planning__barre { grid-template-columns: 1fr; justify-items: center; } }
+
+/* Cartes du planning : l'heure et l'icône sur la première ligne, la chambre dessous sur toute la largeur */
+.rl-carte { flex-wrap: wrap; align-items: center; row-gap: 6px; }
+.rl-carte__heure { order: 1; }
+.rl-carte > i { order: 2; margin-left: auto !important; }
+.rl-carte__texte { order: 3; flex: 1 1 100% !important; }
+.rl-grille__salle { width: 190px; }
+
+/* Flèches de navigation foncées ; blocs des chambres teintés (plus de blanc pur) ; nom de salle sans icône */
+.rl-nav { background: #0B3D2A; color: #fff; }
+.rl-nav:hover { background: var(--rl-vert); color: #fff; }
+.rl-nav--texte { background: #0B3D2A; }
+.rl-carte--prevue { background: linear-gradient(135deg, #F4F8F6, #E6EFEA); border: 1.5px dashed #5E9F82; }
+.rl-carte--prevue:hover { background: linear-gradient(135deg, #E9F5EE, #D9ECE2); }
+.rl-pastille--prevue { background: #E6EFEA; border: 1.5px dashed #5E9F82; }
+.rl-salle__txt b { font-size: 15px; }
+
+/* Jour en cours : orange léger et fin */
+.rl-grille th.is-aujourdhui { background: #FFF1E0 !important; border-bottom: 2px solid #F0A04B; }
+.rl-grille th.is-aujourdhui .rl-grille__j { color: #7A3200; }
+.rl-grille th.is-aujourdhui .rl-grille__d { color: #8A4A12; }
+.rl-grille td.is-aujourdhui { background: #FFF9F2; }
+
+/* Texte lisible sur le jour orangé du planning (la règle blanche du premier jet l'emportait) */
+.rl-grille thead th.is-aujourdhui .rl-grille__j { color: #5C2400 !important; }
+.rl-grille thead th.is-aujourdhui .rl-grille__d { color: #7A3200 !important; }
+
+/* Titres de colonnes sous chaque rubrique du rôle */
+.rl-table .rl-colonnes th { padding: 8px 6px; border: 1px solid #111; background: #F2F2F2; text-align: center; vertical-align: middle; font: 700 12px/1.25 var(--police-app); letter-spacing: .02em; color: #111; }
+.rl-table .rl-colonnes th.rl-colonnes__act { border: 0; background: transparent; }
+.rl-table col.c-n { width: 70px; }
+
+/* Rôle pénal : équipe d'audience et heure à droite ; titres de colonnes sous chaque rubrique */
+.rl-equipe { margin: 4px 0 8px; font: 400 13.5px/1.7 var(--police-app); } .rl-equipe b { display: inline-block; min-width: 108px; }
+.rl-feuille__heure { text-align: right; margin: -4px 0 10px; font: 700 15px var(--police-app); }
+.rl-table .rl-colonnes th { padding: 8px 6px; border: 1px solid #111; background: #F2F2F2; text-align: center; vertical-align: middle; font: 700 12px/1.25 var(--police-app); letter-spacing: .02em; color: #111; }
+.rl-table .rl-colonnes th.rl-colonnes__act { border: 0; background: transparent; }
+.rl-table col.c-act { width: 104px; }
+
+/* Mise en forme des modèles : gras (numéros, noms, dates, articles) et italique (précisions, avocats) ; équipe d'audience sous le titre */
+.rl-table .rl-gras { font-weight: 700; } .rl-table .rl-ital { font-style: italic; }
+.rl-equipe { display: flex; justify-content: space-between; align-items: flex-start; margin: 2px 0 12px; }
+.rl-equipe__heure { font: 700 16px var(--police-app); }
+
+/* Avertissement (non bloquant) : magistrat ou greffier déjà pris à la même heure */
+.rl-carte > i.rl-carte__avert { color: #B45309; }
+
+.rl-preparer__titre { margin-bottom: 4px; }
+.rl-preparer__aide { margin: 0 0 12px; font: 400 13px/1.5 var(--police-app); color: #5C3B12; }
+
+/* Date de renvoi : avertissement et proposition de la prochaine audience habituelle */
+.rl-renvoi-aide { margin-top: 0; padding: 10px 14px; border-radius: 10px; background: #FFEDD5; border: 1px solid #F5C28B; color: #7C2D12; font: 500 13px/1.5 var(--police-app); }
+.rl-renvoi-aide[hidden] { display: none; }
+.rl-renvoi-aide__choix-liste { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+.rl-renvoi-aide__choix { display: inline-block; padding: 6px 12px; border: 0; border-radius: 8px; background: #15803D; color: #fff; font: 600 13px/1.2 var(--police-app); cursor: pointer; }
+.rl-renvoi-aide__choix:hover { background: #166534; }
+
+/* Planning : une carte publiée doit se distinguer d'un coup d'oeil d'une audience « rôle à créer » */
+.rl-carte--prevue { background: #F8FAFC; border: 1.5px dashed #94A3B8; }
+.rl-carte--prevue:hover { background: #EEF2F7; border-color: #64748B; }
+.rl-carte--prevue > i { color: #64748B; }
+.rl-carte--prevue .rl-carte__texte small { color: #64748B; font-style: italic; }
+.rl-carte--publie { background: linear-gradient(135deg, #1F8A5B, #15683F); border: 1px solid #0F5132; box-shadow: 0 2px 6px rgba(15, 81, 50, .25); }
+.rl-carte--publie .rl-carte__texte b, .rl-carte--publie .rl-carte__texte small, .rl-carte--publie > i { color: #fff !important; }
+.rl-carte--publie .rl-carte__heure { background: #fff !important; color: #0F5132; }
+.rl-carte--prevue { border: 2px dashed #475569; }
+.rl-carte--prevue:hover { border-color: #1E293B; }
+
+/* Aperçu PDF du rôle dans une fenêtre */
+.rl-apercu .rl-apercu__corps { padding: 0; background: #525659; }
+.rl-apercu__cadre { display: block; width: 100%; height: 78vh; border: 0; background: #525659; }

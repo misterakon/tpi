@@ -1,0 +1,21 @@
+/* Page d'impression d'une décision : une barre d'outils (jamais imprimée) et les pages A4. */
+
+body { margin: 0; background: #E9EDF3; font-family: var(--police-app); }
+.imp-barre { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; padding: 10px 20px; background: #fff; border-bottom: 1px solid #DDE3EC; font-size: 14px; }
+.imp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.imp-actions button { border: 1px solid #B9D3C5; background: #fff; color: #0B3D2A; border-radius: 8px; padding: 7px 14px; font: 600 13.5px var(--police-app); cursor: pointer; }
+.imp-actions button:hover { background: #DDF1E6; border-color: #00794C; }
+.imp-actions button.principal { background: #00794C; border-color: #00794C; color: #fff; }
+.imp-lib { min-width: 48px; font-weight: 600; color: #5B6B86; }
+.imp-alerte { margin: 12px 20px 0; padding: 10px 14px; border-radius: 10px; background: #FFE3CC; color: #8A3A00; font-size: 13.5px; }
+.imp-conseil { margin: 12px 20px 0; font-size: 12.5px; color: #5B6B86; }
+#feuilles { padding: 10px 0 30px; }
+
+@page { size: A4; margin: 0; }
+
+@media print {
+  html, body { background: #fff; }
+  .imp-barre, .imp-alerte, .imp-conseil { display: none !important; }
+  #feuilles { padding: 0; }
+  .acte-page:last-child { page-break-after: auto; }
+}

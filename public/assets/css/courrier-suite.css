@@ -1,0 +1,162 @@
+/* =====================================================================
+   MODULE COURRIER, SUITE : traitement des diligences, délais, réponses et visas,
+   registre départ, archives. S'appuie sur les variables de courrier.css (à charger avant).
+   ===================================================================== */
+
+/* ---------- Navigation rapide d'une diligence ---------- */
+.cs-nav { position: static; top: 76px; z-index: 6; display: flex; gap: 6px; flex-wrap: wrap; padding: 8px; margin: 0 0 20px; background: rgba(255, 255, 255, .94); backdrop-filter: blur(10px); border: 1px solid var(--cr-bord); border-radius: 999px; box-shadow: var(--cr-ombre); }
+.cs-nav a { display: inline-flex !important; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 700; color: var(--cr-muted) !important; text-decoration: none !important; transition: background .15s ease, color .15s ease; }
+.cs-nav a:hover { background: var(--cr-fond); color: var(--cr-primary) !important; }
+.cs-nav a i { font-size: 14px; }
+.cs-compte { display: inline-flex !important; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; font-size: 11.5px; font-weight: 800; color: #fff; background: var(--cr-alerte); }
+.cs-compte--ok { background: var(--cr-ok); }
+.cs-compte--neutre { background: var(--cr-clair); }
+.cs-compte--danger { background: var(--cr-danger); }
+
+.cs-bloc { scroll-margin-top: 150px; }
+.cs-aide { margin: 0; font-size: 13px; color: var(--cr-muted); }
+.cs-vide { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 28px 16px; text-align: center; color: var(--cr-muted); font-size: 14px; }
+.cs-vide i { font-size: 34px; color: #B8C0CC; }
+.cs-vide strong { color: var(--cr-texte); }
+
+/* ---------- Plan de traitement ---------- */
+.cs-progression { display: flex; align-items: center; gap: 18px; padding: 18px 22px; border-bottom: 1px solid var(--cr-bord); background: linear-gradient(180deg, rgba(43, 108, 176, .05), transparent); }
+.cs-anneau { --p: 0; --c: var(--cr-ok); position: relative; flex-shrink: 0; width: 66px; height: 66px; border-radius: 50%; background: conic-gradient(var(--c) calc(var(--p) * 1%), rgba(91, 107, 132, .16) 0); display: flex !important; align-items: center; justify-content: center; }
+.cs-anneau::before { content: ""; position: absolute; inset: 7px; border-radius: 50%; background: #fff; }
+.cs-anneau span { position: relative; z-index: 1; font-size: 15px; font-weight: 800; color: var(--cr-texte); }
+.cs-progression__texte strong { display: block; font-size: 15.5px; color: var(--cr-texte); }
+.cs-progression__texte small { display: block; margin-top: 2px; font-size: 13px; color: var(--cr-muted); }
+
+.cs-actions { margin: 0; padding: 6px 22px 10px; list-style: none; }
+.cs-action { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 14px; align-items: start; padding: 16px 0; border-bottom: 1px dashed var(--cr-bord); }
+.cs-action:last-child { border-bottom: 0; }
+.cs-action--faite .cs-action__titre { color: #636363; text-decoration: line-through; }
+.cs-action--attente { margin: 0 -22px; padding-left: 22px; padding-right: 22px; background: rgba(199, 125, 10, .06); }
+.cs-action--refusee { margin: 0 -22px; padding-left: 22px; padding-right: 22px; background: rgba(167, 59, 52, .05); }
+.cs-case { display: flex !important; align-items: center; justify-content: center; width: 30px; height: 30px; margin: 0; padding: 0; border-radius: 50%; border: 2px solid #9AA5B8; background: #fff; color: transparent; font-size: 13px; cursor: pointer; transition: all .15s ease; }
+.cs-case:hover:not(:disabled) { border-color: var(--cr-ok); color: var(--cr-ok); transform: scale(1.08); }
+.cs-case--cochee { background: var(--cr-ok); border-color: var(--cr-ok); color: #fff; }
+.cs-case:disabled { cursor: default; opacity: .45; }
+.cs-action__titre { display: block !important; font-size: 15px; font-weight: 700; color: var(--cr-texte); }
+.cs-action__texte { display: block !important; margin-top: 4px; font-size: 13.5px; color: var(--cr-muted); white-space: pre-line; }
+.cs-action__ligne { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 8px; }
+.cs-avatar { display: inline-flex !important; align-items: center; justify-content: center; flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; font-size: 10.5px; font-weight: 800; color: #fff; background: linear-gradient(135deg, var(--cr-primary-2), var(--cr-accent)); }
+.cs-avatar--grand { width: 38px; height: 38px; font-size: 13px; }
+.cs-agent { display: inline-flex !important; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--cr-texte); }
+.cs-meta { display: inline-flex !important; align-items: center; gap: 6px; font-size: 12.5px; color: var(--cr-muted); }
+.cs-meta--retard { color: var(--cr-danger); font-weight: 700; }
+.cs-condition { display: block !important; margin-top: 8px; padding: 8px 12px; border-left: 3px solid var(--cr-primary-2); border-radius: 0 8px 8px 0; background: var(--cr-fond); font-size: 13px; color: var(--cr-texte); white-space: pre-line; }
+.cs-condition b { display: block; margin-bottom: 2px; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--cr-muted); }
+.cs-outils { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.cs-outil { display: inline-flex !important; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; border: 1px solid var(--cr-bord); border-radius: 9px; background: #fff; color: var(--cr-primary) !important; font-size: 13px; cursor: pointer; transition: all .15s ease; }
+/* .cs-outil:hover { background: #f5f5f502; transform: translateY(-1px); } */
+.cs-outil--ok { color: #fff !important; border-color: rgba(46, 125, 91, .4); background-color: #166d04a9; }
+.cs-outil--danger { color: #FFF!important; border-color: rgba(167, 59, 52, .4); background-color: #af1f06a9; }
+.cs-motif { margin: 8px 0 0; padding: 8px 12px; border-radius: 8px; background: rgba(167, 59, 52, .08); color: #7a2a248c; font-size: 13px; }
+.cs-carte-pied { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 14px 22px; border-top: 1px solid var(--cr-bord); background: var(--cr-fond); }
+
+/* ---------- Demandes de délai ---------- */
+.cs-delais { margin: 0; padding: 8px 22px 14px; list-style: none; }
+.cs-delai { padding: 16px 0; border-bottom: 1px dashed var(--cr-bord); }
+.cs-delai:last-child { border-bottom: 0; }
+.cs-delai__dates { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.cs-date { display: inline-flex !important; flex-direction: column; padding: 6px 12px; border-radius: 10px; background: var(--cr-fond); border: 1px solid var(--cr-bord); }
+.cs-date small { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--cr-muted); }
+.cs-date strong { font-size: 14.5px; color: var(--cr-texte); }
+.cs-date--nouvelle { background: rgba(46, 125, 91, .1); border-color: rgba(46, 125, 91, .35); }
+.cs-date--nouvelle strong { color: var(--cr-ok); }
+.cs-fleche { color: var(--cr-clair); font-size: 15px; }
+.cs-delai__motif { margin: 10px 0 0; font-size: 13.5px; color: var(--cr-texte); white-space: pre-line; }
+.cs-decision { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+/* ---------- Réponses et circuit de visa ---------- */
+.cs-reponse { padding: 20px 22px; border-bottom: 1px solid var(--cr-bord); }
+.cs-reponse:last-child { border-bottom: 0; }
+.cs-reponse__tete { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.cs-reponse__objet { margin: 0; font-size: 15.5px; font-weight: 700; color: var(--cr-texte); }
+.cs-reponse__meta { margin: 4px 0 0; font-size: 12.5px; color: var(--cr-muted); }
+.cs-fichiers { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.cs-fichier { display: inline-flex !important; align-items: center; gap: 10px; max-width: 100%; padding: 8px 14px; border: 1px solid var(--cr-bord); border-radius: 12px; background: #fff; text-decoration: none !important; color: var(--cr-texte) !important; transition: all .15s ease; }
+.cs-fichier:hover { border-color: var(--cr-primary-2); box-shadow: 0 6px 16px rgba(20, 48, 79, .1); transform: translateY(-1px); }
+.cs-fichier i { font-size: 22px; color: var(--cr-primary-2); }
+.cs-fichier--signe i { color: var(--cr-ok); }
+.cs-fichier small { display: block; font-size: 11.5px; color: var(--cr-muted); }
+.cs-fichier strong { display: block; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13.5px; }
+
+.cs-circuit { display: flex; align-items: flex-start; margin: 20px 0 6px; padding: 0; list-style: none; overflow-x: auto; }
+.cs-etape { position: relative; flex: 1 1 0; min-width: 118px; padding: 0 6px; text-align: center; }
+.cs-etape::before { content: ""; position: absolute; top: 19px; left: -50%; width: 100%; height: 3px; background: var(--cr-bord); z-index: 0; }
+.cs-etape:first-child::before { display: none; }
+.cs-etape--vise::before, .cs-etape--cours::before { background: var(--cr-ok); }
+.cs-etape__rond { position: relative; z-index: 1; display: flex !important; align-items: center; justify-content: center; width: 40px; height: 40px; margin: 0 auto 8px; border-radius: 50%; border: 3px solid var(--cr-bord); background: #fff; color: var(--cr-clair); font-size: 15px; font-weight: 800; transition: all .2s ease; }
+.cs-etape--vise .cs-etape__rond { background: var(--cr-ok); border-color: var(--cr-ok); color: #fff; }
+.cs-etape--cours .cs-etape__rond { border-color: var(--cr-primary-2); color: var(--cr-primary-2); box-shadow: 0 0 0 5px rgba(43, 108, 176, .16); animation: cs-pouls 2s ease-in-out infinite; }
+.cs-etape--refuse .cs-etape__rond { background: var(--cr-danger); border-color: var(--cr-danger); color: #fff; }
+.cs-etape--annule .cs-etape__rond { background: #EEF1F5; color: #B8C0CC; }
+.cs-etape__nom { display: block !important; font-size: 12.5px; font-weight: 700; line-height: 1.25; color: var(--cr-texte); }
+.cs-etape__qui { display: block !important; margin-top: 2px; font-size: 11.5px; color: var(--cr-muted); }
+.cs-etape__etat { display: block !important; margin-top: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--c, var(--cr-muted)); }
+@keyframes cs-pouls { 0%, 100% { box-shadow: 0 0 0 4px rgba(43, 108, 176, .16); } 50% { box-shadow: 0 0 0 8px rgba(43, 108, 176, .06); } }
+
+.cs-sceau { display: flex; align-items: center; gap: 14px; margin-top: 16px; padding: 14px 16px; border-radius: 14px; background: linear-gradient(120deg, rgba(46, 125, 91, .13), rgba(15, 139, 141, .1)); border: 1px solid rgba(46, 125, 91, .35); }
+.cs-sceau > i { display: flex !important; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 50%; background: var(--cr-ok); color: #fff; font-size: 20px; }
+.cs-sceau strong { display: block; font-size: 14.5px; color: var(--cr-texte); }
+.cs-sceau small { color: var(--cr-muted); font-size: 12.5px; }
+.cs-historique { margin: 12px 0 0; font-size: 12.5px; color: var(--cr-muted); }
+.cs-historique summary { cursor: pointer; font-weight: 700; }
+.cs-historique ul { margin: 8px 0 0; padding-left: 18px; }
+.cs-reponse__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.cs-attente-vous { display: flex; align-items: center; gap: 12px; margin-top: 16px; padding: 12px 16px; border-radius: 12px; background: rgba(199, 125, 10, .1); border: 1px solid rgba(199, 125, 10, .35); font-size: 13.5px; color: #7a4e07; }
+.cs-attente-vous i { font-size: 20px; }
+
+/* ---------- Mes courriers : à faire ---------- */
+.cs-afaire { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 22px; }
+.cs-afaire__carte { padding: 18px 20px; background: #fff; border: 1px solid var(--cr-bord); border-left: 5px solid var(--c, var(--cr-alerte)); border-radius: var(--cr-rayon); box-shadow: var(--cr-ombre); }
+.cs-afaire__carte h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 15px; font-weight: 800; color: var(--cr-texte); }
+.cs-afaire__carte h3 i { color: var(--c, var(--cr-alerte)); }
+.cs-afaire__ligne { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px dashed var(--cr-bord); font-size: 13.5px; }
+.cs-afaire__ligne:first-of-type { border-top: 0; }
+.cs-afaire__ligne b { display: block; color: var(--cr-texte); }
+.cs-afaire__ligne small { color: var(--cr-muted); }
+
+/* ---------- Formulaires (grandes fenêtres) ---------- */
+.cs-modal .modal-dialog { max-width: 640px; }
+.cs-champ { margin-bottom: 14px; }
+.cs-champ > label { display: block; margin-bottom: 4px; font-size: 13px; font-weight: 600; color: var(--cr-texte); }
+.cs-champ .cs-opt { font-weight: 500; color: var(--cr-clair); }
+.cs-requis { color: var(--cr-danger); }
+.cs-info { display: flex; gap: 10px; padding: 10px 14px; margin-bottom: 14px; border-radius: 10px; background: rgba(43, 108, 176, .08); color: #1b4a78; font-size: 13px; }
+.cs-info i { margin-top: 2px; }
+
+/* ---------- Registre départ : formulaire ---------- */
+.cs-section { margin: 0 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--cr-bord); font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--cr-primary-2); }
+.cs-dest-liste { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+.cs-dest-ligne { display: grid; grid-template-columns: 34px minmax(0, 1.4fr) minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--cr-bord); border-radius: 12px; background: var(--cr-fond); }
+.cs-dest-rang { display: flex !important; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; font-size: 13px; font-weight: 800; color: #fff; background: var(--cr-primary-2); }
+.cs-numero-prevu { display: inline-flex !important; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: rgba(15, 139, 141, .1); color: #0b6466; font-size: 12.5px; font-weight: 700; }
+.cs-origine { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: rgba(43, 108, 176, .07); border: 1px solid rgba(43, 108, 176, .25); }
+.cs-origine > i { font-size: 20px; color: var(--cr-primary-2); }
+.cs-form-page { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.cs-sticky { position: sticky; top: 90px; }
+
+/* ---------- Archives ---------- */
+.cs-onglets { display: inline-flex; padding: 5px; margin-bottom: 18px; border-radius: 999px; background: #fff; border: 1px solid var(--cr-bord); box-shadow: var(--cr-ombre); }
+.cs-onglets a { padding: 9px 22px; border-radius: 999px; font-size: 14px; font-weight: 700; color: var(--cr-muted) !important; text-decoration: none !important; }
+.cs-onglets a.cs-onglet--actif { color: #fff !important; background: var(--cr-primary-2); box-shadow: 0 4px 12px rgba(43, 108, 176, .35); }
+.cs-boite { display: inline-flex !important; align-items: center; gap: 8px; padding: 4px 11px; border-radius: 8px; background: rgba(123, 107, 224, .12); color: #4a3fa8; font-size: 12.5px; font-weight: 800; font-family: Consolas, "SFMono-Regular", Menlo, monospace; }
+.cs-boite--vide { background: rgba(199, 125, 10, .12); color: #8a5605; font-family: inherit; }
+.cs-conservation { display: inline-flex !important; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--cr-muted); }
+.cs-conservation--depassee { color: var(--cr-danger); }
+.cs-conservation--proche { color: var(--cr-alerte); }
+.cs-pret { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 22px; border-top: 1px solid var(--cr-bord); }
+.cs-pret:first-of-type { border-top: 0; }
+
+@media (max-width: 900px) {
+  .cs-form-page { grid-template-columns: 1fr; }
+  .cs-sticky { position: static; }
+  .cs-dest-ligne { grid-template-columns: 34px minmax(0, 1fr); }
+  .cs-dest-ligne > :nth-child(3), .cs-dest-ligne > :nth-child(4) { grid-column: 2; }
+  .cs-action { grid-template-columns: 34px minmax(0, 1fr); }
+  .cs-action .cs-outils { grid-column: 2; justify-content: flex-start; }
+  .cs-nav { border-radius: 18px; top: 64px; }
+}

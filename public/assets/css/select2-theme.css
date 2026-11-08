@@ -1,0 +1,39 @@
+/* Select2 aux couleurs de l'application : le champ fermé a la même hauteur et le même aspect que les autres champs. */
+.select2-container { width: 100% !important; font-family: inherit; --s2-h: var(--s2-hauteur, 38px); }
+/* Dans les fenêtres de saisie et les barres de filtres, les champs font 42 px */
+.el-formgrid .select2-container, .el-filtres .select2-container, .aff-filtres .select2-container { --s2-h: 42px; }
+/* Listes simples (sans recherche), champs texte et dates : même hauteur que les listes avec recherche */
+.el-formgrid select.form-select:not(.select2-hidden-accessible):not(.form-select-sm), .el-filtres select.form-select:not(.select2-hidden-accessible), .aff-filtres select.form-select:not(.select2-hidden-accessible),
+.aff-filtres .form-control { height: 42px; }
+.select2-container--default .select2-selection--single {
+	height: var(--s2-h); display: flex; align-items: center;
+	background: var(--s2-fond, #fff); border: 1px solid var(--s2-bordure, #CFDDD5); border-radius: var(--s2-rayon, 8px);
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+	flex: 1; padding: 0 34px 0 12px; line-height: calc(var(--s2-h) - 2px); color: var(--s2-texte, #10241B); font-size: var(--s2-taille, 14px);
+	overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.select2-container--default .select2-selection--single .select2-selection__placeholder { color: #8A94A6; }
+.select2-container--default .select2-selection--single .select2-selection__arrow { height: calc(var(--s2-h) - 2px); right: 6px; top: 0; }
+.select2-container--default .select2-selection--single .select2-selection__arrow b { border-color: #5C6F66 transparent transparent transparent; }
+.select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b { border-color: transparent transparent #5C6F66 transparent; }
+.select2-container--default.select2-container--focus .select2-selection--single,
+.select2-container--default.select2-container--open .select2-selection--single { border-color: #00794C; box-shadow: 0 0 0 3px rgba(0, 121, 76, .16); }
+.select2-container--default.select2-container--disabled .select2-selection--single { background: #F3F7F4; cursor: not-allowed; }
+.select2-container .select2-selection--single.select2-sm,
+.select2-sm.select2-container--default .select2-selection--single { height: 34px; --s2-h: 34px; }
+
+/* Liste déroulante : champ de recherche en haut, puis les options */
+.select2-dropdown { border: 1px solid #CFE5D9; border-radius: 12px; box-shadow: 0 16px 38px rgba(16, 36, 27, .22); overflow: hidden; z-index: 20000; }
+.select2-container--open .select2-dropdown--below { margin-top: 4px; }
+.select2-container--open .select2-dropdown--above { margin-bottom: 4px; }
+.select2-search--dropdown { padding: 10px 10px 6px; }
+.select2-container--default .select2-search--dropdown .select2-search__field {
+	height: 38px; padding: 0 12px; border: 1px solid #CFDDD5; border-radius: 8px; outline: 0; font-size: 14px;
+}
+.select2-container--default .select2-search--dropdown .select2-search__field:focus { border-color: #00794C; box-shadow: 0 0 0 3px rgba(0, 121, 76, .16); }
+.select2-results__options { padding: 4px 6px 8px; max-height: 260px; }
+.select2-container--default .select2-results__option { padding: 8px 10px; border-radius: 8px; font-size: 13.5px; color: #10241B; }
+.select2-container--default .select2-results__option[aria-selected=true] { background: #E3F1E9; color: #00613D; font-weight: 600; }
+.select2-container--default .select2-results__option--highlighted[aria-selected] { background: #00794C; color: #fff; }
+.select2-container--default .select2-results__message { padding: 14px 10px; text-align: center; color: #8A94A6; }

@@ -1,0 +1,173 @@
+/* =====================================================================
+   En-tête (.page-header) : dégradé à trois niveaux + motif sur les 70 % du centre
+   À charger APRÈS les feuilles de style du thème (dans le <head> du layout).
+
+   Réglages :
+     --h-g1  gauche  (le plus foncé)
+     --h-g2  milieu
+     --h-g3  droite  (le plus clair, mais assez foncé pour que le texte blanc reste lisible : contraste >= 4,5)
+     --h-motif: none;   retire le motif
+
+   Couleurs de l'application : orange, blanc, vert. Le vert occupe les 20 % de droite
+   pour que le texte blanc du profil reste lisible.
+   ===================================================================== */
+
+.page-header {
+  --h-g1: #E8710A;   /* orange */
+  --h-g2: #FFFFFF;   /* blanc */
+  --h-g3: #00794C;   /* vert */
+
+  /* Motif de points (SVG intégré, aucune image à charger) */
+  --h-motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Ccircle cx='3' cy='3' r='1.6' fill='%23fff' fill-opacity='.40'/%3E%3C/svg%3E");
+
+  background-color: var(--h-g2);
+  /* De haut en bas : voile gauche et voile droit (ils effacent le motif sur 15 % de chaque bord, il reste donc
+     pleinement visible sur les 70 % du centre), motif, halo lumineux, dégradé à trois niveaux. */
+  background-image:
+    linear-gradient(90deg, var(--h-g1) 0%, transparent 15%),
+    linear-gradient(270deg, var(--h-g3) 0%, transparent 15%),
+    var(--h-motif),
+    radial-gradient(ellipse 38% 150% at 94% -35%, rgba(255, 255, 255, .15), transparent 72%),
+    linear-gradient(100deg, var(--h-g1) 0%, var(--h-g2) 42%, var(--h-g3) 80%, var(--h-g3) 100%);
+  background-size: 100% 100%, 100% 100%, auto, auto, auto;
+  background-repeat: no-repeat, no-repeat, repeat, no-repeat, no-repeat;
+  background-position: center;
+}
+
+/* ---------------------------------------------------------------------
+   Lisibilité sur fond foncé. Seuls les éléments de la barre sont touchés :
+   les menus déroulants (profil, notifications) gardent leurs couleurs d'origine.
+   --------------------------------------------------------------------- */
+
+/* Logo : sur une pastille blanche, quelles que soient ses couleurs */
+.page-header .header-logo-wrapper { background: transparent; }
+.page-header .header-logo-wrapper .logo-wrapper a {
+  display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 12px;
+  background: #fff; box-shadow: 0 4px 12px rgba(0, 0, 0, .18);
+}
+
+/* Icônes de la barre : passées en blanc (le filtre marche pour une icône en trait comme pleine) */
+.page-header .toggle-sidebar svg,
+.page-header .fullscreen-body svg,
+.page-header .mode svg,
+.page-header .notification-box > svg { filter: brightness(0) invert(1); }
+
+/* Profil */
+.page-header .profile-media .profile-content span { color: #fff; font-weight: 600; }
+.page-header .profile-media .profile-content p,
+.page-header .profile-media .profile-content p i { color: rgba(255, 255, 255, .84); }
+.page-header .profile-media img { box-shadow: 0 0 0 2px rgba(255, 255, 255, .55); }
+
+
+/* ---------------------------------------------------------------------
+   Barre de menu (sous l'en-tête) : fond orange foncé (défini dans style.css), textes blancs ;
+   au survol et pour l'entrée active : fond vert foncé, texte et icône blancs.
+   Les sélecteurs sont volontairement des « descendants » (et non « > li ») car le thème
+   insère un conteneur « simplebar » entre la liste et ses éléments.
+   --------------------------------------------------------------------- */
+:root { --entete-hauteur: 80px; --menu-hauteur: 54px; --vert-fonce: #f84007e3; --orange-fonce: #00613D; }
+
+/* Filet clair (1 px) que le thème dessine en haut de la barre : on le rend transparent, la couleur de la barre apparaît dessous. */
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper { border-top-color: transparent !important; }
+
+/* Position : la barre commence sous l'en-tête (elle était en partie cachée par lui, ce qui
+   faisait paraître le texte trop haut) et le contenu de la page descend d'autant. */
+@media (min-width: 1024px) {   /* en dessous, le menu devient un tiroir et le logo de l'en-tête est masqué */
+  .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper { top: var(--entete-hauteur) !important; }
+  .page-wrapper.horizontal-wrapper .page-body-wrapper .page-body { margin-top: calc(var(--entete-hauteur) + var(--menu-hauteur) + 4px) !important; }
+}
+
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links li.sidebar-list > a,
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links li.sidebar-list > a span {
+  color: #fff;
+}
+
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links li.sidebar-list:hover > a,
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links li.sidebar-list > a:hover,
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links li.sidebar-list > a.active {
+  background: var(--vert-fonce) !important;
+  color: #fff !important;
+}
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links li.sidebar-list:hover > a span,
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links li.sidebar-list > a:hover span,
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links li.sidebar-list > a.active span {
+  color: #fff !important;
+}
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links li.sidebar-list:hover > a svg.stroke-icon,
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links li.sidebar-list > a.active svg.stroke-icon {
+  stroke: #fff !important;
+  color: #fff !important;
+}
+
+/* Sous-menus : au survol (et entrée active), fond vert foncé et texte blanc */
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links .sidebar-submenu li a:hover,
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links .sidebar-submenu li a.active {
+  background: var(--vert-fonce) !important;
+  color: #fff !important;
+}
+
+/* Entrée active (page affichée) : fond vert foncé et trait blanc en bas, pour la distinguer du simple survol */
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links li.sidebar-list > a.active {
+  box-shadow: inset 0 -3px 0 #fff;
+}
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links .sidebar-submenu li a.active {
+  font-weight: 700;
+}
+
+/* Le thème impose un texte bleu sur l'entrée active, avec une priorité élevée : l'identifiant #pageWrapper la dépasse. */
+#pageWrapper .sidebar-wrapper .sidebar-links li.sidebar-list > a.active,
+#pageWrapper .sidebar-wrapper .sidebar-links li.sidebar-list > a.active span,
+#pageWrapper .sidebar-wrapper .sidebar-links li.sidebar-list > a.active svg {
+  color: #fff !important;
+}
+#pageWrapper .sidebar-wrapper .sidebar-links li.sidebar-list > a.active svg.stroke-icon {
+  stroke: #fff !important;
+}
+
+/* Menu contextuel du compte (Mon compte, Déconnexion) : sans majuscules forcées, en gras,
+   juste assez large pour que chaque titre tienne sur une seule ligne. */
+#pageWrapper .page-header .nav-right .profile-dropdown {
+  width: 10.5rem;
+  left: auto;
+  right: 0;   /* aligné sur le bord droit de l'en-tête : ne dépasse plus de l'écran */
+}
+#pageWrapper .page-header .nav-right .profile-dropdown li,
+#pageWrapper .page-header .nav-right .profile-dropdown li a,
+#pageWrapper .page-header .nav-right .profile-dropdown li a span,
+#pageWrapper .page-header .nav-right .profile-dropdown li span {
+  text-transform: none;
+  font-weight: 700;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+/* Sous-menus du menu horizontal : cadre plus large pour que les libellés longs tiennent sur une ligne */
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links .sidebar-submenu {
+  width: 280px !important;
+  min-width: 280px !important;
+}
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links .sidebar-submenu li a {
+  white-space: nowrap;
+}
+
+/* Sous-sous-menus : s'ouvrent à droite du sous-menu (dont la largeur a été élargie), sans le recouvrir. */
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links .sidebar-submenu li { position: relative; }
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links .sidebar-submenu li > .sidebar-submenu {
+  left: calc(100% - 28px) !important;   /* chevauche le bord droit du sous-menu, comme dans le modèle du thème : aucun espace entre les deux */
+  top: -12px !important;
+  margin-left: 0;
+  width: 300px !important;
+  min-width: 300px !important;
+}
+
+/* Recherche dans l'en-tête */
+.recherche-globale form { position: relative; display: flex; align-items: center; }
+.recherche-globale form i { position: absolute; left: 12px; color: #7a8a99; font-size: 13px; pointer-events: none; }
+.recherche-globale input { height: 38px; width: 210px; padding: 0 12px 0 34px; border: 1px solid #d5e0d9; border-radius: 99px; background: rgba(255, 255, 255, .92); font-size: 13.5px; transition: width .25s, box-shadow .25s; }
+.recherche-globale input:focus { width: 290px; outline: 0; border-color: #00794c; box-shadow: 0 0 0 3px rgba(0, 121, 76, .15); }
+@media (max-width: 992px) { .recherche-globale input { width: 140px; } .recherche-globale input:focus { width: 180px; } }
+
+
+/* Un sous-sous-menu ne s'affiche qu'au survol de son titre (même celui de la page active) : il ne reste plus de cadre gris ouvert derrière les autres. */
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links .sidebar-submenu li > .sidebar-submenu { display: none !important; }
+.page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links .sidebar-submenu li:hover > .sidebar-submenu { display: block !important; }
