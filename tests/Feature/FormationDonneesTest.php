@@ -39,11 +39,11 @@ class FormationDonneesTest extends TestCase
 
         // Décisions : un exemplaire de chaque stade du circuit et du suivi des recours.
         $this->assertSame(10, Decision::count());
-        $this->assertEqualsCanonicalizing(['brouillon', 'redigee', 'validee', 'signee', 'delivree'], Decision::distinct()->pluck('statut')->all());
+        $this->assertEqualsCanonicalizing(['brouillon', 'redigee', 'validee', 'signee', 'transmise'], Decision::distinct()->pluck('statut')->all());
         $this->assertSame(8, Decision::whereNotNull('numero')->count());
         $this->assertSame(1, DB::table('certificats_recours')->count());
         $this->assertSame(1, DB::table('recours')->count());
-        $this->assertSame(1, DB::table('delivrances')->count());
+        $this->assertSame(0, DB::table('delivrances')->count());
         $this->assertSame(4, DB::table('suivis_recours')->count());
 
         $this->assertSame(8, Requete::count());

@@ -26,10 +26,19 @@ class AffectationController extends Controller
 {
     private const CHAMPS = ['formation_id', 'agent_id', 'role', 'suppleant', 'chef_section', 'debut', 'fin', 'remarque'];
 
-    /** Page de composition d'une chambre : ses formations, avec pour chacune les personnes affectées et les audiences. */
-    public function index(Chambre $chambre): View
+    /**
+     * Composition d'une chambre : ses formations, avec pour chacune les personnes affectées et les audiences.
+     * Elle s'affiche dans le panneau de la page « Composition des chambres » (fragment HTML demandé en AJAX) ;
+     * l'ancienne adresse ouverte directement renvoie vers cette page, panneau ouvert.
+     */
+    public function index(Request $request, Chambre $chambre): View|RedirectResponse
     {
         Gate::authorize('affectations.voir');
+
+        if (! $request->ajax()) {
+            return redirect()->route('organisation.composition', ['annee' => $chambre->annee_judiciaire_id, 'ouvrir' => $chambre->id]);
+        }
+
         $chambre->load('section', 'annee', 'formations.creneaux.salle', 'formations.affectations.agent');
 
         $ordreRoles = array_flip(array_keys(Affectation::ROLES));
@@ -42,14 +51,7 @@ class AffectationController extends Controller
             ])->values());
         }
 
-        $dejaPresents = $chambre->formations->flatMap->affectations->pluck('agent_id')->all();
-
-        return view('organisation.affectations.index', [
-            'chambre' => $chambre,
-            'salles' => \App\Models\Salle::where('actif', true)->orderBy('nom')->get(),
-            'ordonnances' => \App\Models\Ordonnance::orderByDesc('date_signature')->get(),
-            'agents' => Agent::query()->where('actif', true)->orWhereIn('id', $dejaPresents)->orderBy('nom')->orderBy('prenoms')->get(),
-        ]);
+        return view('organisation.composition._detail', ['chambre' => $chambre]);
     }
 
     public function show(int $id): JsonResponse
@@ -99,7 +101,7 @@ class AffectationController extends Controller
 
         Journal::audit($avant ? 'affectation_modifie' : 'affectation_cree', $affectation, $this->libelle($affectation), $avant, $this->valeurs($affectation));
 
-        return redirect()->route('organisation.affectations', $affectation->formation->chambre_id)->with('success', $avant ? 'Affectation modifiée.' : 'Personne ajoutée à la formation.');
+        return redirect()->route('organisation.composition', ['annee' => $affectation->formation->chambre->annee_judiciaire_id, 'ouvrir' => $affectation->formation->chambre_id])->with('success', $avant ? 'Affectation modifiée.' : 'Personne ajoutée à la formation.');
     }
 
     /** Remplace une personne à une date donnée : l'ancienne affectation se termine la veille, la nouvelle commence ce jour-là. */
@@ -137,7 +139,7 @@ class AffectationController extends Controller
 
         Journal::audit('affectation_remplacee', $nouvelle, $this->libelle($nouvelle), ['agent_id' => $ancienne->agent_id, 'fin' => $ancienne->fin?->format('Y-m-d')], $this->valeurs($nouvelle));
 
-        return redirect()->route('organisation.affectations', $ancienne->formation->chambre_id)->with('success', 'Remplacement enregistré : l\'ancienne affectation est terminée, la nouvelle commence le '.$effet->format('d/m/Y').'.');
+        return redirect()->route('organisation.composition', ['annee' => $ancienne->formation->chambre->annee_judiciaire_id, 'ouvrir' => $ancienne->formation->chambre_id])->with('success', 'Remplacement enregistré : l\'ancienne affectation est terminée, la nouvelle commence le '.$effet->format('d/m/Y').'.');
     }
 
     public function destroy(int $id): JsonResponse

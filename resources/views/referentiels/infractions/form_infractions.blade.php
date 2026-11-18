@@ -19,7 +19,7 @@
             <div class="el-c12">
               <label class="form-label" for="f_articles"><b>Articles visés</b> <span class="el-muted">(code pénal)</span></label>
               <input class="form-control" id="f_articles" name="articles" type="text" maxlength="300" placeholder="Ex. : Art. 421 du CP">
-              <small class="text-muted">Proposés avec l'infraction à l'enrôlement d'une affaire pénale.</small>
+              <small class="text-muted">Proposés avec l'infraction à l'enregistrement d'une affaire pénale.</small>
             </div>
             <div class="el-c5">
               <label class="el-switch el-switch--lg" for="f_actif">

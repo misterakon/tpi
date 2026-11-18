@@ -71,7 +71,7 @@ class FormationController extends Controller
 
         Journal::audit($avant ? 'formation_modifie' : 'formation_cree', $formation, $formation->libelleComplet(), $avant, $formation->only(self::CHAMPS));
 
-        return redirect()->route('organisation.affectations', $formation->chambre_id)->with('success', $avant ? 'Formation modifiée.' : 'Formation créée.');
+        return redirect()->route('organisation.chambres', ['annee' => $formation->chambre->annee_judiciaire_id])->with('success', $avant ? 'Formation modifiée.' : 'Formation créée.');
     }
 
     public function destroy(int $id): JsonResponse

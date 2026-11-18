@@ -9,5 +9,11 @@
                   </td>
                   <td>{{ $l->nature?->libelle }}</td>
                   <td title="{{ $l->chambre?->libelle }}">{{ $l->chambre?->libelle }}</td>
-                  <td><x-chip :tone="$l->estAnnulee() ? 'danger' : 'success'" :label="\App\Models\Affaire::STATUTS[$l->statut] ?? $l->statut" /></td>
+                  <td>
+                    <x-chip :tone="$l->estAnnulee() ? 'danger' : 'success'" :label="\App\Models\Affaire::STATUTS[$l->statut] ?? $l->statut" />
+                    @unless ($l->estAnnulee())
+                      @php $jours = \App\Support\Durees::entre($l->date_rg, now()); @endphp
+                      <div class="el-person__sub" title="Depuis l'enregistrement du {{ $l->date_rg->format('d/m/Y') }}">{{ $jours === 0 ? "Enregistrée aujourd'hui" : 'Enregistrée depuis '.\App\Support\Durees::texte($jours) }}</div>
+                    @endunless
+                  </td>
                 </tr>

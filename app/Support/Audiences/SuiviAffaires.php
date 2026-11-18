@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 /*
- | Où en est chaque affaire enrôlée, d'après ce qui a été noté aux audiences (lignes des rôles publiés) :
+ | Où en est chaque affaire enregistrée, d'après ce qui a été noté aux audiences (lignes des rôles publiés) :
  |   - a_venir     : jamais jugée, son prochain passage est à venir (première audience ou rôle publié à venir) ;
  |   - non_portee  : sa première audience est passée mais elle n'a jamais figuré sur un rôle publié (en retard) ;
  |   - sans_suite  : elle a figuré sur un rôle passé sans qu'on ait noté la suite (en retard) ;

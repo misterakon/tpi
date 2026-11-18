@@ -44,7 +44,7 @@ class RecoursController extends Controller
     /** Les décisions signées visibles de l'utilisateur. */
     private function signees(?User $u): \Illuminate\Database\Eloquent\Builder
     {
-        return Decision::visiblesPour($u)->whereIn('statut', ['signee', 'delivree']);
+        return Decision::visiblesPour($u)->whereIn('statut', ['signee', 'transmise']);
     }
 
     /** L'état de recours de chaque décision signée (calcul complet : sert au filtre par état et aux compteurs seulement). @return array<int, array<string, mixed>> */

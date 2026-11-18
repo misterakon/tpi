@@ -9,7 +9,7 @@
   <div class="page-body">
     <div class="el-page">
 
-      <x-hero tag="Référentiels" title="Infractions" subtitle="Les infractions les plus fréquentes avec leurs articles du code pénal. À l'enrôlement d'une affaire pénale, le greffier choisit l'infraction : la nature de la prévention et les articles se remplissent tout seuls." icon="fa-solid fa-handcuffs">
+      <x-hero tag="Référentiels" title="Infractions" subtitle="Les infractions les plus fréquentes avec leurs articles du code pénal. À l'enregistrement d'une affaire pénale, le greffier choisit l'infraction : la nature de la prévention et les articles se remplissent tout seuls." icon="fa-solid fa-handcuffs">
         <x-slot:extra>
           <span><i class="fa-solid fa-list"></i> {{ $total }} élément(s)</span>
           <span><i class="fa-solid fa-triangle-exclamation"></i> {{ $sansArticles }} sans articles renseignés</span>

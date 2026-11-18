@@ -116,7 +116,7 @@
 	}
 
 	/* ============================================================
-	   DATE DE PREMIÈRE AUDIENCE : prochaines audiences de la chambre et date limite d'enrôlement
+	   DATE DE PREMIÈRE AUDIENCE : prochaines audiences de la chambre et date limite d'enregistrement
 	   ============================================================ */
 	function charger_dates() {
 		const chambre = $('#f_chambre').val();
@@ -134,7 +134,7 @@
 					return;
 				}
 				$zone.append($('<div class="aff-dates__note">').text(
-					(r.exemptee ? "Cette nature d'affaire n'est pas soumise à la date limite d'enrôlement. " : "Audiences : " + r.jours + ". Cliquez sur une date pour la choisir ; ") +
+					(r.exemptee ? "Cette nature d'affaire n'est pas soumise à la date limite d'enregistrement. " : "Audiences : " + r.jours + ". Cliquez sur une date pour la choisir ; ") +
 					(r.exemptee ? '' : manuel ? "la date reste facultative." : "la plus proche encore ouverte est proposée.")
 				));
 				const $liste = $('<div class="aff-dates__liste">');
@@ -142,7 +142,7 @@
 					const $b = $('<button type="button" class="aff-date">').toggleClass('aff-date--fermee', !d.ouverte && !r.exemptee);
 					$b.append($('<b>').text(d.libelle));
 					if (d.precision && d.heure) { $b.append($('<span>').text(d.precision)); }
-					if (d.limite) { $b.append($('<span>').text((d.ouverte || r.exemptee ? "Enrôlement jusqu'au " : 'Date limite dépassée : ') + d.limite)); }
+					if (d.limite) { $b.append($('<span>').text((d.ouverte || r.exemptee ? "Enregistrement jusqu'au " : 'Date limite dépassée : ') + d.limite)); }
 					$b.on('click', function () { $('#f_date_audience').val(d.date); $('#f_heure_audience').val(d.heure || ''); });
 					$liste.append($b);
 				});

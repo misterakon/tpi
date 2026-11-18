@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 
 /*
  | Statistiques civiles, calculées comme les onglets « RECAP ENROL. CIV » des classeurs du TPI :
- |   affaire NOUVELLE de l'année N   année de sa première audience (à défaut, de son enrôlement) ;
+ |   affaire NOUVELLE de l'année N   année de sa première audience (à défaut, de son enregistrement) ;
  |   affaire VIDÉE de l'année N      année de sa décision ; issues qui vident : décision au fond, radiation, PV de conciliation totale, désistement ;
  |   stock fin N                     stock début N + nouvelles N − vidées N ; stock début N = stock fin N−1 ;
  |   à juger N                       (à juger N−1 − vidées N−1) + nouvelles N.
@@ -44,7 +44,7 @@ class DonneesCivil
         $toutesDecisions = Decision::whereIn('affaire_id', $ids)->whereIn('statut', Decision::STATUTS_VALIDES)->get(['affaire_id', 'date_decision', 'validee_le', 'numero', 'numero_seq', 'numero_annee'])->groupBy('affaire_id');
         $decisions = $toutesDecisions->map(fn ($g) => $g->map(fn ($d) => ($d->date_decision ?? $d->validee_le)?->copy()->startOfDay())->filter()->min());
         $numerosDecision = $toutesDecisions->map(fn ($g) => $g->sortBy(fn ($d) => $d->date_decision ?? $d->validee_le)->first())
-            ->map(fn ($d) => $d->numero ? ((int) ($d->numero_seq ?: $d->numero)).'/'.substr((string) $d->numero_annee, -2) : null);
+            ->map(fn ($d) => $d->numero ? sprintf('%02d', (int) ($d->numero_seq ?: $d->numero)).'/'.substr((string) $d->numero_annee, -2) : null);
         $feuille = RoleLigne::query()->join('roles_audience', 'roles_audience.id', '=', 'role_lignes.role_id')->where('roles_audience.statut', 'publie')
             ->whereIn('role_lignes.affaire_id', $ids)->whereIn('role_lignes.issue', array_keys(self::ISSUES_FEUILLE))
             ->orderBy('roles_audience.date_audience')->get(['role_lignes.affaire_id', 'role_lignes.issue', 'roles_audience.date_audience'])->groupBy('affaire_id')->map->first();

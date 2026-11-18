@@ -1,6 +1,6 @@
 {{-- Fenêtres du répertoire pénal : décision (création et correction), transmission de la minute. Variables : $affaires, $prevenus --}}
 <div class="modal fade panel-modal" id="modal-decision" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
-  <div class="modal-dialog aff-modal"><div class="modal-content">
+  <div class="modal-dialog aff-modal aff-modal-moyen"><div class="modal-content">
     <div class="modal-header"><h4 class="modal-title" id="t-decision">Enregistrer une décision</h4><button class="btn-close py-0" type="button" data-bs-dismiss="modal" aria-label="Fermer"></button></div>
     <form method="post" action="{{ route('decisions.repertoire_penal.store') }}" id="f-decision" autocomplete="off">
       @csrf <input type="hidden" name="id_" id="d_id">

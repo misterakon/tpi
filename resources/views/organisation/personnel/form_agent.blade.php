@@ -20,16 +20,22 @@
               <label class="form-label" for="f_prenoms"><b>Prénoms</b></label>
               <input class="form-control" id="f_prenoms" name="prenoms" type="text" maxlength="120" required>
             </div>
-            <div class="el-c5">
-              <label class="form-label" for="f_fonction"><b>Fonction</b></label>
-              <select class="form-select" id="f_fonction" name="fonction" required>
+            <div class="el-c6">
+              <label class="form-label" for="f_categorie"><b>Catégorie</b></label>
+              <select class="form-select" id="f_categorie" name="categorie" required>
                 <option value="">Choisir…</option>
-                @foreach (\App\Models\Agent::FONCTIONS as $valeur => $texte)
-                  <option value="{{ $valeur }}">{{ $texte }}</option>
+                @foreach (\App\Models\Agent::CATEGORIES as $valeur => $categorie)
+                  <option value="{{ $valeur }}">{{ $categorie['libelle'] }}</option>
                 @endforeach
               </select>
             </div>
-            <div class="el-c3">
+            <div class="el-c6">
+              <label class="form-label" for="f_fonction"><b>Fonction</b></label>
+              <select class="form-select" id="f_fonction" name="fonction" required>
+                <option value="">Choisissez d'abord la catégorie…</option>
+              </select>
+            </div>
+            <div class="el-c4">
               <label class="form-label" for="f_sexe"><b>Sexe</b> <span class="text-muted">(facultatif)</span></label>
               <select class="form-select" id="f_sexe" name="sexe">
                 <option value="">—</option>
@@ -38,7 +44,7 @@
                 @endforeach
               </select>
             </div>
-            <div class="el-c4">
+            <div class="el-c8">
               <label class="form-label" for="f_matricule"><b>Matricule</b> <span class="text-muted">(facultatif)</span></label>
               <input class="form-control" id="f_matricule" name="matricule" type="text" maxlength="40">
             </div>

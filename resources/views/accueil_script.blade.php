@@ -49,7 +49,7 @@
 		if (!c.entrees.some(function (v) { return v > 0; }) && !c.sorties.some(function (v) { return v > 0; })) { $('#ac-courbe').html(vide('fa-chart-line', 'Aucune activité sur cette période.')); return; }
 		courbe = new ApexCharts(document.querySelector('#ac-courbe'), {
 			chart: Object.assign({ type: 'area', height: 300, zoom: { enabled: false } }, base),
-			series: [{ name: 'Enrôlées', data: c.entrees }, { name: 'Terminées', data: c.sorties }],
+			series: [{ name: 'Enregistrées', data: c.entrees }, { name: 'Terminées', data: c.sorties }],
 			colors: ['#00794C', '#E8710A'], stroke: { curve: 'smooth', width: 3 }, dataLabels: { enabled: false },
 			fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.3, opacityTo: 0.02, stops: [0, 95, 100] } }, markers: { size: 0, hover: { size: 5 } },
 			xaxis: { categories: c.mois, labels: { style: { colors: '#2F3A52', fontSize: '11px' }, rotate: -45, hideOverlappingLabels: true }, axisBorder: { show: false }, axisTicks: { show: false } },
@@ -120,9 +120,9 @@
 		$('#ac-recentes').html(d.recentes.length ? d.recentes.map(function (a) {
 			return '<article class="au-rv">' + blocDate(a.date, '')
 				+ '<div class="au-rv__corps"><b>' + esc(a.numero) + ' <span style="font-weight:600;color:#2F3A52">· ' + esc(a.chambre) + '</span></b><div>' + esc(a.objet || 'Objet non renseigné') + '</div>'
-				+ '<div class="au-rv__etiquettes"><span class="au-badge au-badge--vert"><i class="fa-solid fa-file-circle-plus"></i>Enrôlée le ' + esc(a.date_libelle || '—') + '</span></div></div>'
+				+ '<div class="au-rv__etiquettes"><span class="au-badge au-badge--vert"><i class="fa-solid fa-file-circle-plus"></i>Enregistrée le ' + esc(a.date_libelle || '—') + '</span></div></div>'
 				+ '<div class="au-rv__actions"><a class="au-btn au-btn--clair" href="' + esc(a.url) + '"><i class="fa-solid fa-folder-open"></i>Ouvrir</a></div></article>';
-		}).join('') : vide('fa-folder-open', 'Aucune affaire enrôlée pour le moment.'));
+		}).join('') : vide('fa-folder-open', 'Aucune affaire enregistrée pour le moment.'));
 	}
 
 	/* ---------------------------------------------------------------- priorités : petites lignes, la première sort par le haut toutes les quelques secondes */

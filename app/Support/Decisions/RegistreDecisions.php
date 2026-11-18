@@ -18,7 +18,7 @@ use OpenSpout\Writer\XLSX\Writer;
  */
 class RegistreDecisions
 {
-    public const COLONNES = ['N° de décision', 'Date de la décision', 'Date de signature', 'Référence', 'Type de décision', 'Chambre', 'Statut', 'Remises'];
+    public const COLONNES = ['N° de décision', 'Date de la décision', 'Date de signature', 'Référence', 'Type de décision', 'Chambre', 'Statut', 'Transmise au greffe le'];
 
     /** @return array{annee: ?int, chambre: ?int, statut: ?string, q: string} */
     public static function filtres(array $entree): array
@@ -41,9 +41,9 @@ class RegistreDecisions
             ->when($f['statut'], fn ($q, $v) => $q->where('statut', $v))
             ->when($f['q'] !== '', function ($q) use ($f) {
                 $mot = '%'.addcslashes($f['q'], '%_\\').'%';
-                // « D-145/2026 » ou « 145/2026 » : le numéro et l'année ; sinon une partie du numéro ou de la référence de l'affaire.
-                if (preg_match('#^\s*(?:D\s*-?\s*)?(\d{1,6})\s*/\s*(\d{4})\s*$#i', $f['q'], $m)) {
-                    $q->where('numero', $m[1])->where('numero_annee', (int) $m[2]);
+                // « 12/26 », « 012/26 », « 12/2026 » (ou l'ancienne forme « D-12/2026 ») : le numéro et l'année ; sinon une partie du numéro ou de la référence de l'affaire.
+                if (preg_match('#^\s*(?:D\s*-?\s*)?(\d{1,6})\s*/\s*(\d{4}|\d{2})\s*$#i', $f['q'], $m)) {
+                    $q->where('numero_seq', (int) $m[1])->where('numero_annee', strlen($m[2]) === 2 ? 2000 + (int) $m[2] : (int) $m[2]);
                 } else {
                     $q->where(fn ($w) => $w->where('numero', 'like', $mot)->orWhere('reference', 'like', $mot));
                 }
@@ -67,7 +67,7 @@ class RegistreDecisions
         return [
             'id' => $d->id, 'numero' => $d->numeroAffichage(), 'date_decision' => $d->date_decision?->format('d/m/Y'), 'date_signature' => $d->date_signature?->format('d/m/Y'),
             'reference' => $d->reference, 'type' => (string) $d->modele?->nom, 'chambre' => (string) $d->chambre?->libelle, 'statut' => $d->statut, 'statut_libelle' => Decision::STATUTS[$d->statut] ?? $d->statut,
-            'remises' => (int) $d->delivrances_count, 'validee_le' => $d->validee_le?->format('d/m/Y'),
+            'remises' => (int) $d->delivrances_count, 'transmise_le' => $d->transmise_le?->format('d/m/Y'), 'validee_le' => $d->validee_le?->format('d/m/Y'),
         ];
     }
 
@@ -77,7 +77,7 @@ class RegistreDecisions
         $sortie = [];
         foreach ($decisions as $d) {
             $e = self::ecran($d);
-            $sortie[] = [(string) $e['numero'], (string) ($e['date_decision'] ?? $e['validee_le']), (string) $e['date_signature'], $e['reference'], $e['type'], $e['chambre'], $e['statut_libelle'], (string) $e['remises']];
+            $sortie[] = [(string) $e['numero'], (string) ($e['date_decision'] ?? $e['validee_le']), (string) $e['date_signature'], $e['reference'], $e['type'], $e['chambre'], $e['statut_libelle'], (string) ($e['transmise_le'] ?? '')];
         }
 
         return $sortie;

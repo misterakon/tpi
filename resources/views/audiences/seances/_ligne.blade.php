@@ -20,7 +20,7 @@
                   @endif
                   @if ($s->statut === 'prevue')
                     @can('seances.modifier')
-                      <button class="el-iconbtn el-iconbtn--blue" type="button" title="Corriger" aria-label="Corriger" onclick='ouvrir_seance({{ Illuminate\Support\Js::from($donnees) }})'><i class="fa-regular fa-pen-to-square"></i></button>
+                      <button class="el-iconbtn el-iconbtn--blue" type="button" title="Corriger" aria-label="Corriger" onclick="ouvrir_seance({{ Illuminate\Support\Js::from($donnees) }})"><i class="fa-regular fa-pen-to-square"></i></button>
                       <button class="el-iconbtn el-iconbtn--green" type="button" title="Déclarer tenue" aria-label="Tenue" onclick="changer_statut({{ $s->id }}, 'tenue')"><i class="fa-solid fa-check"></i></button>
                     @endcan
                     @can('seances.annuler')<button class="el-iconbtn el-iconbtn--red" type="button" title="Annuler la séance" aria-label="Annuler" onclick="changer_statut({{ $s->id }}, 'annulee')"><i class="fa-solid fa-ban"></i></button>@endcan

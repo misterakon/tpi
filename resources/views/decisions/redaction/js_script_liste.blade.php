@@ -18,9 +18,23 @@
 		return $r;
 	}
 
+	/* Le modèle choisi à la main n'est plus remplacé par la proposition faite d'après l'objet de l'affaire. */
+	let modeleChoisiAMain = false;
+
+	/* Propose le modèle de décision qui convient à l'objet de l'affaire (le plus précis d'abord) ; l'utilisateur garde la main. */
+	function proposer_modele(a) {
+		const $note = $('#modele_propose').empty();
+		const modeles = a.modeles || [];
+		if (!modeles.length) { return; }
+		if (!modeleChoisiAMain) { $('#f_modele_decision_id').val(String(modeles[0].id)).trigger('change.select2'); }
+		$note.append($('<i class="fa-solid fa-wand-magic-sparkles"></i>')).append(document.createTextNode(" Modèle proposé d'après l'objet de l'affaire : " + modeles[0].nom + '.'));
+		if (modeles.length > 1) { $note.append(document.createTextNode(' Autre possibilité : ' + modeles.slice(1).map(function (m) { return m.nom; }).join(', ') + '.')); }
+	}
+
 	function remplir(a) {
 		if (a.chambre_id) { $('#f_chambre_id').val(String(a.chambre_id)).trigger('change.select2'); }
 		if (a.audience) { $('#f_date_audience').val(a.audience); }
+		proposer_modele(a);
 	}
 
 	function choisir(a) {
@@ -29,6 +43,8 @@
 	}
 
 	function add_form() {
+		modeleChoisiAMain = false;
+		$('#modele_propose').empty();
 		$('.modal_form')[0].reset();
 		$('#f_modele_decision_id').val('').trigger('change.select2');
 		$('#f_chambre_id').val('').trigger('change.select2');
@@ -39,6 +55,7 @@
 
 	document.addEventListener('DOMContentLoaded', function () {
 		if (!$('#f_affaire_id').length) { return; }
+		$('#f_modele_decision_id').on('select2:select', function () { modeleChoisiAMain = true; });
 		$('#f_affaire_id').select2({
 			width: '100%', language: FR, dropdownParent: $('#modal-decision'), placeholder: 'Rechercher par numéro ou par partie…', allowClear: false, minimumInputLength: 0,
 			ajax: { url: URL_AFFAIRES, dataType: 'json', delay: 250, data: function (p) { return { q: p.term || '' }; }, processResults: function (j) { return { results: j.resultats }; } },

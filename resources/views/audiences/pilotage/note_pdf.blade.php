@@ -6,10 +6,10 @@
   $cs = $couleurs[$a['sante']['niveau']] ?? '#00794C';
   $cartes = [
     ['Affaires en cours', $nb($k['stock']), 'stock du tribunal', '#00794C'],
-    ['Affaires enrôlées', $nb($k['entrees']), 'sur la période', '#0A7C86'],
+    ['Affaires enregistrées', $nb($k['entrees']), 'sur la période', '#0A7C86'],
     ['Affaires terminées', $nb($k['sorties']), 'jugées, radiées, jointes, désistées', '#334155'],
-    ['Taux de traitement', $nb($k['taux_sortie'], ' %'), 'terminées pour 100 enrôlées', ($k['taux_sortie'] !== null && $k['taux_sortie'] < 80) ? '#B42318' : '#00794C'],
-    ['Délai moyen', $nb($k['delai_moyen'], ' j'), "de l'enrôlement à la fin", '#0A7C86'],
+    ['Taux de traitement', $nb($k['taux_sortie'], ' %'), 'terminées pour 100 enregistrées', ($k['taux_sortie'] !== null && $k['taux_sortie'] < 80) ? '#B42318' : '#00794C'],
+    ['Délai moyen', $nb($k['delai_moyen'], ' j'), "de l'enregistrement à la fin", '#0A7C86'],
     ['Affaires en retard', $nb($k['retards']), 'échéance dépassée', $k['retards'] > 0 ? '#B42318' : '#00794C'],
     ['Décisions à rédiger', $nb($k['a_rediger']), $k['a_rediger'] ? 'la plus ancienne : '.$k['plus_ancienne_decision'].' j' : 'rien en attente', $k['a_rediger'] > 0 ? '#C95A00' : '#00794C'],
     ['Alertes critiques', $nb($k['alertes_critiques']), $k['alertes_ouvertes'].' alerte(s) ouverte(s)', $k['alertes_critiques'] > 0 ? '#B42318' : '#00794C'],
@@ -102,7 +102,7 @@
 </div>
 
 <div class="bloc">
-<h2>Affaires enrôlées et terminées, mois par mois</h2>
+<h2>Affaires enregistrées et terminées, mois par mois</h2>
 <img class="g" src="{{ $courbe }}" alt="">
 </div>
 
@@ -126,7 +126,7 @@
 <div class="bloc">
 <h2>Situation par chambre</h2>
 <table class="t">
-  <thead><tr><th class="l" style="width:25%">Chambre</th><th>En cours</th><th>Enrôlées</th><th>Terminées</th><th>Taux</th><th>Délai</th><th>En retard</th><th>À rédiger</th><th>Renvois</th><th>Alertes</th></tr></thead>
+  <thead><tr><th class="l" style="width:25%">Chambre</th><th>En cours</th><th>Enregistrées</th><th>Terminées</th><th>Taux</th><th>Délai</th><th>En retard</th><th>À rédiger</th><th>Renvois</th><th>Alertes</th></tr></thead>
   <tbody>
     @foreach ($chambres as $n => $c)
       <tr class="{{ $n % 2 ? 'alt' : '' }}">

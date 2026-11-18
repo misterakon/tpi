@@ -18,16 +18,16 @@ Votre profil n'a pas le **droit** pour cette page ou cette action. Ce n'est pas 
 - Vous ne voyez que les dossiers **de votre chambre**. Un dossier d'une autre chambre, **de mineurs** ou d'**instruction** est invisible sans le droit correspondant.
 - Essayez le champ **« Rechercher un dossier »** de l'en-tête avec un nom de partie.
 
-## Mon numéro est refusé à l'enrôlement
+## Mon numéro est refusé à l'enregistrement
 
-- **« Déjà enrôlé »** : ce numéro existe. Si c'est la même affaire, cochez **Jonction**.
+- **« Déjà enregistré »** : ce numéro existe. Si c'est la même affaire, cochez **Jonction**.
 - **« N'est jamais réutilisé »** : ce numéro appartenait à une affaire **annulée**.
 - **« Une jonction se fait dans la même chambre »** : l'affaire visée est dans une autre chambre.
 - **Format** : saisissez `numéro/année sur 2 chiffres`, par exemple `1500/26`.
 
 ## La première audience est refusée
 
-La date est **trop proche** de l'enrôlement (art. 7). Demandez à la Présidente la **dérogation** : cochez-la avec un motif. Vérifiez aussi que la date n'est pas passée.
+La date est **trop proche** de l'enregistrement (art. 7). Demandez à la Présidente la **dérogation** : cochez-la avec un motif. Vérifiez aussi que la date n'est pas passée.
 
 ## Je ne peux pas publier le rôle
 
@@ -45,11 +45,12 @@ La date est **trop proche** de l'enrôlement (art. 7). Demandez à la Président
 
 Des champs obligatoires du modèle ne sont pas remplis : le message les **liste**. Enregistrez, complétez-les, puis recommencez.
 
-## Je ne peux pas valider, signer ou délivrer
+## Je ne peux pas valider, signer ou transmettre
 
 - **Valider** : la décision doit être complète, et **numérotée** si le réglage l'exige (demandez au greffier de la chambre).
 - **Signer** : seule une décision **validée** se signe, avec une date **qui n'est pas dans le futur**.
-- **Délivrer** : la décision doit être **signée**. Une **grosse** ne se délivre qu'**une fois** à la même personne.
+- **Transmettre au greffe** (juge) : la décision doit être **signée**.
+- **Copie au greffier en chef** : elle ne part que si son **adresse e-mail** est réglée (*Réglages > Décisions*) ; la transmission, elle, est bien enregistrée.
 
 ## Le certificat de non-appel est refusé
 

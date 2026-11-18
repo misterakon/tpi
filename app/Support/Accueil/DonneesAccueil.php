@@ -40,7 +40,7 @@ class DonneesAccueil
         // Les quatre indicateurs les plus utiles pour ce profil, dans cet ordre.
         $candidats = [];
         if ($droits['affaires'] && $k) {
-            $candidats[] = ['code' => 'en_cours', 'libelle' => 'Affaires en cours', 'valeur' => $k['stock'], 'aide' => $k['entrees'].' enrôlée'.($k['entrees'] > 1 ? 's' : '').' en 30 jours', 'icone' => 'fa-folder-open', 'ton' => 'vert', 'lien' => route('affaires.liste')];
+            $candidats[] = ['code' => 'en_cours', 'libelle' => 'Affaires en cours', 'valeur' => $k['stock'], 'aide' => $k['entrees'].' enregistrée'.($k['entrees'] > 1 ? 's' : '').' en 30 jours', 'icone' => 'fa-folder-open', 'ton' => 'vert', 'lien' => route('affaires.liste')];
         }
         if ($droits['roles'] && $audiences !== null) {
             $candidats[] = ['code' => 'audiences', 'libelle' => 'Audiences cette semaine', 'valeur' => $semaine, 'aide' => $audiences ? 'Prochaine : '.$audiences[0]['quand'] : 'Aucun rôle publié', 'icone' => 'fa-gavel', 'ton' => 'sarcelle', 'lien' => route('audiences.roles')];
@@ -103,7 +103,7 @@ class DonneesAccueil
             ])->all();
     }
 
-    /** Les dernières affaires enrôlées (numéro, objet, chambre) : pas de nom de partie sur l'accueil. @return list<array<string, mixed>> */
+    /** Les dernières affaires enregistrées (numéro, objet, chambre) : pas de nom de partie sur l'accueil. @return list<array<string, mixed>> */
     private static function recentes(User $user): array
     {
         return Affaire::visiblesPour($user)->where('statut', 'enrolee')->with('chambre:id,libelle')->orderByDesc('date_rg')->orderByDesc('id')->limit(4)->get()

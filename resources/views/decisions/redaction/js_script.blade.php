@@ -116,6 +116,59 @@
 		if ($lignes.length <= 1) { $(bouton).attr('hidden', true); }
 	}
 
+	/* Le formulaire se réduit à ce que le jugement exige : un champ à condition (data-si) n'apparaît que lorsque son choix le demande
+	   (« deguerpissement = ordonné », « di in accordés|rejetés »…), comme le calcule ChampsDecision::visible côté serveur. */
+	function evaluer_si(si, valeur) {
+		return si.split('&&').every(function (condition) {
+			const m = $.trim(condition).match(/^([a-z0-9_.]+)(?:\s+(=|!=|in)\s+(.+))?$/i);
+			if (!m) { return true; }
+			const reel = $.trim(String(valeur(m[1]) || '')).toLowerCase();
+			const attendu = $.trim(m[3] || '').toLowerCase();
+			if (m[2] === '=') { return reel === attendu; }
+			if (m[2] === '!=') { return reel !== attendu; }
+			if (m[2] === 'in') { return attendu.split('|').map($.trim).indexOf(reel) >= 0; }
+			return reel !== '' && ['non', 'false', '0'].indexOf(reel) < 0;
+		});
+	}
+
+	function maj_visibilites() {
+		const valeur = function (code) { return $('[name="valeurs[' + code + ']"]').val(); };
+		const conditions = {};
+		$('.red-champ[data-si]').each(function () { conditions[$(this).attr('data-code')] = $(this).attr('data-si'); });
+		// Un champ n'est demandé que si son choix de départ l'est aussi (suivre la chaîne : avant-dire-droit, puis déguerpissement, puis ses motifs).
+		const memo = {};
+		const demande = function (code) {
+			if (!(code in conditions)) { return true; }
+			if (code in memo) { return memo[code]; }
+			memo[code] = false;
+			memo[code] = conditions[code].split('&&').every(function (c) {
+				const m = $.trim(c).match(/^([a-z0-9_.]+)/i);
+				return (!m || demande(m[1])) && evaluer_si(c, valeur);
+			});
+			return memo[code];
+		};
+		$('.red-champ[data-si]').each(function () { $(this).prop('hidden', !demande($(this).attr('data-code'))); });
+		$('details.red-bloc[data-dynamique]').each(function () {
+			const $b = $(this), $visibles = $b.find('.red-champ:not([hidden])');
+			$b.prop('hidden', $visibles.length === 0);
+			let remplis = 0;
+			$visibles.each(function () { if ($(this).find('input, select, textarea').filter(function () { return this.type !== 'hidden' && $.trim($(this).val()) !== ''; }).length) { remplis++; } });
+			$b.find('.red-bloc__etat').text(remplis + ' / ' + $visibles.length).toggleClass('red-bloc__etat--ok', remplis === $visibles.length);
+		});
+	}
+
+	document.addEventListener('DOMContentLoaded', function () {
+		maj_visibilites();
+		$('#form-decision').on('change input', 'select, input, textarea', maj_visibilites);
+	});
+
+	/** Affiche la ligne suivante d'une liste de parties ou de rubriques. */
+	function ajouter_ligne(bouton) {
+		const $lignes = $(bouton).closest('.red-liste').find('.red-fiche[hidden]');
+		$lignes.first().removeAttr('hidden').find('input[type="text"], textarea').first().trigger('focus');
+		if ($lignes.length <= 1) { $(bouton).attr('hidden', true); }
+	}
+
 	function recomposer_tribunal() {
 		Swal.fire({
 			title: APP_NOM, icon: 'question', showCancelButton: true, confirmButtonColor: '#00794C', cancelButtonColor: '#d33', cancelButtonText: 'Annuler', confirmButtonText: 'Oui, reprendre',
@@ -210,7 +263,7 @@
 	}
 
 	function ouvrir_signature() { $('#modal-signature').modal('show'); }
-	function ouvrir_delivrance() { $('#modal-delivrance').modal('show'); }
+	function ouvrir_transmission() { $('#modal-transmission').modal('show'); }
 
 	function corriger_decision() {
 		Swal.fire({

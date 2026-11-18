@@ -48,7 +48,7 @@
               <label class="el-switch el-switch--lg" for="f_actif">
                 <input type="checkbox" id="f_actif" name="actif" value="1" data-defaut="1">
                 <span class="el-switch__piste"><i></i></span>
-                <span class="el-switch__texte">Actif (proposé à l'enrôlement)</span>
+                <span class="el-switch__texte">Actif (proposé à l'enregistrement)</span>
               </label>
             </div>
           </div>

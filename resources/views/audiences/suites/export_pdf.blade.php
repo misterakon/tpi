@@ -31,7 +31,7 @@
 </tr></table>
 <p class="sous">{{ count($lignes) }} affaire(s) · {{ implode(' · ', $criteres) ?: 'Sans autre filtre' }}</p>
 @php
-  // Largeur de chaque colonne : date, chambre, affaire, enrôlée le, 1re audience, parties, objet, (suite), détail.
+  // Largeur de chaque colonne : date, chambre, affaire, enregistrée le, 1re audience, parties, objet, (suite), détail.
   $largeurs = count($colonnes) === 9 ? [8, 11, 7, 8, 8, 20, 15, 9, 14] : [8, 12, 8, 9, 9, 21, 18, 15];
 @endphp
 <table class="suites">

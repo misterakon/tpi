@@ -58,10 +58,10 @@
 		const kpiPct = function (p) { if (p == null || isNaN(p)) { return ''; } const v = Math.round(Math.max(0, Math.min(100, p))); return ' data-pct="' + v + '" style="--pct:' + v + '"'; };
 		const cartes = [
 			{ c: 'vert', i: 'fa-folder-open', l: 'Affaires en cours', v: k.stock, chip: ['fa-hourglass-half', 'stock du tribunal'] },
-			{ c: 'sarcelle', i: 'fa-file-circle-plus', l: 'Affaires enrôlées', v: k.entrees, chip: ['fa-calendar-plus', 'sur la période'] },
+			{ c: 'sarcelle', i: 'fa-file-circle-plus', l: 'Affaires enregistrées', v: k.entrees, chip: ['fa-calendar-plus', 'sur la période'] },
 			{ c: 'ardoise', i: 'fa-flag-checkered', l: 'Affaires terminées', v: k.sorties, chip: ['fa-gavel', 'jugées, radiées, jointes…'], href: LIENS.suites },
-			{ c: k.taux_sortie === null ? 'sarcelle' : (k.taux_sortie < 50 ? 'rouge' : (k.taux_sortie < 80 ? 'orange' : 'vert')), i: 'fa-gauge-high', l: 'Taux de traitement', v: k.taux_sortie, suf: ' %', chip: ['fa-scale-balanced', 'terminées pour 100 enrôlées'], pct: k.taux_sortie },
-			{ c: k.delai_moyen !== null && k.delai_moyen > 183 ? 'orange' : 'sarcelle', i: 'fa-stopwatch', l: 'Délai moyen', v: k.delai_moyen, suf: ' j', chip: ['fa-calendar-day', 'de l\'enrôlement à la fin'] },
+			{ c: k.taux_sortie === null ? 'sarcelle' : (k.taux_sortie < 50 ? 'rouge' : (k.taux_sortie < 80 ? 'orange' : 'vert')), i: 'fa-gauge-high', l: 'Taux de traitement', v: k.taux_sortie, suf: ' %', chip: ['fa-scale-balanced', 'terminées pour 100 enregistrées'], pct: k.taux_sortie },
+			{ c: k.delai_moyen !== null && k.delai_moyen > 183 ? 'orange' : 'sarcelle', i: 'fa-stopwatch', l: 'Délai moyen', v: k.delai_moyen, suf: ' j', chip: ['fa-calendar-day', 'de l\'enregistrement à la fin'] },
 			{ c: k.retards <= 0 ? 'vert' : (k.stock > 0 && k.retards / k.stock >= 0.3 ? 'rouge' : 'orange'), i: 'fa-clock', l: 'Affaires en retard', v: k.retards, chip: ['fa-triangle-exclamation', 'échéance dépassée'], href: LIENS.renvois, pct: k.stock > 0 ? k.retards / k.stock * 100 : null },
 			{ c: k.a_rediger > 0 ? 'orange' : 'vert', i: 'fa-pen-nib', l: 'Décisions à rédiger', v: k.a_rediger, chip: ['fa-gavel', k.a_rediger ? 'la plus ancienne : ' + k.plus_ancienne_decision + ' j' : 'rien en attente'], href: LIENS.redaction },
 			{ c: k.alertes_critiques > 0 ? 'rouge' : 'vert', i: 'fa-bell', l: 'Alertes critiques', v: k.alertes_critiques, chip: ['fa-list-check', k.alertes_ouvertes + ' alerte' + (k.alertes_ouvertes > 1 ? 's' : '') + ' ouverte' + (k.alertes_ouvertes > 1 ? 's' : '')], href: LIEN_SUIVI, pct: k.alertes_ouvertes > 0 ? k.alertes_critiques / k.alertes_ouvertes * 100 : null },
@@ -87,8 +87,8 @@
 		if (graphe) { graphe.destroy(); graphe = null; } $('#graphe').empty();
 		let options;
 		if (onglet === 'flux') {
-			$('#titre-graphe').text('Affaires enrôlées et terminées'); $('#sous-graphe').text('Affaires enregistrées au tribunal et affaires jugées, radiées, jointes ou désistées, mois par mois');
-			options = { chart: Object.assign({ type: 'bar', height: hauteurDispo('graphe') }, base), series: [{ name: 'Enrôlées', data: D.mensuel.entrees }, { name: 'Terminées', data: D.mensuel.sorties }], colors: ['#00A36C', '#F59A3B'],
+			$('#titre-graphe').text('Affaires enregistrées et terminées'); $('#sous-graphe').text('Affaires enregistrées au tribunal et affaires jugées, radiées, jointes ou désistées, mois par mois');
+			options = { chart: Object.assign({ type: 'bar', height: hauteurDispo('graphe') }, base), series: [{ name: 'Enregistrées', data: D.mensuel.entrees }, { name: 'Terminées', data: D.mensuel.sorties }], colors: ['#00A36C', '#F59A3B'],
 				plotOptions: { bar: { borderRadius: 5, columnWidth: '62%' } }, dataLabels: { enabled: false }, xaxis: { categories: D.mensuel.mois, labels: { style: { colors: '#2F3A52', fontSize: '11.5px' } } },
 				yaxis: { labels: { style: { colors: '#2F3A52' }, formatter: function (v) { return Math.round(v); } } }, grid: { borderColor: '#E3E9F0', strokeDashArray: 4 }, legend: { position: 'top', horizontalAlign: 'right', fontSize: '13px' }, tooltip: { shared: true, intersect: false } };
 		} else {

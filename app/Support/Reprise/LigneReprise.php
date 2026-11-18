@@ -15,7 +15,7 @@ class LigneReprise
 {
     /** Champs reconnaissables dans un fichier, avec leur libellé (la correspondance colonne/champ est choisie par l'utilisateur). */
     public const CHAMPS = [
-        'numero' => ['Numéro de l\'affaire', true], 'date' => ['Date d\'enrôlement', true], 'objet' => ['Objet ou prévention', true],
+        'numero' => ['Numéro de l\'affaire', true], 'date' => ['Date d\'enregistrement', true], 'objet' => ['Objet ou prévention', true],
         'demandeur' => ['Demandeur / prévenu / inculpé', false], 'defendeur' => ['Défendeur / victime', false], 'parties' => ['Parties (« A c/ B » dans une seule colonne)', false],
         'chambre' => ['Chambre ou cabinet', true], 'nature' => ['Nature de l\'affaire', false], 'audience' => ['Date de première audience', false], 'ancien_numero' => ['Ancien numéro', false],
     ];
@@ -35,16 +35,16 @@ class LigneReprise
         $def = RegistreAffaire::depuisSerie($serie);
         $res = ['serie' => $serie];
 
-        // Date d'enrôlement
+        // Date d'enregistrement
         $date = self::date($val('date'));
         if ($val('date') === '') {
-            $erreurs[] = "La date d'enrôlement est vide.";
+            $erreurs[] = "La date d'enregistrement est vide.";
         } elseif ($date === null) {
             $erreurs[] = 'Date illisible : « '.Str::limit($val('date'), 30).' » (attendu : jj/mm/aaaa).';
         } elseif ($date->isFuture()) {
-            $erreurs[] = "La date d'enrôlement est dans le futur.";
+            $erreurs[] = "La date d'enregistrement est dans le futur.";
         } elseif ($date->year < 1990) {
-            $erreurs[] = "La date d'enrôlement est antérieure à 1990.";
+            $erreurs[] = "La date d'enregistrement est antérieure à 1990.";
         }
         $res['date_rg'] = $date?->toDateString();
 

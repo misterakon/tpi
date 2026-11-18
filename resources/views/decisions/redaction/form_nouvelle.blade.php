@@ -24,7 +24,8 @@
                   <option value="{{ $m->id }}">{{ $m->nom }}{{ $m->etat === 'brouillon' ? ' (modèle en brouillon)' : '' }}</option>
                 @endforeach
               </select>
-              <small class="text-muted">Les modèles en brouillon sont proposés tant que les modèles définitifs ne sont pas validés.</small>
+              <small class="text-muted" id="modele_propose" style="display:block; color:#00613D !important; font-weight:600"></small>
+              <small class="text-muted">Les modèles en brouillon sont proposés tant que les modèles définitifs ne sont pas validés. Le modèle se propose tout seul quand on choisit l'affaire.</small>
             </div>
             <div class="el-c12">
               <label class="form-label" for="f_affaire_id"><b>Affaire</b></label>

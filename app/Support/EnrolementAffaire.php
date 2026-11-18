@@ -13,8 +13,8 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 /*
- | Règles communes à l'enrôlement et à la correction d'une affaire : contrôle du formulaire, nettoyage des parties, alerte de doublon,
- | contrôle de la date d'audience (date limite d'enrôlement, dérogation de la Présidente).
+ | Règles communes à l'enregistrement et à la correction d'une affaire : contrôle du formulaire, nettoyage des parties, alerte de doublon,
+ | contrôle de la date d'audience (date limite d'enregistrement, dérogation de la Présidente).
  */
 class EnrolementAffaire
 {
@@ -33,7 +33,7 @@ class EnrolementAffaire
             'nature_affaire_id' => ['required', 'integer', Rule::exists('natures_affaire', 'id')->whereIn('registre', $def['natures'])],
             'matiere_id' => ['required', 'integer', 'exists:matieres,id'],
             'chambre_id' => $creation ? ['required', 'integer', 'exists:chambres,id'] : ['nullable'],
-            // Mode manuel : le greffe gère l'enrôlement, on reporte sa date sans contrôle ; sinon la date ne peut pas être passée.
+            // Mode manuel : le greffe gère l'enregistrement, on reporte sa date sans contrôle ; sinon la date ne peut pas être passée.
             'date_premiere_audience' => $manuel || ! $civil ? ['nullable', 'date'] : ['nullable', 'date', 'after_or_equal:today'],
             'heure_premiere_audience' => ['nullable', 'date_format:H:i'],
             'derogation_motif' => ['nullable', 'string', 'max:300'],
@@ -146,7 +146,7 @@ class EnrolementAffaire
     }
 
     /**
-     * Date de première audience : contrôlée (fermeture, jour d'audience de la chambre, date limite d'enrôlement) puis, si elle est vide,
+     * Date de première audience : contrôlée (fermeture, jour d'audience de la chambre, date limite d'enregistrement) puis, si elle est vide,
      * la plus proche audience encore ouverte est proposée. Les référés et voies d'exécution ne sont pas soumis au contrôle.
      * Une date limite dépassée demande la dérogation de la Présidente (droit « enrolement.deroger ») avec un motif.
      *
@@ -155,11 +155,11 @@ class EnrolementAffaire
     public static function dateAudience(array $donnees, Request $request, Chambre $chambre, ?array $def = null): array
     {
         $date = $donnees['date_premiere_audience'] ?? null;
-        // La date limite d'enrôlement et les audiences proposées ne concernent que le civil.
+        // La date limite d'enregistrement et les audiences proposées ne concernent que le civil.
         if (($def['cle'] ?? 'civil') !== 'civil') {
             return [$date, null];
         }
-        // Mode manuel : l'enrôlement et sa date limite relèvent du greffe, on ne contrôle rien.
+        // Mode manuel : l'enregistrement et sa date limite relèvent du greffe, on ne contrôle rien.
         if (ParametresAffaires::numeroManuel('RG')) {
             return [$date, null];
         }
@@ -186,9 +186,9 @@ class EnrolementAffaire
             }
             $suite = CalendrierEnrolement::proposer($chambre);
             session()->flash('derogation', $peutDeroger);
-            throw ValidationException::withMessages(['date_premiere_audience' => "La date limite d'enrôlement pour cette audience est dépassée ("
+            throw ValidationException::withMessages(['date_premiere_audience' => "La date limite d'enregistrement pour cette audience est dépassée ("
                 .CalendrierEnrolement::libelleLimite($c['limite']).').'.($suite ? ' Première audience possible : '.CalendrierEnrolement::libelleDate(Carbon::parse($suite)).'.' : '')
-                .($peutDeroger ? " Indiquez le motif de la dérogation pour l'enrôler quand même." : " Seule la Présidente peut accorder une dérogation.")]);
+                .($peutDeroger ? " Indiquez le motif de la dérogation pour l'enregistrer quand même." : " Seule la Présidente peut accorder une dérogation.")]);
         }
 
         return [$date, null];

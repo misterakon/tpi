@@ -3,9 +3,9 @@
 namespace App\Support;
 
 /*
- | Paramètres propres à chaque TPI pour les affaires. À Bingerville, le greffe gère déjà l'enrôlement avec son logiciel : le siège reporte
- | le numéro RG (mode « manuel ») et le greffier de chambre ne voit jamais le mot « enrôlement » (son métier : établir le rôle d'audience).
- | Un TPI qui enrôle dans l'application choisit le mode « automatique ».
+ | Paramètres propres à chaque TPI pour les affaires. À Bingerville, le greffe gère déjà l'enregistrement avec son logiciel : le siège reporte
+ | le numéro RG (mode « manuel ») et le greffier de chambre ne voit jamais le mot « enregistrement » (son métier : établir le rôle d'audience).
+ | Un TPI qui enregistre dans l'application choisit le mode « automatique ».
  */
 class ParametresAffaires
 {
@@ -15,7 +15,7 @@ class ParametresAffaires
         return config('tpi.enrolement.numero.'.strtolower($serie), 'manuel') !== 'automatique';
     }
 
-    /** Une série au moins reçoit ses numéros du greffe : l'écran parle de « saisie » et non d'« enrôlement ». */
+    /** Une série au moins reçoit ses numéros du greffe : l'écran parle de « saisie » et non d'« enregistrement ». */
     public static function auMoinsUnManuel(): bool
     {
         foreach (['RG', 'RP', 'RI', 'RE'] as $serie) {
@@ -43,12 +43,12 @@ class ParametresAffaires
         }
 
         return [
-            'menu' => 'Enrôlement',
-            'titre' => 'Enrôlement',
+            'menu' => 'Enregistrement',
+            'titre' => 'Enregistrement',
             'sous_titre' => "Enregistrer une nouvelle affaire civile : le numéro RG est attribué à l'enregistrement, sans doublon ni trou, et ne change plus.",
-            'ajout' => 'Enrôler une affaire',
+            'ajout' => 'Enregistrer une affaire',
             'bouton' => 'Enregistrer et obtenir le numéro RG',
-            'recentes' => 'Derniers enrôlements',
+            'recentes' => 'Derniers enregistrements',
             'tag' => 'Affaires',
         ];
     }

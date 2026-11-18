@@ -116,7 +116,7 @@ class AffairesTest extends TestCase
         $this->charger();
         $admin = User::factory()->create();
 
-        $this->connecte($admin)->get(route('affaires.liste'))->assertOk()->assertSee('Enrôler une affaire')->assertSee('Mode de saisine')->assertSee('Les demandeurs')->assertSee('Les défendeurs');
+        $this->connecte($admin)->get(route('affaires.liste'))->assertOk()->assertSee('Enregistrer une affaire')->assertSee('Mode de saisine')->assertSee('Les demandeurs')->assertSee('Les défendeurs');
 
         $this->enroler($admin, ['parties' => [0 => ['autres' => 2]]])->assertSessionHasNoErrors()->assertRedirect();
         $affaire = Affaire::with('parties')->firstOrFail();
@@ -266,7 +266,7 @@ class AffairesTest extends TestCase
 
         // Lecture : on voit, on n'enrôle pas, on n'annule pas, on ne réattribue pas.
         $lecteur = $this->avecDroits(['enrolement.voir', 'affaires.voir', 'affaires.toutes_chambres']);
-        $this->connecte($lecteur)->get(route('affaires.liste'))->assertOk()->assertDontSee('Enrôler une affaire')->assertDontSee('Les demandeurs');
+        $this->connecte($lecteur)->get(route('affaires.liste'))->assertOk()->assertDontSee('Enregistrer une affaire')->assertDontSee('Les demandeurs');
         $this->connecte($lecteur)->get(route('affaires.liste.fiche', $affaire->id))->assertOk()->assertDontSee('Annuler l\'affaire');
         $this->enroler($lecteur)->assertForbidden();
         $this->connecte($lecteur)->postJson(route('affaires.enrolement.suggestions'), ['objet' => 'loyers'])->assertForbidden();
@@ -630,7 +630,7 @@ class AffairesTest extends TestCase
 
         // Un TPI qui enrôle dans l'application : le mot est de retour, le numéro est attribué.
         config(['tpi.enrolement.numero' => array_fill_keys(['rg', 'rp', 'ri', 're'], 'automatique')]);
-        $this->connecte($greffier)->get(route('affaires.liste'))->assertOk()->assertSee('Enrôler une affaire')->assertDontSee('name="numero_rg"', false);
+        $this->connecte($greffier)->get(route('affaires.liste'))->assertOk()->assertSee('Enregistrer une affaire')->assertDontSee('name="numero_rg"', false);
     }
 
     public function test_le_ministere_public_est_une_partie(): void

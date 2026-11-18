@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 /*
- | Dates limites d'enrôlement (article 7) : pour chaque jour d'audience, jour et heure de clôture de la semaine précédente.
+ | Dates limites d'enregistrement (article 7) : pour chaque jour d'audience, jour et heure de clôture de la semaine précédente.
  | Droits : delais.voir / creer / modifier / supprimer.
  */
 class DelaiEnrolementController extends Controller
@@ -36,7 +36,7 @@ class DelaiEnrolementController extends Controller
         return response()->json(['id' => $d->id, 'jour_audience' => $d->jour_audience, 'jour_limite' => $d->jour_limite, 'heure' => substr($d->heure, 0, 5), 'remarque' => $d->remarque]);
     }
 
-    /** Calcul d'essai : date limite d'enrôlement pour une date d'audience. */
+    /** Calcul d'essai : date limite d'enregistrement pour une date d'audience. */
     public function calculer(Request $request): JsonResponse
     {
         Gate::authorize('delais.voir');
@@ -47,8 +47,8 @@ class DelaiEnrolementController extends Controller
         return response()->json([
             'status' => (bool) $limite,
             'message' => $limite
-                ? 'Enrôlement jusqu\'au '.Creneau::JOURS[$limite->isoWeekday()].' '.$limite->format('d/m/Y').' à '.$limite->format('H\hi').'.'
-                : "Aucune règle d'enrôlement pour ce jour d'audience.",
+                ? 'Enregistrement jusqu\'au '.Creneau::JOURS[$limite->isoWeekday()].' '.$limite->format('d/m/Y').' à '.$limite->format('H\hi').'.'
+                : "Aucune règle d'enregistrement pour ce jour d'audience.",
         ]);
     }
 

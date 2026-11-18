@@ -122,6 +122,7 @@ class AffaireController extends Controller
 
         return view('affaires.liste.fiche', [
             'affaire' => $affaire,
+            'chronologie' => \App\Support\Durees::chronologie($affaire),
             'correction' => $peutCorriger ? $this->donneesDeCorrection($affaire) : null,
             'dossier' => Gate::allows('dossiers.voir') ? $this->donneesDuDossier($affaire) : null,
             // Scellés : seulement pour le pénal et l'instruction, et pour qui a le droit de les voir.

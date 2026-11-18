@@ -39,9 +39,9 @@
       <div class="pi-graphiques">
         <section class="pi-carte">
           <div class="pi-carte__tete">
-            <div><h3 id="titre-graphe">Affaires enrôlées et terminées</h3><small id="sous-graphe">Affaires enregistrées au tribunal et affaires jugées, radiées, jointes ou désistées, mois par mois</small></div>
+            <div><h3 id="titre-graphe">Affaires enregistrées et terminées</h3><small id="sous-graphe">Affaires enregistrées au tribunal et affaires jugées, radiées, jointes ou désistées, mois par mois</small></div>
             <div class="au-onglets" id="onglets-graphe" data-no-print>
-              <button type="button" class="is-actif" data-g="flux">Enrôlées et terminées</button><button type="button" data-g="chambres">Par chambre</button>
+              <button type="button" class="is-actif" data-g="flux">Enregistrées et terminées</button><button type="button" data-g="chambres">Par chambre</button>
             </div>
           </div>
           <div class="pi-graphe" id="graphe"></div>
@@ -79,7 +79,7 @@
           <div class="au-fond"><div class="au-tbl-carte">
             <table class="au-tbl pi-tbl" id="tbl-a">
               
-              <thead><tr><th data-tri="libelle">Chambre</th><th data-tri="stock" title="Affaires en cours aujourd'hui">En cours</th><th data-tri="entrees" title="Affaires enregistrées au tribunal sur la période">Enrôlées</th><th data-tri="sorties" title="Affaires jugées, radiées, jointes ou désistées">Terminées</th><th data-tri="taux_sortie" title="Affaires terminées pour 100 enrôlées">Taux</th><th data-tri="delai_moyen" title="De l'enrôlement à la fin de l'affaire">Délai</th><th data-tri="retards" title="Échéance dépassée">En retard</th><th data-tri="a_rediger" title="Affaires jugées sans décision validée">À rédiger</th><th data-tri="renvois_pct" title="Part des renvois parmi les suites notées">Renvois</th><th data-tri="alertes" title="Alertes ouvertes">Alertes</th></tr></thead>
+              <thead><tr><th data-tri="libelle">Chambre</th><th data-tri="stock" title="Affaires en cours aujourd'hui">En cours</th><th data-tri="entrees" title="Affaires enregistrées au tribunal sur la période">Enregistrées</th><th data-tri="sorties" title="Affaires jugées, radiées, jointes ou désistées">Terminées</th><th data-tri="taux_sortie" title="Affaires terminées pour 100 enregistrées">Taux</th><th data-tri="delai_moyen" title="De l'enregistrement à la fin de l'affaire">Délai</th><th data-tri="retards" title="Échéance dépassée">En retard</th><th data-tri="a_rediger" title="Affaires jugées sans décision validée">À rédiger</th><th data-tri="renvois_pct" title="Part des renvois parmi les suites notées">Renvois</th><th data-tri="alertes" title="Alertes ouvertes">Alertes</th></tr></thead>
               <tbody id="corps-a"></tbody>
             </table>
           </div></div>
@@ -88,7 +88,7 @@
           <div class="au-fond"><div class="au-tbl-carte">
             <table class="au-tbl pi-tbl" id="tbl-b">
               
-              <thead><tr><th data-tri="libelle">Chambre</th><th data-tri="stock" title="Affaires en cours aujourd'hui">En cours</th><th data-tri="entrees" title="Affaires enregistrées au tribunal sur la période">Enrôlées</th><th data-tri="sorties" title="Affaires jugées, radiées, jointes ou désistées">Terminées</th><th data-tri="taux_sortie" title="Affaires terminées pour 100 enrôlées">Taux</th><th data-tri="delai_moyen" title="De l'enrôlement à la fin de l'affaire">Délai</th><th data-tri="retards" title="Échéance dépassée">En retard</th><th data-tri="a_rediger" title="Affaires jugées sans décision validée">À rédiger</th><th data-tri="renvois_pct" title="Part des renvois parmi les suites notées">Renvois</th><th data-tri="alertes" title="Alertes ouvertes">Alertes</th></tr></thead>
+              <thead><tr><th data-tri="libelle">Chambre</th><th data-tri="stock" title="Affaires en cours aujourd'hui">En cours</th><th data-tri="entrees" title="Affaires enregistrées au tribunal sur la période">Enregistrées</th><th data-tri="sorties" title="Affaires jugées, radiées, jointes ou désistées">Terminées</th><th data-tri="taux_sortie" title="Affaires terminées pour 100 enregistrées">Taux</th><th data-tri="delai_moyen" title="De l'enregistrement à la fin de l'affaire">Délai</th><th data-tri="retards" title="Échéance dépassée">En retard</th><th data-tri="a_rediger" title="Affaires jugées sans décision validée">À rédiger</th><th data-tri="renvois_pct" title="Part des renvois parmi les suites notées">Renvois</th><th data-tri="alertes" title="Alertes ouvertes">Alertes</th></tr></thead>
               <tbody id="corps-b"></tbody>
             </table>
           </div></div>

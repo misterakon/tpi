@@ -5,8 +5,8 @@ namespace App\Services;
 use Illuminate\Support\Facades\DB;
 
 /*
- | Attribution des numéros de registre (RG, RP, RI, RE) au format RG-0001/26, avec redémarrage chaque année.
- | Le compteur est verrouillé le temps de l'attribution : deux greffiers qui enrôlent en même temps reçoivent deux numéros différents,
+ | Attribution des numéros de registre (RG, RP, RI, RE, RQ) au format RG-01/26 (deux chiffres au moins, puis 12/26, 123/26…), avec redémarrage chaque année.
+ | Le compteur est verrouillé le temps de l'attribution : deux greffiers qui enregistrent en même temps reçoivent deux numéros différents,
  | sans trou. À appeler dans la transaction qui crée l'affaire : si la création échoue, le numéro n'est pas consommé.
  */
 class NumerotationRegistre
@@ -32,9 +32,9 @@ class NumerotationRegistre
         DB::table('compteurs_registre')->where('serie', $serie)->where('annee', $annee)->lockForUpdate()->first();
     }
 
-    /** « RG-0001/26 » : quatre chiffres, année sur deux chiffres. */
+    /** « RG-01/26 », « RG-12/26 », « RG-1391/26 » : deux chiffres au moins (jamais de zéros en trop), année sur deux chiffres. */
     public static function formater(string $serie, int $numero, int $annee): string
     {
-        return sprintf('%s-%04d/%02d', $serie, $numero, $annee % 100);
+        return sprintf('%s-%02d/%02d', $serie, $numero, $annee % 100);
     }
 }

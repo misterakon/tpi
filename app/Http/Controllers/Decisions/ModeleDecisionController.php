@@ -191,7 +191,7 @@ class ModeleDecisionController extends Controller
             'interligneQualite' => (int) $c['interligne_qualite_pct'], 'interligneFactum' => (int) $c['interligne_factum_pct'], 'margeHaut' => (int) $c['marge_haut_mm'], 'margeBas' => (int) $c['marge_bas_mm'],
             'margeGauche' => (int) $c['marge_gauche_mm'], 'margeDroite' => (int) $c['marge_droite_mm'], 'timbreLargeur' => (int) $c['timbre_largeur_mm'],
             'timbreHauteur' => (int) $c['timbre_hauteur_mm'], 'timbreGauche' => (int) $c['timbre_gauche_mm'], 'timbreHaut' => (int) $c['timbre_haut_mm'],
-            'retrait' => (int) $c['retrait_qualite_mm'],
+            'retrait' => (int) $c['retrait_qualite_mm'], 'retraitFactum' => (int) ($c['retrait_factum_mm'] ?? $c['retrait_qualite_mm']),
         ];
     }
 

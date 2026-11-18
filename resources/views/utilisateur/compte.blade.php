@@ -89,7 +89,7 @@
                         <div style="min-width:0">
                           <div class="el-person__name">{{ $compte->name }}</div>
                           <div class="el-person__sub">{{ $compte->email }}</div>
-                          <div class="el-person__sub" title="{{ $compte->agent ? 'Relié à '.$compte->agent->nomComplet() : 'Aucun agent relié : à faire dans « Magistrats et greffiers »' }}"><i class="fa-solid {{ $compte->agent ? 'fa-link' : 'fa-link-slash' }}"></i> {{ $compte->agent ? $compte->agent->nomComplet().' · '.$compte->agent->fonctionLibelle() : 'Aucun agent relié' }}</div>
+                          <div class="el-person__sub" title="{{ $compte->agent ? 'Relié à '.$compte->agent->nomComplet() : 'Aucun agent relié : à faire dans « Personnel du tribunal »' }}"><i class="fa-solid {{ $compte->agent ? 'fa-link' : 'fa-link-slash' }}"></i> {{ $compte->agent ? $compte->agent->nomComplet().' · '.$compte->agent->fonctionLibelle() : 'Aucun agent relié' }}</div>
                         </div>
                       </div>
                     </td>

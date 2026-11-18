@@ -17,7 +17,7 @@ use Illuminate\View\View;
 
 /*
  | Référentiel des avocats et cabinets. Droits : avocats.voir / creer / modifier / supprimer.
- | Un avocat déjà cité dans des affaires ne se supprime pas : on le désactive (il ne sera plus proposé à l'enrôlement).
+ | Un avocat déjà cité dans des affaires ne se supprime pas : on le désactive (il ne sera plus proposé à l'enregistrement).
  */
 class AvocatController extends Controller
 {
@@ -99,7 +99,7 @@ class AvocatController extends Controller
         $avant = $a ? $a->only(self::CHAMPS) : [];
         $a ??= new Avocat;
         $a->forceFill($donnees)->save();
-        // Les affaires déjà enrôlées gardent l'écriture de la fiche à jour.
+        // Les affaires déjà enregistrées gardent l'écriture de la fiche à jour.
         $a->parties()->update(['avocat' => $a->libelle()]);
 
         Journal::audit($avant ? 'avocat_modifie' : 'avocat_cree', $a, $a->libelle(), $avant, $a->only(self::CHAMPS));

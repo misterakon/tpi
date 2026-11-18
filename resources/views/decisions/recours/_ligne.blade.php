@@ -16,9 +16,9 @@
               <td>
                 <div style="display:flex; gap:6px; flex-wrap:nowrap">
                   @if ($e['etat'] !== 'certifie')
-                    @can('recours.modifier')<button class="el-iconbtn el-iconbtn--blue" type="button" title="Enregistrer la signification" aria-label="Signification" onclick='ouvrir_signif({{ $d->id }}, @js($d->numeroAffichage()), @js($e["signification"]?->format("Y-m-d")), @js($e["nature"]))'><i class="fa-solid fa-envelope-open-text"></i></button>@endcan
-                    @can('recours.creer')<button class="el-iconbtn el-iconbtn--red" type="button" title="Enregistrer un recours" aria-label="Recours" onclick='ouvrir_recours({{ $d->id }}, @js($d->numeroAffichage()))'><i class="fa-solid fa-gavel"></i></button>@endcan
-                    @if ($peutCertifier && $e['certifiable'])<button class="el-iconbtn el-iconbtn--green" type="button" title="Délivrer le certificat" aria-label="Certificat" onclick='ouvrir_certificat({{ $d->id }}, @js($d->numeroAffichage()))'><i class="fa-solid fa-stamp"></i></button>@endif
+                    @can('recours.modifier')<button class="el-iconbtn el-iconbtn--blue" type="button" title="Enregistrer la signification" aria-label="Signification" onclick="ouvrir_signif({{ $d->id }}, @js($d->numeroAffichage()), @js($e["signification"]?->format("Y-m-d")), @js($e["nature"]))"><i class="fa-solid fa-envelope-open-text"></i></button>@endcan
+                    @can('recours.creer')<button class="el-iconbtn el-iconbtn--red" type="button" title="Enregistrer un recours" aria-label="Recours" onclick="ouvrir_recours({{ $d->id }}, @js($d->numeroAffichage()))"><i class="fa-solid fa-gavel"></i></button>@endcan
+                    @if ($peutCertifier && $e['certifiable'])<button class="el-iconbtn el-iconbtn--green" type="button" title="Délivrer le certificat" aria-label="Certificat" onclick="ouvrir_certificat({{ $d->id }}, @js($d->numeroAffichage()))"><i class="fa-solid fa-stamp"></i></button>@endif
                     @foreach ($l['recours']->where('statut', 'forme') as $r)
                       @can('recours.modifier')<button class="el-iconbtn el-iconbtn--blue" type="button" title="Transmettre à la Cour d'appel" aria-label="Transmettre" onclick='ouvrir_transmission({{ $r->id }})'><i class="fa-solid fa-paper-plane"></i></button>@endcan
                     @endforeach

@@ -10,11 +10,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /** Décision en cours de rédaction ou validée, écrite à partir d'un modèle de décision. */
 class Decision extends Model
 {
-    /** Le cycle de vie : on rédige, on valide (texte figé), on signe (numéro attribué), on délivre. */
-    public const STATUTS = ['brouillon' => 'Brouillon', 'redigee' => 'Rédigée', 'validee' => 'Validée', 'signee' => 'Signée', 'delivree' => 'Délivrée'];
+    /** Le cycle de vie : on rédige, on valide (texte figé), on signe (numéro attribué), on transmet au greffe (la date de transmission vaut date de délivrance). */
+    public const STATUTS = ['brouillon' => 'Brouillon', 'redigee' => 'Rédigée', 'validee' => 'Validée', 'signee' => 'Signée', 'transmise' => 'Transmise au greffe'];
 
     /** Les statuts où le texte est figé. */
-    public const STATUTS_VALIDES = ['validee', 'signee', 'delivree'];
+    public const STATUTS_VALIDES = ['validee', 'signee', 'transmise'];
 
     public const TYPES_DELIVRANCE = ['expedition' => 'Expédition', 'grosse' => 'Grosse (copie exécutoire)', 'copie' => 'Copie simple'];
 
@@ -26,7 +26,7 @@ class Decision extends Model
     {
         return [
             'valeurs' => 'array', 'retouches' => 'array', 'rendu' => 'array', 'validee_le' => 'datetime', 'date_decision' => 'date', 'numero_le' => 'datetime', 'redigee_le' => 'datetime',
-            'date_signature' => 'date', 'signee_le' => 'datetime', 'delivree_le' => 'datetime',
+            'date_signature' => 'date', 'signee_le' => 'datetime', 'delivree_le' => 'datetime', 'transmise_le' => 'datetime',
         ];
     }
 
@@ -87,7 +87,13 @@ class Decision extends Model
 
     public function estSignee(): bool
     {
-        return in_array($this->statut, ['signee', 'delivree'], true);
+        return in_array($this->statut, ['signee', 'transmise'], true);
+    }
+
+    /** Le juge a transmis la décision signée au greffe : la date de transmission vaut date de délivrance. */
+    public function estTransmise(): bool
+    {
+        return $this->transmise_le !== null;
     }
 
     /** « D-145/2026 » (D, numéro dans l'année, année), ou null tant que la décision n'a pas de numéro. */
@@ -112,17 +118,20 @@ class Decision extends Model
         $valide = $this->estValidee();
         $jour = fn ($d) => $d?->format('d/m/Y');
 
+        // Le numéro n'a sa propre étape que s'il est donné à part (par le greffier de la chambre, avant la validation) ; sinon il fait partie de
+        // la validation (ou de la signature) et s'affiche sous cette étape.
+        $moment = \App\Services\NumeroDecision::moment();
+        $parLeGreffier = $moment === 'redaction';
         $numerotee = ['code' => 'numerotee', 'libelle' => 'Numérotée', 'fait' => $this->numero !== null, 'date' => $this->numeroAffichage()];
-        $parLeGreffier = \App\Services\NumeroDecision::moment() === 'redaction';
+        $avecNumero = fn (string $jour, string $etape) => $moment === $etape && $this->numero !== null ? trim($jour.' · n° '.$this->numeroAffichage(), ' ·') : $jour;
 
         return array_values(array_filter([
             ['code' => 'brouillon', 'libelle' => 'Rédaction', 'fait' => true, 'date' => $jour($this->created_at)],
             ['code' => 'redigee', 'libelle' => 'Rédigée', 'fait' => $valide || $this->estRedigee(), 'date' => $jour($this->redigee_le)],
             $parLeGreffier ? $numerotee : null,
-            ['code' => 'validee', 'libelle' => 'Validée', 'fait' => $valide, 'date' => $jour($this->validee_le)],
-            ['code' => 'signee', 'libelle' => 'Signée', 'fait' => $this->estSignee(), 'date' => $jour($this->date_signature)],
-            $parLeGreffier ? null : $numerotee,
-            ['code' => 'delivree', 'libelle' => 'Délivrée', 'fait' => $this->statut === 'delivree', 'date' => $jour($this->delivree_le)],
+            ['code' => 'validee', 'libelle' => 'Validée', 'fait' => $valide, 'date' => $avecNumero((string) $jour($this->validee_le), 'validation')],
+            ['code' => 'signee', 'libelle' => 'Signée', 'fait' => $this->estSignee(), 'date' => $avecNumero((string) $jour($this->date_signature), 'signature')],
+            ['code' => 'transmise', 'libelle' => 'Transmise au greffe', 'fait' => $this->estTransmise(), 'date' => $jour($this->transmise_le)],
         ]));
     }
 

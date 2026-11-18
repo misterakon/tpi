@@ -66,7 +66,8 @@ class NombreEnLettres
         $texte = self::convertir($n, $feminin).' ('.$chiffres.')';
 
         if ($singulier !== null) {
-            $texte .= ' '.($n >= 2 ? ($pluriel ?? $singulier.'s') : $singulier);
+            // Un mot qui finit par s, x ou z ne change pas au pluriel (« mois », « prix »).
+            $texte .= ' '.($n >= 2 ? ($pluriel ?? (preg_match('/[sxz]$/u', $singulier) ? $singulier : $singulier.'s')) : $singulier);
         }
 
         return $texte;

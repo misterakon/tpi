@@ -52,10 +52,10 @@
 		$('#filtres-suite').html(html);
 	}
 
-	/* Les dates qui situent l'affaire : son enrôlement et, quand elle est connue, sa première audience. */
+	/* Les dates qui situent l'affaire : son enregistrement et, quand elle est connue, sa première audience. */
 	function datesAffaire(l) {
 		const une = function (libelle, v) { return v ? '<div><span>' + libelle + '</span><b>' + esc(v) + '</b></div>' : ''; };
-		return une('Enrôlée le', l.enrolee_le) + une('1re audience', l.premiere_le) || '<span class="au-tbl__vide">—</span>';
+		return une('Enregistrée le', l.enrolee_le) + une('1re audience', l.premiere_le) || '<span class="au-tbl__vide">—</span>';
 	}
 
 	/* Pendant le chargement, des lignes grisées qui pulsent montrent que la liste arrive. */

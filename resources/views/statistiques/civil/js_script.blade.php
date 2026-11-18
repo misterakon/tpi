@@ -41,7 +41,7 @@
 
 	function afficher() {
 		const k = D.kpis;
-		$id('st-resume').innerHTML = '<i class="fa-solid fa-scale-balanced"></i> ' + nb(D.total_affaires) + ' affaire(s) civile(s) analysée(s)' + (D.sans_audience ? ' · <i class="fa-solid fa-triangle-exclamation"></i> ' + D.sans_audience + ' sans date de première audience (comptées à la date d\'enrôlement)' : '');
+		$id('st-resume').innerHTML = '<i class="fa-solid fa-scale-balanced"></i> ' + nb(D.total_affaires) + ' affaire(s) civile(s) analysée(s)' + (D.sans_audience ? ' · <i class="fa-solid fa-triangle-exclamation"></i> ' + D.sans_audience + ' sans date de première audience (comptées à la date d\'enregistrement)' : '');
 		const evo = (k.evolution != null && k.evolution > 0) ? Math.round((k.nouvelles - k.evolution) / k.evolution * 100) : null;
 		const tendance = evo == null ? '' : '<span class="st-tendance ' + (evo >= 0 ? 'st-tendance--haut' : 'st-tendance--bas') + '">' + (evo >= 0 ? '▲ +' : '▼ ') + evo + ' %</span>';
 		$id('st-tuiles').innerHTML =

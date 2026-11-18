@@ -1,4 +1,4 @@
-{{-- Fenêtre de saisie d'une formation ; incluse dans la page « Composition » d'une chambre (variable : $chambre). --}}
+{{-- Fenêtre de saisie d'une formation ; incluse dans la page « Chambres » (la chambre est renseignée par le script à l'ouverture). --}}
 <div class="modal fade panel-modal" id="modal-formation" tabindex="-1" role="dialog" aria-labelledby="titre-modal-formation" aria-hidden="true" data-keyboard="false">
   <div class="modal-dialog" style="width:60%">
     <div class="modal-content">
@@ -10,7 +10,7 @@
       <form class="modal_form_formation" id="form-formation" action="{{ route('organisation.formations.store') }}" method="post" autocomplete="off">
         @csrf
         <input type="hidden" name="id_" value="">
-        <input type="hidden" name="chambre_id" value="{{ $chambre->id }}">
+        <input type="hidden" name="chambre_id" value="">
 
         <div class="modal-body dark-modal">
           <div class="el-formgrid">
@@ -42,6 +42,9 @@
         </div>
 
         <div class="modal-footer">
+          @can('formations.supprimer')
+            <button class="btn btn-danger text-white me-auto d-none" id="btn-supprimer-formation" type="button"><i class="fa-regular fa-trash-can"></i> Supprimer</button>
+          @endcan
           <button class="btn btn-secondary text-white" type="button" data-bs-dismiss="modal">Annuler</button>
           <button class="btn btn-primary text-white submit" type="submit">Enregistrer</button>
         </div>

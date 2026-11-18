@@ -9,12 +9,40 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /*
- | Personne du tribunal (magistrat ou greffier) qui peut être affectée à une formation.
+ | Personne du tribunal (magistrat, greffier, assesseur, personnel administratif et technique ou membre extérieur).
+ | Les magistrats, greffiers et assesseurs peuvent être affectés à une formation.
  | Distincte du compte utilisateur : un agent peut ne pas avoir de compte ; le lien est facultatif.
  */
 class Agent extends Model
 {
     use SoftDeletes;
+
+    /**
+     * Catégories du personnel. Les agents inter-ministériels (agents de bureau, informaticiens…) forment une catégorie à part :
+     * l'ordonnance ne les cite pas, ils ne sont donc affectés ni aux chambres ni aux formations.
+     */
+    public const CATEGORIES = [
+        'magistrat' => [
+            'libelle' => 'Magistrats', 'singulier' => 'Magistrat', 'icone' => 'fa-solid fa-gavel', 'ton' => 'blue', 'chip' => 'info',
+            'fonctions' => ['presidente', 'vice_president', 'juge', 'juge_instruction', 'juge_enfants'],
+        ],
+        'greffier' => [
+            'libelle' => 'Greffiers', 'singulier' => 'Greffier', 'icone' => 'fa-solid fa-file-signature', 'ton' => 'green', 'chip' => 'success',
+            'fonctions' => ['greffier_en_chef', 'greffier_en_chef_adjoint', 'greffier', 'secretaire'],
+        ],
+        'assesseur' => [
+            'libelle' => 'Assesseurs', 'singulier' => 'Assesseur', 'icone' => 'fa-solid fa-scale-balanced', 'ton' => 'amber', 'chip' => 'warning',
+            'fonctions' => ['assesseur_spjej', 'assesseur_employeur', 'assesseur_travailleur'],
+        ],
+        'administratif' => [
+            'libelle' => 'Personnel administratif et technique', 'singulier' => 'Administratif / technique', 'icone' => 'fa-solid fa-laptop-code', 'ton' => 'purple', 'chip' => 'purple',
+            'fonctions' => ['agent_de_bureau', 'agent_administratif', 'informaticien', 'agent_technique', 'service_social', 'autre'],
+        ],
+        'exterieur' => [
+            'libelle' => 'Membres extérieurs', 'singulier' => 'Membre extérieur', 'icone' => 'fa-solid fa-handshake', 'ton' => 'red', 'chip' => 'neutral',
+            'fonctions' => ['membre_exterieur'],
+        ],
+    ];
 
     public const FONCTIONS = [
         'presidente' => 'Président(e) du tribunal',
@@ -29,7 +57,12 @@ class Agent extends Model
         'assesseur_spjej' => 'Assesseur SPJEJ',
         'assesseur_employeur' => 'Assesseur employeur',
         'assesseur_travailleur' => 'Assesseur travailleur',
+        'agent_de_bureau' => 'Agent de bureau',
+        'agent_administratif' => 'Agent administratif',
+        'informaticien' => 'Informaticien',
+        'agent_technique' => 'Agent technique (entretien, sécurité…)',
         'service_social' => 'Service social (SPJEJ)',
+        'membre_exterieur' => 'Membre extérieur (bureau, commission)',
         'autre' => 'Autre',
     ];
 
@@ -43,6 +76,33 @@ class Agent extends Model
     protected function casts(): array
     {
         return ['actif' => 'boolean'];
+    }
+
+    /** Un agent créé sans catégorie (reprise Excel, seeder) est classé d'après sa fonction. */
+    protected static function booted(): void
+    {
+        static::saving(function (Agent $agent) {
+            if (blank($agent->categorie)) {
+                $agent->categorie = self::categorieDe((string) $agent->fonction);
+            }
+        });
+    }
+
+    /** Catégorie à laquelle appartient une fonction. */
+    public static function categorieDe(string $fonction): string
+    {
+        foreach (self::CATEGORIES as $cle => $categorie) {
+            if (in_array($fonction, $categorie['fonctions'], true)) {
+                return $cle;
+            }
+        }
+
+        return 'administratif';
+    }
+
+    public function categorieLibelle(): string
+    {
+        return self::CATEGORIES[$this->categorie]['libelle'] ?? 'Autre';
     }
 
     public function user(): BelongsTo

@@ -33,7 +33,7 @@
         </div>
         <div class="el-tblwrap">
           <table class="el-tbl el-tbl--fixe" id="tbl-seances" data-serveur="{{ route('audiences.seances.donnees') }}">
-            <colgroup><col style="width:130px"><col style="width:190px"><col style="width:190px"><col><col style="width:120px"><col style="width:170px"></colgroup>
+            <colgroup><col style="width:130px"><col style="width:190px"><col style="width:190px"><col><col style="width:120px"><col style="width:205px"></colgroup>
             <thead><tr><th>Date</th><th>Séance</th><th>Magistrat et greffier</th><th>Dossiers examinés</th><th>État</th><th>Actions</th></tr></thead>
             <tbody>
             </tbody>
@@ -69,7 +69,7 @@
       <form method="post" id="f-dossier" autocomplete="off">
         @csrf
         <div class="modal-body dark-modal"><div class="el-formgrid">
-          <div class="el-c12"><label class="form-label"><b>Affaire (facultatif)</b></label><select class="form-select" name="affaire_id"><option value="">Aucune affaire enrôlée</option>@foreach ($affaires as $a)<option value="{{ $a->id }}">{{ $a->numero_complet }} : {{ \Illuminate\Support\Str::limit($a->objet, 60) }}</option>@endforeach</select></div>
+          <div class="el-c12"><label class="form-label"><b>Affaire (facultatif)</b></label><select class="form-select" name="affaire_id"><option value="">Aucune affaire enregistrée</option>@foreach ($affaires as $a)<option value="{{ $a->id }}">{{ $a->numero_complet }} : {{ \Illuminate\Support\Str::limit($a->objet, 60) }}</option>@endforeach</select></div>
           <div class="el-c12"><label class="form-label"><b>Objet</b></label><input class="form-control" type="text" name="objet" maxlength="250" required></div>
           <div class="el-c12"><label class="form-label"><b>Issue</b></label><input class="form-control" type="text" name="issue" maxlength="250" placeholder="Ex. : ordonnance rendue, tentative de conciliation échouée"></div>
         </div></div>

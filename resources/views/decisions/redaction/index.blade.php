@@ -32,7 +32,7 @@
 
         <div class="el-tblwrap">
           <table class="el-tbl el-tbl--fixe" id="tbl-decisions" data-serveur="{{ route('decisions.redaction.donnees') }}">
-            <colgroup><col><col style="width:130px"><col style="width:150px"><col style="width:170px"><col style="width:170px"></colgroup>
+            <colgroup><col><col style="width:80px"><col style="width:215px"><col style="width:150px"><col style="width:215px"></colgroup>
             <thead>
               <tr><th>Décision</th><th>Version</th><th>État</th><th>Modifiée le</th><th>Actions</th></tr>
             </thead>

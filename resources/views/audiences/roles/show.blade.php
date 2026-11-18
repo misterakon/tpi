@@ -84,6 +84,10 @@
                                 @if ($i === 1 && $role->type !== 'penal')<span class="rl-vide">—</span>@endif
                               @endforelse
                             @endif
+                            @if ($i === count($cellules) - 1 && $l->affaire?->date_rg)
+                              @php $jours = \App\Support\Durees::entre($l->affaire->date_rg, $role->date_audience); @endphp
+                              <div class="rl-duree" style="margin-top:4px; font-size:12px; opacity:.75" title="Du jour de l'enregistrement ({{ $l->affaire->date_rg->format('d/m/Y') }}) au jour de l'audience"><i class="fa-regular fa-hourglass-half"></i> {{ $jours === 0 ? "Enregistrée le jour de l'audience" : 'Enregistrée '.\App\Support\Durees::texte($jours)." avant l'audience" }}</div>
+                            @endif
                             @if ($i === count($cellules) - 1 && $l->issue)
                               <span class="rl-suite rl-suite--{{ $l->issue }}" title="Suite donnée à l'audience (non imprimée)"><i class="fa-solid fa-flag-checkered"></i> {{ \App\Models\RoleLigne::ISSUES[$l->issue] }}{{ $l->renvoi_au ? ' au '.$l->renvoi_au->format('d/m/Y') : '' }}</span>
                             @endif

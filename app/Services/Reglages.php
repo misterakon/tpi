@@ -103,9 +103,9 @@ class Reglages
             'affaires' => [
                 'libelle' => 'Affaires',
                 'icone' => 'fa-solid fa-folder-open',
-                'description' => "Comment les numéros d'affaire sont obtenus, série par série. À Bingerville, le greffe a son propre logiciel d'enrôlement : on reporte ses numéros à la main. Un TPI qui enrôle dans l'application choisit l'attribution automatique.",
+                'description' => "Comment les numéros d'affaire sont obtenus, série par série. À Bingerville, le greffe a son propre logiciel d'enregistrement : on reporte ses numéros à la main. Un TPI qui enregistre dans l'application choisit l'attribution automatique.",
                 'champs' => [
-                    'tpi.enrolement.numero.rg' => ['libelle' => 'Numéro RG (civil)', 'type' => 'liste', 'options' => self::MODES_NUMERO, 'aide' => "Mode « saisi à la main » : le numéro est celui du greffe, sans contrôle de la date d'audience. Mode automatique : numérotation sans doublon ni trou, date limite d'enrôlement contrôlée."],
+                    'tpi.enrolement.numero.rg' => ['libelle' => 'Numéro RG (civil)', 'type' => 'liste', 'options' => self::MODES_NUMERO, 'aide' => "Mode « saisi à la main » : le numéro est celui du greffe, sans contrôle de la date d'audience. Mode automatique : numérotation sans doublon ni trou, date limite d'enregistrement contrôlée."],
                     'tpi.enrolement.numero.rp' => ['libelle' => 'Numéro RP (pénal)', 'type' => 'liste', 'options' => self::MODES_NUMERO, 'aide' => 'Le numéro RP est normalement celui du parquet : à saisir à la main, sauf si le TPI préfère un numéro généré.'],
                     'tpi.enrolement.numero.ri' => ['libelle' => 'Numéro RI (instruction, adultes)', 'type' => 'liste', 'options' => self::MODES_NUMERO, 'aide' => "Registre des cabinets d'instruction pour les adultes."],
                     'tpi.enrolement.numero.re' => ['libelle' => 'Numéro RE (instruction, enfants)', 'type' => 'liste', 'options' => self::MODES_NUMERO, 'aide' => 'Registre des cabinets des juges des enfants.'],
@@ -136,15 +136,17 @@ class Reglages
                     'tpi.actes.timbre_hauteur_mm' => ['libelle' => 'Hauteur du timbre', 'type' => 'entier', 'min' => 30, 'max' => 250, 'unite' => 'mm', 'aide' => 'Le texte du timbre y est centré verticalement.'],
                     'tpi.actes.timbre_gauche_mm' => ['libelle' => 'Distance du timbre au bord gauche', 'type' => 'entier', 'min' => 1, 'max' => 60, 'unite' => 'mm', 'aide' => 'Mesurée depuis le bord de la feuille.'],
                     'tpi.actes.timbre_haut_mm' => ['libelle' => 'Distance du timbre au bord haut', 'type' => 'entier', 'min' => 1, 'max' => 120, 'unite' => 'mm', 'aide' => 'Mesurée depuis le haut de la feuille.'],
-                    'tpi.actes.retrait_qualite_mm' => ['libelle' => 'Retrait du texte de la qualité', 'type' => 'entier', 'min' => 1, 'max' => 120, 'unite' => 'mm', 'aide' => 'Le texte de la qualité commence à droite du timbre ; le factum occupe toute la largeur.'],
+                    'tpi.actes.retrait_qualite_mm' => ['libelle' => 'Retrait du texte de la qualité', 'type' => 'entier', 'min' => 1, 'max' => 120, 'unite' => 'mm', 'aide' => 'Le texte de la qualité commence à droite du timbre.'],
+                    'tpi.actes.retrait_factum_mm' => ['libelle' => 'Retrait du texte du factum', 'type' => 'entier', 'min' => 0, 'max' => 120, 'unite' => 'mm', 'aide' => 'Le factum reste dans la même colonne que la qualité (même retrait, par défaut) et ne vient pas sous le timbre. 0 : le factum occupe toute la largeur.'],
                 ],
             ],
             'decisions' => [
                 'libelle' => 'Décisions',
                 'icone' => 'fa-solid fa-file-signature',
-                'description' => "Numérotation des décisions : un numéro par année, sans trou ni doublon, attribué automatiquement au moment choisi.",
+                'description' => "Numérotation des décisions (un numéro par année, sans trou ni doublon, attribué automatiquement au moment choisi) et adresse du greffier en chef, qui reçoit la copie des décisions transmises.",
                 'champs' => [
                     'tpi.decisions.numero_moment' => ['libelle' => 'Moment où le numéro est attribué', 'type' => 'liste', 'options' => \App\Services\NumeroDecision::MOMENTS, 'aide' => "À la validation (choix du tribunal) : le numéro D-N/année est généré automatiquement quand le juge valide la décision après son factum. Par le greffier de la chambre : le greffier donne le numéro par un bouton, quand le juge a terminé sa rédaction ; la validation exige alors ce numéro. À la signature : le numéro est donné quand la décision est signée (le texte validé garde un numéro en pointillés jusque-là, puis le numéro est inscrit). À la validation : le numéro figure dès le texte validé. Valeur à confirmer avec la greffière en chef : une fois des numéros attribués, ne la changez qu'en connaissance de cause."],
+                    'tpi.decisions.email_greffier_en_chef' => ['libelle' => 'Adresse e-mail du greffier en chef', 'type' => 'texte', 'max' => 255, 'requis' => false, 'format' => 'email', 'aide' => "Reçoit, en fichier Word, les décisions que le juge transmet au greffe quand il coche « Envoyer une copie au greffier en chef ». Laissez vide pour désactiver l'envoi."],
                 ],
             ],
             'pilotage' => [

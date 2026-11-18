@@ -2,7 +2,7 @@
   <div class="modal-dialog" style="width:50%">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title" id="titre-modal-enrolement">Règle d'enrôlement</h4>
+        <h4 class="modal-title" id="titre-modal-enrolement">Règle d'enregistrement</h4>
         <button class="btn-close py-0" type="button" data-bs-dismiss="modal" aria-label="Fermer"></button>
       </div>
 
@@ -21,7 +21,7 @@
               </select>
             </div>
             <div class="el-c5">
-              <label class="form-label" for="f_jour_limite"><b>Enrôlement clos le</b></label>
+              <label class="form-label" for="f_jour_limite"><b>Enregistrement clos le</b></label>
               <select class="form-select" id="f_jour_limite" name="jour_limite" required data-sans-recherche>
                 @foreach (\App\Models\Creneau::JOURS as $valeur => $texte)
                   <option value="{{ $valeur }}">{{ $texte }} précédent</option>

@@ -64,8 +64,9 @@
 
   {{-- Commissions rogatoires --}}
   <div class="modal fade panel-modal" id="modal-cr" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
-    <div class="modal-dialog modal-lg"><div class="modal-content">
-      <div class="modal-header"><h4 class="modal-title">Commissions rogatoires</h4><button class="btn-close py-0" type="button" data-bs-dismiss="modal" aria-label="Fermer"></button></div>
+    <div class="modal-dialog aff-modal aff-modal-moyen"><div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Commissions rogatoires</h4><button class="btn-close py-0" type="button" data-bs-dismiss="modal" aria-label="Fermer"></button></div>
       <div class="modal-body dark-modal">
         <div class="st-filtres" style="grid-template-columns: repeat(4, minmax(0,1fr)); padding:0 0 12px">
           <div class="st-champ"><label>Cabinet</label><select class="form-select" id="cr_chambre">@foreach ($cabinets as $c)<option value="{{ $c->id }}">{{ $c->libelle }}</option>@endforeach</select></div>
@@ -80,10 +81,10 @@
     </div></div>
   </div>
 
-  @include('instruction.js_script')
 @endsection
 
 @section('script')
   <script src="{{ asset('assets/js/elouange-table.js') }}"></script>
+  @include('instruction.js_script')
   <script>ElTable.init('#tbl-instruction', { order: [[0, 'desc']], noSort: [1, 2, 3, 4, 6], search: '#el-search' });</script>
 @endsection

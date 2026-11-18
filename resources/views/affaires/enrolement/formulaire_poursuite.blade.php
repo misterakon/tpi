@@ -129,7 +129,7 @@
       @error('heure_premiere_audience') <div class="aff-erreur">{{ $message }}</div> @enderror
     </div>
     @unless ($instruction || $modification)
-      {{-- Pénal : les jours et heures d'audience de la chambre choisie, d'après l'ordonnance (pas de date limite d'enrôlement au pénal) --}}
+      {{-- Pénal : les jours et heures d'audience de la chambre choisie, d'après l'ordonnance (pas de date limite d'enregistrement au pénal) --}}
       <div class="el-c12">
         <div class="aff-dates" data-dates-audience aria-live="polite"></div>
       </div>

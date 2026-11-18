@@ -1,7 +1,9 @@
 {{-- Sous-menu d'une entrée du menu : liens et groupes imbriqués (« submenu-title » du thème). Variables : $enfants, $actif, $lien, $contientActif --}}
 <ul class="sidebar-submenu">
     @foreach ($enfants as $enfant)
-        @if (isset($enfant['enfants']))
+        @if (! empty($enfant['rubrique']))
+            <li class="submenu-rubrique" aria-hidden="true">{{ $enfant['rubrique'] }}</li>
+        @elseif (isset($enfant['enfants']))
             <li>
                 <a class="submenu-title {{ $contientActif($enfant) ? 'active' : '' }}" href="#">{{ $enfant['titre'] }}<span class="sub-arrow"><i class="fa-solid fa-angle-right"></i></span></a>
                 @include('layout.sidebar_sous_menu', ['enfants' => collect($enfant['enfants'])])

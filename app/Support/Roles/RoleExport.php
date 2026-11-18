@@ -106,7 +106,15 @@ class RoleExport
     {
         $doc = RoleDocument::normaliser($doc);
         $colonnes = $doc['colonnes'];
-        $total = array_sum(array_column($colonnes, 'twips'));
+        // Largeur utile de la page : A4 paysage (16 838) moins deux marges de 1 134 (20 mm). Les colonnes du modèle sont ramenées à cette largeur
+        // et les tableaux sont centrés (plus de retrait négatif : le tableau ne dépasse plus à gauche).
+        $utile = 14570;
+        $brut = array_sum(array_column($colonnes, 'twips'));
+        foreach ($colonnes as $i => $colonne) {
+            $colonnes[$i]['twips'] = (int) round($colonne['twips'] * $utile / $brut);
+        }
+        $colonnes[array_key_last($colonnes)]['twips'] += $utile - array_sum(array_column($colonnes, 'twips'));
+        $total = $utile;
 
         // Papier à en-tête saisi en texte (gauche : ministère, cour, tribunal ; droite : République), la salle au centre, puis le titre : la chambre, et la date seule sur sa ligne.
         // Armoiries en petit (1,5 cm de haut) au-dessus de « République de Côte d'Ivoire ».
@@ -124,11 +132,11 @@ class RoleExport
 
             return '<w:tc><w:tcPr><w:tcW w:w="'.$largeur.'" w:type="dxa"/></w:tcPr>'.$x.'</w:tc>';
         };
-        $salle = '<w:tc><w:tcPr><w:tcW w:w="6200" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>'
+        $salle = '<w:tc><w:tcPr><w:tcW w:w="6130" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>'
             .($doc['salle'] ? '<w:p><w:pPr><w:spacing w:before="0" w:after="0"/><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="36"/><w:szCs w:val="36"/><w:u w:val="single"/></w:rPr><w:t xml:space="preserve">'.self::x($doc['salle']).'</w:t></w:r></w:p>' : '<w:p/>').'</w:tc>';
-        $corps = '<w:tbl><w:tblPr><w:tblW w:w="14743" w:type="dxa"/><w:tblInd w:w="-998" w:type="dxa"/><w:tblLayout w:type="fixed"/></w:tblPr>'
-            .'<w:tblGrid><w:gridCol w:w="4271"/><w:gridCol w:w="6200"/><w:gridCol w:w="4272"/></w:tblGrid><w:tr>'
-            .$bloc($doc['entete_gauche'] ?? RoleDocument::enteteGauche(), 4271).$salle.$bloc($doc['entete_droite'] ?? RoleDocument::enteteDroite(), 4272, 'center', 24, $armoiries).'</w:tr></w:tbl>';
+        $corps = '<w:tbl><w:tblPr><w:tblW w:w="14570" w:type="dxa"/><w:jc w:val="center"/><w:tblLayout w:type="fixed"/></w:tblPr>'
+            .'<w:tblGrid><w:gridCol w:w="4220"/><w:gridCol w:w="6130"/><w:gridCol w:w="4220"/></w:tblGrid><w:tr>'
+            .$bloc($doc['entete_gauche'] ?? RoleDocument::enteteGauche(), 4220).$salle.$bloc($doc['entete_droite'] ?? RoleDocument::enteteDroite(), 4220, 'center', 24, $armoiries).'</w:tr></w:tbl>';
         $corps .= self::paragrapheMultiligne($doc['titre_chambre'] ?? $doc['titre'], ['gras' => true, 't' => 40, 'avant' => 240]);
         if (! empty($doc['titre_quand'])) {
             $corps .= self::paragrapheMultiligne($doc['titre_quand'], ['gras' => true, 't' => 40]);
@@ -165,7 +173,7 @@ class RoleExport
             $bord .= '<w:'.$b.' w:val="single" w:sz="4" w:space="0" w:color="000000"/>';
         }
         $grille = '<w:tblGrid>'.implode('', array_map(fn ($w) => '<w:gridCol w:w="'.$w.'"/>', array_column($colonnes, 'twips'))).'</w:tblGrid>';
-        $corps .= '<w:tbl><w:tblPr><w:tblW w:w="'.$total.'" w:type="dxa"/><w:tblInd w:w="-998" w:type="dxa"/><w:tblBorders>'.$bord.'</w:tblBorders>'
+        $corps .= '<w:tbl><w:tblPr><w:tblW w:w="'.$total.'" w:type="dxa"/><w:jc w:val="center"/><w:tblBorders>'.$bord.'</w:tblBorders>'
             .'<w:tblLayout w:type="fixed"/><w:tblCellMar><w:left w:w="85" w:type="dxa"/><w:right w:w="85" w:type="dxa"/></w:tblCellMar></w:tblPr>'.$grille.$lignes.'</w:tbl>';
 
         $corps .= self::p('', ['apres' => 240]);
@@ -176,7 +184,7 @@ class RoleExport
         $en = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
         $document = $en.'<w:document '.$ns.'><w:body>'.$corps
             .'<w:sectPr><w:headerReference w:type="default" r:id="rIdH"/><w:footerReference w:type="default" r:id="rIdF"/>'
-            .'<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="1417" w:right="851" w:bottom="1417" w:left="1417" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr></w:body></w:document>';
+            .'<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="1417" w:right="1134" w:bottom="1417" w:left="1134" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr></w:body></w:document>';
 
         // Filigrane : la balance de la justice, estompée et centrée derrière le texte (même réglage que le modèle Word : gain et niveau de noir).
         $nsh = $ns.' xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w10="urn:schemas-microsoft-com:office:word"';

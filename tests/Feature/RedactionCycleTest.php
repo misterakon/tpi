@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Chambre;
 use App\Models\Decision;
-use App\Models\Delivrance;
 use App\Models\ModeleDecision;
 use App\Models\Profil;
 use App\Models\User;
@@ -58,7 +57,7 @@ class RedactionCycleTest extends TestCase
 
     private function tout(array $en_plus = []): User
     {
-        return $this->avecDroits(array_merge(['redaction.voir', 'redaction.creer', 'redaction.modifier', 'redaction.valider', 'redaction.signer', 'redaction.delivrer', 'registre_decisions.voir', 'registre_decisions.exporter', 'affaires.toutes_chambres'], $en_plus));
+        return $this->avecDroits(array_merge(['redaction.voir', 'redaction.creer', 'redaction.modifier', 'redaction.valider', 'redaction.signer', 'redaction.transmettre', 'registre_decisions.voir', 'registre_decisions.exporter', 'affaires.toutes_chambres'], $en_plus));
     }
 
     /** Une décision complète (valeurs d'exemple) dans la chambre, en brouillon. */
@@ -111,12 +110,13 @@ class RedactionCycleTest extends TestCase
         $this->assertStringNotContainsString('……', json_encode($d->rendu, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         $this->assertStringContainsString('N° D-1/2026 du', json_encode($d->rendu, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 'Le numéro est dans le texte figé.');
 
-        // 4. Délivrée.
-        $this->connecte($u)->post($this->url('decisions.redaction.delivrer', $d), ['type' => 'expedition', 'delivre_a' => 'Me DAGBO', 'qualite' => 'avocat', 'delivre_le' => '2026-11-10'])->assertSessionHas('success');
+        // 4. Transmise au greffe : la date de transmission vaut date de délivrance.
+        $this->connecte($u)->post($this->url('decisions.redaction.transmettre', $d), ['date_transmission' => '2026-11-10'])->assertSessionHas('success');
         $d->refresh();
-        $this->assertSame('delivree', $d->statut);
-        $this->assertCount(1, $d->delivrances);
-        foreach (['decision_redigee', 'decision_validee', 'decision_signee', 'decision_delivree'] as $action) {
+        $this->assertSame('transmise', $d->statut);
+        $this->assertSame('2026-11-10', $d->transmise_le->toDateString());
+        $this->assertSame('2026-11-10', $d->delivree_le->toDateString(), 'La date de transmission vaut date de délivrance.');
+        foreach (['decision_redigee', 'decision_validee', 'decision_signee', 'decision_transmise'] as $action) {
             $this->assertDatabaseHas('journal_audit', ['action' => $action]);
         }
 
@@ -126,7 +126,7 @@ class RedactionCycleTest extends TestCase
         $this->assertStringContainsString('Numéro de la décision', $page);   // champ grisé, en lecture seule
         $this->assertMatchesRegularExpression('/id="f_numero_decision"[^>]*value="D-1\/2026"[^>]*disabled/', $page);
         $this->assertStringContainsString('D-1/2026', $page);
-        $this->assertStringContainsString('Me DAGBO', $page);
+        $this->assertStringContainsString('Transmise au greffe', $page);
     }
 
     public function test_le_greffier_de_la_chambre_donne_le_numero_quand_le_juge_a_termine(): void
@@ -166,7 +166,7 @@ class RedactionCycleTest extends TestCase
 
         // La frise place « Numérotée » juste après « Rédigée ».
         $codes = array_column($d->etapes(), 'code');
-        $this->assertSame(['brouillon', 'redigee', 'numerotee', 'validee', 'signee', 'delivree'], $codes);
+        $this->assertSame(['brouillon', 'redigee', 'numerotee', 'validee', 'signee', 'transmise'], $codes);
     }
 
     public function test_le_numero_peut_etre_attribue_des_la_validation(): void
@@ -216,14 +216,14 @@ class RedactionCycleTest extends TestCase
         $u = $this->tout();
         $d = $this->decision();
 
-        // Signer ou délivrer un brouillon : refusé avec un message.
+        // Signer ou transmettre un brouillon : refusé avec un message.
         $this->connecte($u)->post($this->url('decisions.redaction.signer', $d), ['date_signature' => '2026-11-10'])->assertSessionHas('error');
-        $this->connecte($u)->post($this->url('decisions.redaction.delivrer', $d), ['type' => 'copie', 'delivre_a' => 'X', 'delivre_le' => '2026-11-10'])->assertSessionHas('error');
+        $this->connecte($u)->post($this->url('decisions.redaction.transmettre', $d), ['date_transmission' => '2026-11-10'])->assertSessionHas('error');
         $this->assertSame('brouillon', $d->refresh()->statut);
 
         $this->connecte($u)->post($this->url('decisions.redaction.valider', $d));
-        // Délivrer une décision seulement validée : refusé. La date de signature ne peut pas être future.
-        $this->connecte($u)->post($this->url('decisions.redaction.delivrer', $d), ['type' => 'copie', 'delivre_a' => 'X', 'delivre_le' => '2026-11-10'])->assertSessionHas('error');
+        // Transmettre une décision seulement validée : refusé. La date de signature ne peut pas être future.
+        $this->connecte($u)->post($this->url('decisions.redaction.transmettre', $d), ['date_transmission' => '2026-11-10'])->assertSessionHas('error');
         $this->connecte($u)->post($this->url('decisions.redaction.signer', $d), ['date_signature' => '2026-12-01'])->assertSessionHasErrors('date_signature');
         $this->assertSame('validee', $d->refresh()->statut);
     }
@@ -256,7 +256,7 @@ class RedactionCycleTest extends TestCase
         $this->connecte($redacteur)->post($this->url('decisions.redaction.store', $d), ['reference' => $d->reference, 'valeurs' => $d->valeurs])->assertSessionHasNoErrors();
     }
 
-    public function test_signer_et_delivrer_ont_leurs_droits(): void
+    public function test_signer_et_transmettre_ont_leurs_droits(): void
     {
         $sans = $this->avecDroits(['redaction.voir', 'redaction.valider', 'affaires.toutes_chambres']);
         $u = $this->tout();
@@ -265,10 +265,10 @@ class RedactionCycleTest extends TestCase
 
         $this->connecte($sans)->post($this->url('decisions.redaction.signer', $d), ['date_signature' => '2026-11-10'])->assertForbidden();
         $this->connecte($u)->post($this->url('decisions.redaction.signer', $d), ['date_signature' => '2026-11-10']);
-        $this->connecte($sans)->post($this->url('decisions.redaction.delivrer', $d), ['type' => 'copie', 'delivre_a' => 'X', 'delivre_le' => '2026-11-10'])->assertForbidden();
+        $this->connecte($sans)->post($this->url('decisions.redaction.transmettre', $d), ['date_transmission' => '2026-11-10'])->assertForbidden();
         // Les boutons n'apparaissent que pour qui a le droit.
-        $this->assertStringNotContainsString('onclick="ouvrir_delivrance()"', $this->connecte($sans)->get($this->url('decisions.redaction.edition', $d))->getContent());
-        $this->assertStringContainsString('onclick="ouvrir_delivrance()"', $this->connecte($u)->get($this->url('decisions.redaction.edition', $d))->getContent());
+        $this->assertStringNotContainsString('onclick="ouvrir_transmission()"', $this->connecte($sans)->get($this->url('decisions.redaction.edition', $d))->getContent());
+        $this->assertStringContainsString('onclick="ouvrir_transmission()"', $this->connecte($u)->get($this->url('decisions.redaction.edition', $d))->getContent());
     }
 
     public function test_une_decision_signee_ne_se_corrige_ni_ne_se_supprime(): void
@@ -285,20 +285,63 @@ class RedactionCycleTest extends TestCase
         $this->assertDatabaseHas('decisions', ['id' => $d->id]);
     }
 
-    public function test_une_grosse_n_est_delivree_qu_une_fois_a_la_meme_personne(): void
+    public function test_la_transmission_se_fait_une_fois_avec_une_date_valide_et_une_copie_facultative(): void
     {
+        \Illuminate\Support\Facades\Mail::fake();
+        config(['tpi.decisions.email_greffier_en_chef' => 'greffier.enchef@tpi.test']);
         $u = $this->tout();
         $d = $this->decision();
         $this->connecte($u)->post($this->url('decisions.redaction.valider', $d));
         $this->connecte($u)->post($this->url('decisions.redaction.signer', $d), ['date_signature' => '2026-11-10']);
-        $donnees = ['type' => 'grosse', 'delivre_a' => 'Société EXEMPLE', 'qualite' => 'partie', 'delivre_le' => '2026-11-10'];
 
-        $this->connecte($u)->post($this->url('decisions.redaction.delivrer', $d), $donnees)->assertSessionHas('success');
-        $this->connecte($u)->post($this->url('decisions.redaction.delivrer', $d), array_merge($donnees, ['delivre_a' => ' société  exemple ']))->assertSessionHas('error');   // même personne
-        $this->connecte($u)->post($this->url('decisions.redaction.delivrer', $d), array_merge($donnees, ['type' => 'copie']))->assertSessionHas('success');             // une copie reste possible
-        $this->connecte($u)->post($this->url('decisions.redaction.delivrer', $d), array_merge($donnees, ['type' => 'inconnu']))->assertSessionHasErrors('type');
-        $this->connecte($u)->post($this->url('decisions.redaction.delivrer', $d), array_merge($donnees, ['delivre_le' => '2027-01-01']))->assertSessionHasErrors('delivre_le');
-        $this->assertSame(2, Delivrance::count());
+        $this->connecte($u)->post($this->url('decisions.redaction.transmettre', $d), ['date_transmission' => '2999-01-01'])->assertSessionHasErrors('date_transmission');   // dans le futur
+        $this->connecte($u)->post($this->url('decisions.redaction.transmettre', $d), ['date_transmission' => '2026-11-09'])->assertSessionHas('error');                      // avant la signature
+        $this->assertSame('signee', $d->refresh()->statut);
+
+        $this->connecte($u)->post($this->url('decisions.redaction.transmettre', $d), ['date_transmission' => '2026-11-10', 'envoyer_copie' => '1'])->assertSessionHas('success');
+        $this->assertSame('transmise', $d->refresh()->statut);
+        \Illuminate\Support\Facades\Mail::assertSent(\App\Mail\DecisionsTransmises::class, fn ($m) => $m->hasTo('greffier.enchef@tpi.test') && count($m->fichiers) === 1);
+        $this->assertDatabaseHas('journal_audit', ['action' => 'decision_copie_envoyee']);
+
+        // Une seconde transmission est refusée.
+        $this->connecte($u)->post($this->url('decisions.redaction.transmettre', $d), ['date_transmission' => '2026-11-10'])->assertSessionHas('error');
+    }
+
+    public function test_sans_adresse_la_decision_est_transmise_mais_la_copie_ne_part_pas(): void
+    {
+        \Illuminate\Support\Facades\Mail::fake();
+        config(['tpi.decisions.email_greffier_en_chef' => null]);
+        $u = $this->tout();
+        $d = $this->decision();
+        $this->connecte($u)->post($this->url('decisions.redaction.valider', $d));
+        $this->connecte($u)->post($this->url('decisions.redaction.signer', $d), ['date_signature' => '2026-11-10']);
+
+        $this->connecte($u)->post($this->url('decisions.redaction.transmettre', $d), ['date_transmission' => '2026-11-10', 'envoyer_copie' => '1'])->assertSessionHas('success')->assertSessionHas('error');
+        $this->assertSame('transmise', $d->refresh()->statut);
+        \Illuminate\Support\Facades\Mail::assertNothingSent();
+    }
+
+    public function test_la_transmission_en_lot_transmet_la_selection_et_envoie_un_seul_courriel(): void
+    {
+        \Illuminate\Support\Facades\Mail::fake();
+        config(['tpi.decisions.email_greffier_en_chef' => 'greffier.enchef@tpi.test']);
+        $u = $this->tout();
+        $a = $this->decision('2026-11-05');
+        $b = $this->decision('2026-11-06');
+        $c = $this->decision('2026-11-07');
+        foreach ([$a, $b, $c] as $d) {
+            $this->connecte($u)->post($this->url('decisions.redaction.valider', $d));
+            $this->connecte($u)->post($this->url('decisions.redaction.signer', $d), ['date_signature' => '2026-11-10']);
+        }
+
+        $this->connecte($this->avecDroits(['redaction.voir', 'affaires.toutes_chambres']))->get(route('decisions.transmission'))->assertForbidden();
+        $this->connecte($u)->get(route('decisions.transmission'))->assertOk()->assertSee('Transmission au greffe');
+        $this->connecte($u)->post(route('decisions.transmission.store'), ['date_transmission' => '2026-11-10'])->assertSessionHasErrors('ids');
+
+        $this->connecte($u)->post(route('decisions.transmission.store'), ['ids' => [$a->id, $b->id], 'date_transmission' => '2026-11-10', 'envoyer_copie' => '1'])->assertSessionHas('success');
+        $this->assertSame(['transmise', 'transmise', 'signee'], [$a->refresh()->statut, $b->refresh()->statut, $c->refresh()->statut]);
+        \Illuminate\Support\Facades\Mail::assertSent(\App\Mail\DecisionsTransmises::class, 1);
+        \Illuminate\Support\Facades\Mail::assertSent(\App\Mail\DecisionsTransmises::class, fn ($m) => count($m->fichiers) === 2);
     }
 
     public function test_le_perimetre_des_chambres_s_applique_aux_nouvelles_etapes(): void
@@ -306,10 +349,10 @@ class RedactionCycleTest extends TestCase
         $u = $this->tout();
         $d = $this->decision();
         $this->connecte($u)->post($this->url('decisions.redaction.valider', $d));
-        $limite = $this->avecDroits(['redaction.voir', 'redaction.modifier', 'redaction.valider', 'redaction.signer', 'redaction.delivrer']);   // aucune chambre
+        $limite = $this->avecDroits(['redaction.voir', 'redaction.modifier', 'redaction.valider', 'redaction.signer', 'redaction.transmettre']);   // aucune chambre
 
         $this->connecte($limite)->post($this->url('decisions.redaction.signer', $d), ['date_signature' => '2026-11-10'])->assertNotFound();
-        $this->connecte($limite)->post($this->url('decisions.redaction.delivrer', $d), ['type' => 'copie', 'delivre_a' => 'X', 'delivre_le' => '2026-11-10'])->assertNotFound();
+        $this->connecte($limite)->post($this->url('decisions.redaction.transmettre', $d), ['date_transmission' => '2026-11-10'])->assertNotFound();
         $this->connecte($limite)->post($this->url('decisions.redaction.redigee', $d))->assertNotFound();
     }
 
@@ -325,15 +368,15 @@ class RedactionCycleTest extends TestCase
             $this->connecte($u)->post($this->url('decisions.redaction.valider', $d));
         }
         $this->connecte($u)->post($this->url('decisions.redaction.signer', $a), ['date_signature' => '2026-11-10']);
-        $this->connecte($u)->post($this->url('decisions.redaction.delivrer', $a), ['type' => 'expedition', 'delivre_a' => 'Me DAGBO', 'delivre_le' => '2026-11-10']);
+        $this->connecte($u)->post($this->url('decisions.redaction.transmettre', $a), ['date_transmission' => '2026-11-10']);
 
         $this->connecte($this->avecDroits(['redaction.voir']))->get(route('decisions.registre'))->assertForbidden();
         $this->connecte($u)->get(route('decisions.registre'))->assertOk()->assertSee('Registre des décisions');
 
         $r = $this->connecte($u)->getJson(route('decisions.registre.donnees'))->assertOk();
-        $r->assertJsonPath('total', 2)->assertJsonPath('compteurs.validee', 1)->assertJsonPath('compteurs.delivree', 1);
+        $r->assertJsonPath('total', 2)->assertJsonPath('compteurs.validee', 1)->assertJsonPath('compteurs.transmise', 1);
         $this->assertSame(['D-1/2026'], collect($r->json('lignes'))->pluck('numero')->filter()->values()->all(), 'Seule la signée a un numéro (réglage : à la signature).');
-        $this->connecte($u)->getJson(route('decisions.registre.donnees', ['statut' => 'delivree']))->assertJsonPath('total', 1)->assertJsonPath('lignes.0.remises', 1);
+        $this->connecte($u)->getJson(route('decisions.registre.donnees', ['statut' => 'transmise']))->assertJsonPath('total', 1)->assertJsonPath('lignes.0.transmise_le', '10/11/2026');
         $this->connecte($u)->getJson(route('decisions.registre.donnees', ['q' => 'D-1/2026']))->assertJsonPath('total', 1);
         $this->connecte($u)->getJson(route('decisions.registre.donnees', ['annee' => '2025']))->assertJsonPath('total', 0);
         $this->connecte($u)->getJson(route('decisions.registre.donnees', ['statut' => "x' OR 1=1", 'annee' => 'abc']))->assertOk()->assertJsonPath('total', 2);   // valeurs inconnues ignorées
@@ -375,7 +418,7 @@ class RedactionCycleTest extends TestCase
         $this->assertStringContainsString('à signer', $s->titre);
         $this->assertSame($this->chambre->id, $v->chambreId);
         // Trois jours ouvrables après le mardi 10/11 : le vendredi 13/11.
-        $this->assertSame('2026-11-13', $v->date->toDateString());
+        $this->assertSame('2026-11-10', $v->date->toDateString());
 
         // Signée : plus d'échéance de signature.
         $this->connecte($u)->post($this->url('decisions.redaction.signer', $validee), ['date_signature' => '2026-11-10']);

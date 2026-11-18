@@ -22,7 +22,7 @@
         </x-slot:extra>
         @if ($peutDelais)
           <x-slot:actions>
-            <button class="el-btn el-btn--accent" type="button" data-bs-toggle="modal" data-bs-target="#modal-delais"><i class="fa-solid fa-sliders"></i> Délais de recours</button>
+            <button class="el-btn el-btn--accent" type="button" onclick="$('#modal-delais').modal('show')"><i class="fa-solid fa-sliders"></i> Délais de recours</button>
           </x-slot:actions>
         @endif
       </x-hero>
@@ -47,7 +47,7 @@
 
         <div class="el-tblwrap">
           <table class="el-tbl el-tbl--fixe" id="tbl-recours" data-serveur="{{ route('decisions.recours.donnees') }}">
-            <colgroup><col style="width:120px"><col style="width:130px"><col><col style="width:120px"><col style="width:190px"><col style="width:130px"><col style="width:170px"></colgroup>
+            <colgroup><col style="width:120px"><col style="width:130px"><col><col style="width:120px"><col style="width:180px"><col style="width:120px"><col style="width:235px"></colgroup>
             <thead><tr><th>Décision</th><th>Affaire</th><th>Parties et objet</th><th>Signification</th><th>État</th><th>Échéance</th><th>Actions</th></tr></thead>
             <tbody>
             </tbody>

@@ -41,6 +41,7 @@
 		q.style.marginLeft = c.retrait + MM;
 		q.style.lineHeight = (c.interligneQualite / 100) * HAUTEUR_NATURELLE;
 		var f = el('acte-f', parties.factum || '');
+		f.style.marginLeft = (c.retraitFactum || 0) + MM;   // le factum reste dans la colonne de la qualité
 		f.style.lineHeight = (c.interligneFactum / 100) * HAUTEUR_NATURELLE;
 		flux.appendChild(q);
 		flux.appendChild(f);

@@ -14,7 +14,7 @@ class AnalyseAuto
 {
     /** Comment l'indice de santé est calculé : on part de 100 et on retire des points. Affiché dans la page pour que chacun comprenne. */
     public const REGLES_INDICE = [
-        ['critere' => 'Taux de traitement', 'explication' => "Affaires terminées pour 100 enrôlées sur la période. En dessous de 100 %, le stock grossit.", 'retrait' => "1 point par tranche de 5 points manquants, jusqu'à -20"],
+        ['critere' => 'Taux de traitement', 'explication' => "Affaires terminées pour 100 enregistrées sur la période. En dessous de 100 %, le stock grossit.", 'retrait' => "1 point par tranche de 5 points manquants, jusqu'à -20"],
         ['critere' => 'Affaires en retard', 'explication' => "Renvoi ou délibéré dépassé, suite non notée, affaire jamais portée au rôle : part du stock concernée.", 'retrait' => "50 points × la part en retard, jusqu'à -25"],
         ['critere' => 'Décisions à rédiger', 'explication' => "Affaires jugées sans décision validée.", 'retrait' => "3 points par décision, jusqu'à -15, et 5 de plus si la plus ancienne attend depuis plus de 15 jours"],
         ['critere' => "Feuilles d'audience non saisies", 'explication' => "Audiences passées dont les suites n'ont pas été notées.", 'retrait' => "1 point par tranche de 10 % non saisis, jusqu'à -8"],
@@ -46,9 +46,9 @@ class AnalyseAuto
         // ---- sorties et entrées
         if ($k['taux_sortie'] !== null) {
             if ($k['taux_sortie'] >= 100) {
-                $fortes[] = 'Le tribunal termine au moins autant d\'affaires qu\'il en enrôle : '.self::n($k['sorties'], 'affaire terminée').' pour '.self::n($k['entrees'], 'affaire enrôlée').' (taux de traitement de '.$k['taux_sortie'].' %).';
+                $fortes[] = 'Le tribunal termine au moins autant d\'affaires qu\'il en enregistre : '.self::n($k['sorties'], 'affaire terminée').' pour '.self::n($k['entrees'], 'affaire enregistrée').' (taux de traitement de '.$k['taux_sortie'].' %).';
             } elseif ($k['taux_sortie'] < 80) {
-                $attention[] = ['gravite' => $k['taux_sortie'] < 50 ? 'critique' : 'attention', 'texte' => 'Le stock augmente : '.self::n($k['entrees'], 'affaire enrôlée').' pour '.self::n($k['sorties'], 'affaire terminée').' sur la période (taux de traitement de '.$k['taux_sortie'].' %).'];
+                $attention[] = ['gravite' => $k['taux_sortie'] < 50 ? 'critique' : 'attention', 'texte' => 'Le stock augmente : '.self::n($k['entrees'], 'affaire enregistrée').' pour '.self::n($k['sorties'], 'affaire terminée').' sur la période (taux de traitement de '.$k['taux_sortie'].' %).'];
                 $reco[] = 'Augmenter le rythme de jugement : '.max(0, $k['entrees'] - $k['sorties']).' affaires terminées de plus sont nécessaires pour ne pas alourdir le stock de '.$stock.' affaires en cours.';
             }
         }
@@ -96,7 +96,7 @@ class AnalyseAuto
         // ---- délais
         if ($k['delai_moyen'] !== null) {
             if ($k['delai_moyen'] > self::DELAI_CIVIL_JOURS) {
-                $attention[] = ['gravite' => 'attention', 'texte' => 'Le délai moyen entre l\'enrôlement et la fin de l\'affaire est de '.$k['delai_moyen'].' jours, au-delà de six mois.'];
+                $attention[] = ['gravite' => 'attention', 'texte' => 'Le délai moyen entre l\'enregistrement et la fin de l\'affaire est de '.$k['delai_moyen'].' jours, au-delà de six mois.'];
                 $reco[] = 'Réduire le délai moyen de traitement ('.$k['delai_moyen'].' jours) en priorisant les plus anciennes affaires.';
             } else {
                 $fortes[] = 'Le délai moyen de traitement est de '.$k['delai_moyen'].' jours, dans le délai de six mois.';
@@ -149,7 +149,7 @@ class AnalyseAuto
 
         usort($attention, fn ($a, $b) => (['critique' => 0, 'attention' => 1][$a['gravite']] ?? 2) <=> (['critique' => 0, 'attention' => 1][$b['gravite']] ?? 2));
 
-        $situation = 'Sur la période « '.mb_strtolower($d['periode']['libelle']).' » ('.$d['perimetre'].'), '.self::n($k['entrees'], 'affaire').' ont été enrôlées et '.self::n($k['sorties'], 'affaire').' sont terminées (jugées, radiées, jointes ou désistées)'
+        $situation = 'Sur la période « '.mb_strtolower($d['periode']['libelle']).' » ('.$d['perimetre'].'), '.self::n($k['entrees'], 'affaire').' ont été enregistrées et '.self::n($k['sorties'], 'affaire').' sont terminées (jugées, radiées, jointes ou désistées)'
             .($k['taux_sortie'] !== null ? ', soit un taux de traitement de '.$k['taux_sortie'].' %' : '').'. '.self::n($stock, 'affaire').' sont en cours'
             .($k['retards'] > 0 ? ', dont '.$k['retards'].' avec une échéance dépassée' : '').($k['delai_moyen'] !== null ? '. Le délai moyen de traitement est de '.$k['delai_moyen'].' jours' : '')
             .'. L\'indice de santé du tribunal est de '.$score.' sur 100 : '.mb_strtolower($sante['libelle']).'.';

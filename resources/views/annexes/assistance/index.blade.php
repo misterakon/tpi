@@ -52,7 +52,7 @@
   </div>
 
   <div class="modal fade panel-modal" id="modal-aj" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
-    <div class="modal-dialog aff-modal"><div class="modal-content">
+    <div class="modal-dialog aff-modal aff-modal-moyen"><div class="modal-content">
       <div class="modal-header"><h4 class="modal-title" id="t-aj">Nouvelle demande</h4><button class="btn-close py-0" type="button" data-bs-dismiss="modal" aria-label="Fermer"></button></div>
       <form method="post" action="{{ route('assistance.store') }}" id="f-aj" autocomplete="off">
         @csrf <input type="hidden" name="id_" id="aj_id">

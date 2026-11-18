@@ -7,7 +7,6 @@ use App\Models\Affaire;
 use App\Models\AnneeJudiciaire;
 use App\Models\Chambre;
 use App\Models\Decision;
-use App\Models\Delivrance;
 use App\Models\ModeleDecision;
 use App\Models\RoleAudience;
 use App\Services\Journal;
@@ -168,8 +167,10 @@ class RedactionController extends Controller
             'miseEnPage' => ModeleDecisionController::miseEnPage(),
             'peutValider' => Gate::allows('redaction.valider'),
             'peutNumeroter' => Gate::allows('redaction.numeroter'),
-            'peutSigner' => Gate::allows('redaction.signer'), 'peutDelivrer' => Gate::allows('redaction.delivrer'),
-            'delivrances' => $decision->delivrances()->with('auteur:id,name')->get(),
+            'peutSigner' => Gate::allows('redaction.signer'),
+            'peutTransmettre' => Gate::allows('redaction.transmettre'), 'peutWord' => Gate::allows('redaction.word'),
+            'delivrances' => $decision->delivrances()->with('auteur:id,name')->get(),   // historique des remises d'avant la suppression de l'étape (lecture seule)
+            'adresseGreffierEnChef' => \App\Support\Decisions\TransmissionDecision::adresseGreffierEnChef(),
             'momentNumero' => NumeroDecision::moment(),
         ]);
     }
@@ -411,36 +412,6 @@ class RedactionController extends Controller
         return $this->retour($decision, 'success', 'Décision signée. Numéro '.$decision->numeroAffichage().'.');
     }
 
-    /** Remet une expédition, une grosse ou une copie : à qui, quand. Une grosse n\'est délivrée qu\'une fois à la même personne. */
-    public function delivrer(int $id, Request $request): RedirectResponse
-    {
-        Gate::authorize('redaction.delivrer');
-        $decision = $this->decision($id, ['modele']);
-        if (! $decision->estSignee()) {
-            return $this->retour($decision, 'error', 'Une décision ne se délivre qu\'une fois signée.');
-        }
-        $donnees = $request->validate([
-            'type' => ['required', Rule::in(array_keys(Decision::TYPES_DELIVRANCE))], 'delivre_a' => ['required', 'string', 'max:160'], 'qualite' => ['nullable', 'string', 'max:60'],
-            'delivre_le' => ['required', 'date', 'before_or_equal:today'], 'observation' => ['nullable', 'string', 'max:300'],
-        ], ['delivre_a.required' => 'Indiquez à qui la décision est remise.', 'delivre_le.required' => 'Indiquez la date de remise.', 'delivre_le.before_or_equal' => 'La date de remise ne peut pas être dans le futur.', 'type.required' => 'Choisissez le type de remise.']);
-
-        $nom = trim(preg_replace('/\s+/u', ' ', $donnees['delivre_a']));
-        if ($donnees['type'] === 'grosse' && $decision->delivrances()->where('type', 'grosse')->get()->contains(fn ($d) => mb_strtolower($d->delivre_a) === mb_strtolower($nom))) {
-            return $this->retour($decision, 'error', "Une grosse a déjà été délivrée à $nom : elle ne se délivre qu'une fois à la même personne (une copie ou une expédition reste possible).");
-        }
-
-        Delivrance::create([
-            'decision_id' => $decision->id, 'type' => $donnees['type'], 'delivre_a' => $nom, 'qualite' => trim((string) ($donnees['qualite'] ?? '')) ?: null, 'delivre_le' => $donnees['delivre_le'],
-            'observation' => trim((string) ($donnees['observation'] ?? '')) ?: null, 'delivre_par' => $request->user()?->id,
-        ]);
-        if ($decision->statut !== 'delivree') {
-            $decision->forceFill(['statut' => 'delivree', 'delivree_le' => now()])->save();
-        }
-        Journal::audit('decision_delivree', $decision, $decision->libelle(), [], ['type' => $donnees['type'], 'delivre_a' => $nom, 'delivre_le' => $donnees['delivre_le']]);
-
-        return $this->retour($decision, 'success', Decision::TYPES_DELIVRANCE[$donnees['type']].' délivrée à '.$nom.'.');
-    }
-
     /** Ce qui manque encore pour que le texte soit complet. @return list<string> */
     private function manquantes(Decision $decision): array
     {
@@ -508,6 +479,53 @@ class RedactionController extends Controller
             'parties' => ['entete' => $rendu['entete'], 'qualite' => $rendu['qualite'], 'factum' => $rendu['factum']],
             'manquantes' => $rendu['manquantes'] ?? [],
             'miseEnPage' => ModeleDecisionController::miseEnPage(),
+        ]);
+    }
+
+    /** Le juge transmet la décision signée au greffe : la date de transmission vaut date de délivrance. Option : copie en Word au greffier en chef. */
+    public function transmettre(int $id, Request $request): RedirectResponse
+    {
+        Gate::authorize('redaction.transmettre');
+        $decision = $this->decision($id, ['modele', 'affaire']);
+        $donnees = $request->validate(
+            ['date_transmission' => ['required', 'date', 'before_or_equal:today'], 'envoyer_copie' => ['nullable', 'boolean']],
+            ['date_transmission.required' => 'Indiquez la date de transmission au greffe.', 'date_transmission.before_or_equal' => 'La date de transmission ne peut pas être dans le futur.']
+        );
+
+        $res = \App\Support\Decisions\TransmissionDecision::transmettre([$decision], $request->user(), \Illuminate\Support\Carbon::parse($donnees['date_transmission']), (bool) ($donnees['envoyer_copie'] ?? false));
+        if ($res['refusees']) {
+            return $this->retour($decision, 'error', reset($res['refusees']));
+        }
+
+        $message = 'Décision transmise au greffe le '.\Illuminate\Support\Carbon::parse($donnees['date_transmission'])->format('d/m/Y').' : cette date vaut date de délivrance.';
+        if ($res['courriel'] === 'envoyé') {
+            $message .= " Une copie en Word a été envoyée au greffier en chef.";
+        } elseif ($res['courriel'] !== null) {
+            return redirect()->route('decisions.redaction.edition', $decision->id)->with('success', $message)->with('error', $res['courriel']);
+        }
+
+        return $this->retour($decision, 'success', $message);
+    }
+
+    /** Le fichier Word de la décision, avec la mise en page de la feuille (pour la relire, la compléter ou la délivrer). */
+    public function word(int $id): \Illuminate\Http\Response
+    {
+        Gate::authorize('redaction.word');
+        $decision = $this->decision($id, ['modele']);
+        $rendu = $decision->estValidee() && $decision->rendu ? $decision->rendu : $this->rendu($decision, $decision->valeurs ?? []);
+
+        $octets = \App\Support\Redaction\DecisionDocx::generer(
+            ['entete' => (string) $rendu['entete'], 'qualite' => (string) $rendu['qualite'], 'factum' => (string) $rendu['factum']],
+            ModeleDecisionController::miseEnPage(),
+            ! $decision->estValidee(),
+        );
+        Journal::audit('decision_word', $decision, $decision->libelle(), [], ['statut' => $decision->statut]);
+
+        $nom = \Illuminate\Support\Str::slug(str_replace('/', '-', $decision->numeroAffichage() ? 'decision '.$decision->numeroAffichage() : (string) $decision->reference), '-') ?: 'decision';
+
+        return response($octets, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'Content-Disposition' => 'attachment; filename="'.$nom.'.docx"', 'X-Content-Type-Options' => 'nosniff',
         ]);
     }
 }

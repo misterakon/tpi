@@ -9,8 +9,8 @@ use App\Models\Fermeture;
 use Illuminate\Support\Carbon;
 
 /*
- | Dates d'audience d'une chambre et date limite d'enrôlement : d'après les créneaux d'audience de ses formations (calendrier de l'ordonnance),
- | les jours de fermeture (fériés, vacances) et la règle « pour une audience tel jour, enrôler avant tel jour à telle heure ».
+ | Dates d'audience d'une chambre et date limite d'enregistrement : d'après les créneaux d'audience de ses formations (calendrier de l'ordonnance),
+ | les jours de fermeture (fériés, vacances) et la règle « pour une audience tel jour, enregistrer avant tel jour à telle heure ».
  */
 class CalendrierEnrolement
 {
@@ -51,7 +51,7 @@ class CalendrierEnrolement
     }
 
     /**
-     * Prochaines audiences de la chambre avec leur date limite d'enrôlement.
+     * Prochaines audiences de la chambre avec leur date limite d'enregistrement.
      *
      * @return list<array{date: string, libelle: string, limite: ?string, ouverte: bool}>
      */
@@ -73,7 +73,7 @@ class CalendrierEnrolement
                 if ($c['jour'] !== $d->isoWeekday()) {
                     continue;
                 }
-                $limite = $avecLimite ? DelaiEnrolement::limitePour($d) : null;   // la date limite d'enrôlement ne concerne que le civil
+                $limite = $avecLimite ? DelaiEnrolement::limitePour($d) : null;   // la date limite d'enregistrement ne concerne que le civil
                 $trouvees[] = [
                     'date' => $d->toDateString(), 'heure' => $c['heure'], 'precision' => $c['precision'],
                     'libelle' => self::libelleDate($d).($c['heure'] ? ' à '.str_replace(':', 'h', $c['heure']) : '').($c['precision'] && ! $c['heure'] ? ' ('.mb_strtolower($c['precision']).')' : ''),
@@ -85,7 +85,7 @@ class CalendrierEnrolement
         return $trouvees;
     }
 
-    /** La plus proche audience encore ouverte à l'enrôlement, ou null. */
+    /** La plus proche audience encore ouverte à l'enregistrement, ou null. */
     public static function proposer(Chambre $chambre, ?Carbon $maintenant = null): ?string
     {
         foreach (self::prochaines($chambre, 12, $maintenant) as $a) {

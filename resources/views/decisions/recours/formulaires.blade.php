@@ -31,23 +31,24 @@
 
 @if ($peutDelais)
 <div class="modal fade panel-modal" id="modal-delais" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false">
-  <div class="modal-dialog aff-modal" style="max-width:760px">
+  <div class="modal-dialog aff-modal" style="width:75%">
     <div class="modal-content">
       <div class="modal-header"><h4 class="modal-title">Délais de recours</h4><button class="btn-close py-0" type="button" data-bs-dismiss="modal" aria-label="Fermer"></button></div>
       <form method="post" action="{{ route('decisions.recours.delais') }}" autocomplete="off">
         @csrf
         <div class="modal-body dark-modal">
           <div class="aff-info" style="margin-bottom:10px"><i class="fa-solid fa-circle-info"></i><span>Les délais installés suivent la norme usuelle (appel civil 1 mois, opposition 15 jours, référé 15 jours, appel correctionnel 10 jours). Modifiez-les si le tribunal applique une autre durée : un délai décoché ne permet pas de délivrer de certificat.</span></div>
-          <table class="el-tbl">
-            <thead><tr><th>Délai</th><th>Voie</th><th style="width:90px">Durée</th><th style="width:110px">Unité</th><th style="width:100px">Confirmé</th></tr></thead>
+          <table class="el-tbl el-tbl--fixe" style="table-layout:fixed">
+            <colgroup><col><col style="width:110px"><col style="width:100px"><col style="width:140px"><col style="width:190px"></colgroup>
+            <thead><tr><th>Délai</th><th>Voie</th><th>Durée</th><th>Unité</th><th>Confirmé</th></tr></thead>
             <tbody>
               @foreach ($delais as $x)
                 <tr>
-                  <td>{{ $x->libelle }}<div class="el-person__sub">{{ $x->natureAffaire?->libelle ?? ($x->registre ? 'registre '.$x->registre : 'tous les registres') }}</div></td>
+                  <td style="white-space:normal">{{ $x->libelle }}<div class="el-person__sub" style="white-space:normal">{{ $x->natureAffaire?->libelle ?? ($x->registre ? 'registre '.$x->registre : 'tous les registres') }}</div></td>
                   <td>{{ \App\Models\DelaiRecours::NATURES[$x->nature] }}</td>
                   <td><input class="form-control" type="number" min="1" max="120" name="delais[{{ $x->id }}][valeur]" value="{{ $x->valeur }}" required></td>
                   <td><select class="form-select" name="delais[{{ $x->id }}][unite]" data-sans-recherche><option value="jours" @selected($x->unite === 'jours')>jours</option><option value="mois" @selected($x->unite === 'mois')>mois</option></select></td>
-                  <td><label><input type="checkbox" name="delais[{{ $x->id }}][valide]" value="1" @checked($x->valide)> Confirmé</label>@if ($x->valide_le)<div class="el-person__sub">{{ $x->valide_le->format('d/m/Y') }}</div>@endif</td>
+                  <td style="overflow:visible"><label class="aff-interrupteur"><input type="checkbox" name="delais[{{ $x->id }}][valide]" value="1" @checked($x->valide)><span class="aff-interrupteur__piste" aria-hidden="true"></span><span class="aff-interrupteur__texte"><b>Confirmé</b></span></label>@if ($x->valide_le)<div class="el-person__sub">le {{ $x->valide_le->format('d/m/Y') }}</div>@endif</td>
                 </tr>
               @endforeach
             </tbody>

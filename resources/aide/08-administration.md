@@ -24,11 +24,11 @@ Ce menu est réservé à l'administration et au greffe en chef. Il pose les **r�
 *Administration > Organisation du tribunal.* Dans cet ordre conseillé :
 
 1. **Année judiciaire** : libellé, début et fin (la fin est **après** le début). Une seule année est « courante ».
-2. **Salles**, **Magistrats et greffiers** (fonction, matricule unique, compte relié), **Sections** et **Chambres**.
+2. **Salles**, **Personnel du tribunal** (catégorie, fonction, matricule unique, compte relié), **Sections** et **Chambres**.
 3. **Formations et affectations** dans chaque chambre : c'est elles qui donnent la **composition des rôles**, le **périmètre de chacun** et les **destinataires des alertes**.
 4. **Calendrier** des audiences par chambre (jour, heure, salle). Deux chambres ne peuvent pas avoir **la même salle au même créneau**.
 5. **Jours fériés et vacances** : ils bloquent les rôles et décalent les échéances de recours.
-6. **Dates limites d'enrôlement** (art. 7 de l'ordonnance) et **Services et responsabilités**.
+6. **Dates limites d'enregistrement** (art. 7 de l'ordonnance) et **Services et responsabilités**.
 7. **Archive des ordonnances** : téléversez l'ordonnance signée (PDF) pour la consulter dans l'application.
 
 ## Reconduire une année
@@ -46,7 +46,7 @@ Ce menu est réservé à l'administration et au greffe en chef. Il pose les **r�
 *Administration > Référentiels.* Les listes qui alimentent les formulaires : types d'audience, modes de saisine, matières, **infractions**, natures d'affaire, **objets du litige**.
 
 - On peut **ajouter, modifier, désactiver, supprimer** (si l'élément n'est pas utilisé). Les **doublons** sont refusés.
-- Les **objets du litige** portent des **mots-clés** : ce sont eux qui font proposer nature, matière et chambre à l'enrôlement.
+- Les **objets du litige** portent des **mots-clés** : ce sont eux qui font proposer nature, matière et chambre à l'enregistrement.
 - Complétez les **articles** des infractions (à valider par le tribunal).
 
 ## Réglages

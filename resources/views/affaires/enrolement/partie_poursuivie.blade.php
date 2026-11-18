@@ -17,7 +17,7 @@
 
   <div class="el-formgrid">
     <div class="el-c3">
-      <label class="form-label"><b>Nature</b></label>
+      <label class="form-label"><b>Type de partie</b></label>
       <select class="form-select" name="{{ $nom }}[nature]" data-sans-recherche onchange="changer_nature_poursuite(this)">
         @foreach ($natures as $code => $libelle)
           <option value="{{ $code }}" @selected($nature === $code)>{{ $libelle }}</option>

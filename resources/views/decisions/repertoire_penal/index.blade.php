@@ -36,7 +36,7 @@
         </div>
         <div class="el-tblwrap">
           <table class="el-tbl el-tbl--fixe" id="tbl-repertoire" data-serveur="{{ route('decisions.repertoire_penal.donnees') }}">
-            <colgroup><col style="width:110px"><col style="width:130px"><col><col style="width:150px"><col style="width:250px"><col style="width:170px"><col style="width:130px"></colgroup>
+            <colgroup><col style="width:110px"><col style="width:130px"><col><col style="width:150px"><col style="width:210px"><col style="width:160px"><col style="width:200px"></colgroup>
             <thead><tr><th>Date</th><th>Affaire</th><th>Prévenu</th><th>Issue</th><th>Peine</th><th>Minute</th><th>Actions</th></tr></thead>
             <tbody>
             </tbody>

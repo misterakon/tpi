@@ -119,3 +119,31 @@
 .red-remise { font: 500 13.5px/1.45 var(--police-app, Inter, sans-serif); color: #1F2A44; } .red-remise small { display: block; font-size: 12.5px; color: #2F3A52; }
 /* Numéro de la décision : attribué par l'application, affiché grisé et non modifiable */
 .red-numero:disabled { background: #EEF1F4; color: #4A5670; font-weight: 700; letter-spacing: .3px; border-style: dashed; cursor: not-allowed; opacity: 1; -webkit-text-fill-color: #4A5670; }
+
+/* Parties (demandeurs, défendeurs) et rubriques de motifs d'un jugement civil : une fiche par partie ou par rubrique */
+.red-liste { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+.red-fiche { border: 1px solid #DCEBE2; border-radius: 12px; padding: 12px; background: #FBFDFC; display: flex; flex-direction: column; gap: 10px; }
+.red-fiche[hidden] { display: none; }
+.red-fiche input.form-control, .red-fiche .form-select { height: 42px; min-height: 42px; padding-top: 0; padding-bottom: 0; line-height: 40px; width: 100%; }
+.red-fiche .form-select { padding-right: 34px; }
+.red-fiche .select2-container { --s2-h: 42px; width: 100% !important; }
+.red-fiche textarea.form-control { height: auto; min-height: 0; line-height: 1.45; padding-top: 8px; padding-bottom: 8px; }
+.red-partie__tete { display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 10px; }
+.red-partie__corps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: start; }
+.red-partie__large { grid-column: 1 / -1; }
+.red-partie .red-naissance { width: 100%; }
+.red-liste .red-ajouter { align-self: flex-start; }
+@media (max-width: 767px) { .red-partie__tete, .red-partie__corps { grid-template-columns: 1fr; } }
+
+/* Parties, rubriques et textes longs : toute la largeur du bloc, même sur un écran étroit (la règle des champs « larges » passe à la moitié sous 1700 px). */
+.red-lignes .red-champ.red-champ--pleine { grid-column: 1 / -1; }
+
+/* Champs qui n'apparaissent que si le jugement les exige, et groupes sans aucun champ à remplir */
+.red-champ[hidden], details.red-bloc[hidden] { display: none !important; }
+.red-bloc__aide { margin-left: 8px; font: 500 12px var(--police-app); color: #5B6B86; }
+
+/* Libellé au-dessus de chaque champ d'une partie ou d'une rubrique : mêmes libellés et même rythme que les autres champs du formulaire */
+.red-sous-champ { display: flex; flex-direction: column; gap: 4px; margin: 0; min-width: 0; }
+.red-sous-label { font: 600 12.5px var(--police-app); color: #0B3D2A; }
+.red-sous-label small { font-weight: 500; color: #5B6B86; }
+.red-partie__tete { align-items: end; }

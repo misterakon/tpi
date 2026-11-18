@@ -89,9 +89,9 @@ class JournalLibelles
         'fermeture_cree' => ['Période de fermeture ajoutée', 'success'],
         'fermeture_modifie' => ['Période de fermeture modifiée', 'info'],
         'fermeture_supprime' => ['Période de fermeture supprimée', 'danger'],
-        'enrolement_cree' => ['Règle d\'enrôlement ajoutée', 'success'],
-        'enrolement_modifie' => ['Règle d\'enrôlement modifiée', 'info'],
-        'enrolement_supprime' => ['Règle d\'enrôlement supprimée', 'danger'],
+        'enrolement_cree' => ['Règle d\'enregistrement ajoutée', 'success'],
+        'enrolement_modifie' => ['Règle d\'enregistrement modifiée', 'info'],
+        'enrolement_supprime' => ['Règle d\'enregistrement supprimée', 'danger'],
         'type_audience_cree' => ['Type d\'audience créé', 'success'],
         'type_audience_modifie' => ['Type d\'audience modifié', 'info'],
         'type_audience_supprime' => ['Type d\'audience supprimé', 'danger'],
@@ -139,7 +139,10 @@ class JournalLibelles
         'decision_renvoyee' => ['Décision renvoyée en rédaction', 'warning'],
         'decision_numerotee' => ['Numéro de décision attribué', 'success'],
         'decision_signee' => ['Décision signée', 'success'],
-        'decision_delivree' => ['Décision délivrée', 'success'],
+        'decision_transmise' => ['Décision transmise au greffe', 'info'],
+        'decision_word' => ['Décision téléchargée en Word', 'neutral'],
+        'decision_delivree' => ['Décision délivrée (ancien circuit)', 'success'],
+        'decision_copie_envoyee' => ['Copie de la décision envoyée au greffier en chef', 'info'],
         'registre_decisions_exporte' => ['Registre des décisions exporté', 'info'],
         'alerte_justifiee' => ['Retard justifié (alerte suspendue)', 'warning'],
         'regle_alerte_creee' => ["Règle d'alerte créée", 'success'],
@@ -186,7 +189,7 @@ class JournalLibelles
         'modele_decision_supprime' => ['Modèle de décision supprimé', 'danger'],
         'decision_creee' => ['Décision ouverte', 'success'],
         'decision_modifiee' => ['Décision modifiée', 'info'],
-        'affaire_enrolee' => ['Affaire enrôlée', 'success'],
+        'affaire_enrolee' => ['Affaire enregistrée', 'success'],
         'piece_ajoutee' => ['Pièce ajoutée au dossier', 'success'],
         'piece_modifiee' => ['Pièce du dossier modifiée', 'info'],
         'piece_retiree' => ['Pièce retirée du dossier', 'danger'],
@@ -239,7 +242,7 @@ class JournalLibelles
     {
         return [
             'name' => 'Nom', 'email' => 'E-mail', 'profil_id' => 'Profil (n°)', 'actif' => 'Actif', 'nom' => 'Nom',
-            'description' => 'Description', 'droits' => 'Droits', 'libelle' => 'Libellé', 'debut' => 'Début', 'fin' => 'Fin', 'ordonnance' => 'Ordonnance', 'courante' => 'En cours', 'type' => 'Type', 'emplacement' => 'Emplacement', 'prenoms' => 'Prénoms', 'sexe' => 'Sexe', 'ordre' => 'Ordre', 'chambre_id' => 'Chambre (n°)', 'groupe' => 'Groupe', 'intitule' => 'Intitulé', 'attributions' => 'Attributions', 'annee_judiciaire_id' => 'Année (n°)', 'section_id' => 'Section (n°)', 'agent_id' => 'Agent (n°)', 'formation_id' => 'Formation (n°)', 'role' => 'Rôle', 'suppleant' => 'Suppléant', 'chef_section' => 'Chef de section', 'remarque' => 'Remarque', 'categorie' => 'Catégorie', 'agents' => 'Agents', 'fonction' => 'Fonction', 'matricule' => 'Matricule', 'telephone' => 'Téléphone', 'user_id' => 'Compte (n°)', 'mode' => 'Mode', 'erreur' => 'Erreur', 'numero' => 'Numéro', 'jour' => 'Jour', 'jour_audience' => 'Audience le', 'jour_limite' => 'Enrôlement clos le', 'ajoutes' => 'Ajoutés', 'a_valider' => 'À valider', 'demande_date' => 'Demande une date', 'registre' => 'Registre', 'exclue_enrolement' => 'Exclue de l\'enrôlement', 'matiere_id' => 'Matière (n°)', 'nature_affaire_id' => 'Nature d\'affaire (n°)', 'chambre_libelle' => 'Chambre', 'texte' => 'Texte', 'article' => 'Article', 'valeur' => 'Délai', 'unite' => 'Unité', 'renvois_max' => 'Renvois au plus', 'etat' => 'État', 'copie_de' => 'Copie de', 'modele' => 'Modèle', 'reference' => 'Référence', 'statut' => 'Statut', 'corrige_depuis' => 'Corrigée depuis (n°)', 'valeurs' => 'Valeurs saisies', 'objet' => 'Objet', 'parties' => 'Parties', 'derogation' => 'Dérogation', 'audience' => "Première audience", 'jointe_a' => 'Jointe à', 'affaire' => 'Affaire', 'doublon_confirme' => 'Doublon confirmé', 'motif' => 'Motif', 'numero' => 'Numéro', 'matiere_id' => 'Matière (n°)', 'code' => 'Code', 'nom' => 'Nom', 'categorie' => 'Catégorie', 'contenu' => 'Contenu', 'entete' => 'Timbre', 'qualite' => 'Qualité', 'factum' => 'Factum', 'version' => 'Version', 'etape' => 'Étape', 'acteur' => 'Qui doit agir', 'point_depart' => 'Point de départ', 'chambres' => 'Chambres', 'formations' => 'Formations', 'affectations' => 'Affectations', 'creneaux' => 'Audiences', 'services' => 'Services', 'ignores' => 'Ignorés', 'composition' => 'Composition', 'audiences' => 'Audiences reprises', 'heure' => 'Heure', 'frequence' => 'Fréquence', 'salle_id' => 'Salle (n°)', 'precision' => 'Précision', 'ordonnance_id' => 'Ordonnance (n°)', 'objet' => 'Objet', 'date_signature' => 'Date de signature', 'date_effet' => "Date d'effet", 'observations' => 'Observations', 'fichier' => 'Fichier', 'empreinte' => 'Empreinte',
+            'description' => 'Description', 'droits' => 'Droits', 'libelle' => 'Libellé', 'debut' => 'Début', 'fin' => 'Fin', 'ordonnance' => 'Ordonnance', 'courante' => 'En cours', 'type' => 'Type', 'emplacement' => 'Emplacement', 'prenoms' => 'Prénoms', 'sexe' => 'Sexe', 'ordre' => 'Ordre', 'chambre_id' => 'Chambre (n°)', 'groupe' => 'Groupe', 'intitule' => 'Intitulé', 'attributions' => 'Attributions', 'annee_judiciaire_id' => 'Année (n°)', 'section_id' => 'Section (n°)', 'agent_id' => 'Agent (n°)', 'formation_id' => 'Formation (n°)', 'role' => 'Rôle', 'suppleant' => 'Suppléant', 'chef_section' => 'Chef de section', 'remarque' => 'Remarque', 'categorie' => 'Catégorie', 'agents' => 'Agents', 'fonction' => 'Fonction', 'matricule' => 'Matricule', 'telephone' => 'Téléphone', 'user_id' => 'Compte (n°)', 'mode' => 'Mode', 'erreur' => 'Erreur', 'numero' => 'Numéro', 'jour' => 'Jour', 'jour_audience' => 'Audience le', 'jour_limite' => 'Enregistrement clos le', 'ajoutes' => 'Ajoutés', 'a_valider' => 'À valider', 'demande_date' => 'Demande une date', 'registre' => 'Registre', 'exclue_enrolement' => 'Exclue de l\'enregistrement', 'matiere_id' => 'Matière (n°)', 'nature_affaire_id' => 'Nature d\'affaire (n°)', 'chambre_libelle' => 'Chambre', 'texte' => 'Texte', 'article' => 'Article', 'valeur' => 'Délai', 'unite' => 'Unité', 'renvois_max' => 'Renvois au plus', 'etat' => 'État', 'copie_de' => 'Copie de', 'modele' => 'Modèle', 'reference' => 'Référence', 'statut' => 'Statut', 'corrige_depuis' => 'Corrigée depuis (n°)', 'valeurs' => 'Valeurs saisies', 'objet' => 'Objet', 'parties' => 'Parties', 'derogation' => 'Dérogation', 'audience' => "Première audience", 'jointe_a' => 'Jointe à', 'affaire' => 'Affaire', 'doublon_confirme' => 'Doublon confirmé', 'motif' => 'Motif', 'numero' => 'Numéro', 'matiere_id' => 'Matière (n°)', 'code' => 'Code', 'nom' => 'Nom', 'categorie' => 'Catégorie', 'contenu' => 'Contenu', 'entete' => 'Timbre', 'qualite' => 'Qualité', 'factum' => 'Factum', 'version' => 'Version', 'etape' => 'Étape', 'acteur' => 'Qui doit agir', 'point_depart' => 'Point de départ', 'chambres' => 'Chambres', 'formations' => 'Formations', 'affectations' => 'Affectations', 'creneaux' => 'Audiences', 'services' => 'Services', 'ignores' => 'Ignorés', 'composition' => 'Composition', 'audiences' => 'Audiences reprises', 'heure' => 'Heure', 'frequence' => 'Fréquence', 'salle_id' => 'Salle (n°)', 'precision' => 'Précision', 'ordonnance_id' => 'Ordonnance (n°)', 'objet' => 'Objet', 'date_signature' => 'Date de signature', 'date_effet' => "Date d'effet", 'observations' => 'Observations', 'fichier' => 'Fichier', 'empreinte' => 'Empreinte',
         ][$cle] ?? $cle;
     }
 

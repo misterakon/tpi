@@ -19,7 +19,7 @@ use Illuminate\View\View;
 
 /*
  | Chambres (et juridictions, cabinets d'instruction) d'une section pour une année judiciaire, avec leurs attributions.
- | La composition et les formations se règlent depuis la page « Composition » de chaque chambre.
+ | Structure uniquement : section, attributions, formations. Les personnes et les jours d'audience se règlent dans « Composition des chambres ».
  | Droits : chambres.voir / creer / modifier / supprimer.
  */
 class ChambreController extends Controller
@@ -34,7 +34,7 @@ class ChambreController extends Controller
         $annee = $annees->firstWhere('id', (int) $request->query('annee')) ?? AnneeJudiciaire::courante() ?? $annees->first();
 
         $lignes = Chambre::query()
-            ->with(['section', 'formations.creneaux', 'formations.affectations' => fn ($q) => $q->with('agent')])
+            ->with(['section', 'formations'])
             ->when($annee, fn ($q) => $q->where('annee_judiciaire_id', $annee->id), fn ($q) => $q->whereRaw('1 = 0'))
             ->orderBy('ordre')->get();
 

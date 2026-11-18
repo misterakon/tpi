@@ -14,8 +14,8 @@
     $groupes = collect($champs)->groupBy('groupe');
     $numeroTexte = $decision->numeroAffichage() ? 'n° '.$decision->numeroAffichage().' ' : '';
     $sousTitre = match (true) {
-        $decision->statut === 'delivree' => 'Décision '.$numeroTexte.'signée le '.$decision->date_signature?->format('d/m/Y').' et délivrée : le texte est figé.',
-        $decision->estSignee() => 'Décision '.$numeroTexte.'signée le '.$decision->date_signature?->format('d/m/Y').' : le texte est figé, elle peut être délivrée.',
+        $decision->statut === 'transmise' => 'Décision '.$numeroTexte.'signée le '.$decision->date_signature?->format('d/m/Y').' et transmise au greffe le '.$decision->transmise_le?->format('d/m/Y').' (cette date vaut date de délivrance) : le texte est figé.',
+        $decision->estSignee() => 'Décision '.$numeroTexte.'signée le '.$decision->date_signature?->format('d/m/Y').' : le texte est figé. Elle doit maintenant être transmise au greffe.',
         $decision->estValidee() => 'Décision validée le '.$decision->validee_le?->format('d/m/Y à H:i').($decision->validePar ? ' par '.$decision->validePar->name : '').' : le texte est figé, elle attend la signature.',
         $decision->estRedigee() => 'Décision rédigée le '.$decision->redigee_le?->format('d/m/Y').' : elle attend la validation.',
         default => 'Remplissez les champs à gauche ; la décision se met à jour à droite sur une page A4. Enregistrez régulièrement, marquez la décision comme rédigée, puis faites-la valider.',
@@ -32,6 +32,9 @@
         <x-slot:actions>
           <a class="el-btn el-btn--ghost" href="{{ route('decisions.redaction') }}"><i class="fa-solid fa-arrow-left"></i> Retour</a>
           <a class="el-btn el-btn--ghost" href="{{ route('decisions.redaction.imprimer', $decision->id) }}" target="_blank" rel="noopener"><i class="fa-solid fa-print"></i> Imprimer</a>
+          @if ($peutWord)
+            <a class="el-btn el-btn--ghost" href="{{ route('decisions.redaction.word', $decision->id) }}" title="Télécharger la décision en Word"><i class="fa-solid fa-file-word"></i> Word</a>
+          @endif
           @unless ($lecture)
             @if ($decision->chambre_id)
               <button class="el-btn el-btn--ghost" type="button" onclick="recomposer_tribunal()" title="Reprendre le président, les assesseurs et le greffier de l'ordonnance"><i class="fa-solid fa-users"></i> Composition de l'ordonnance</button>
@@ -60,8 +63,8 @@
               <button class="el-btn el-btn--accent" type="button" onclick="ouvrir_signature()"><i class="fa-solid fa-signature"></i> Signer</button>
             @endif
           @endif
-          @if ($decision->estSignee() && $peutDelivrer)
-            <button class="el-btn el-btn--accent" type="button" onclick="ouvrir_delivrance()"><i class="fa-solid fa-paper-plane"></i> Délivrer</button>
+          @if ($decision->statut === 'signee' && ! $decision->estTransmise() && $peutTransmettre)
+            <button class="el-btn el-btn--accent" type="button" onclick="ouvrir_transmission()" title="Transmettre la décision signée au greffe : la date de transmission vaut date de délivrance"><i class="fa-solid fa-share"></i> Transmettre au greffe</button>
           @endif
         </x-slot:actions>
       </x-hero>
@@ -77,13 +80,20 @@
               <div class="el-card__body">
                 @forelse ($groupes as $groupe => $liste)
                   @php
-                    $remplis = $liste->filter(fn ($c) => ! in_array($valeurs[$c['code']] ?? null, [null, '', []], true))->count();
-                    $ouvert = $loop->first || $remplis < $liste->count();
+                    // Seuls comptent les champs que le jugement exige : un motif non choisi ne demande rien (voir VariablesDecision::SI).
+                    $indexChamps = collect($champs)->keyBy('code')->all();
+                    $visibles = $liste->filter(fn ($c) => \App\Support\Redaction\ChampsDecision::visible($c, $valeurs, $indexChamps));
+                    $remplis = $visibles->filter(fn ($c) => ! in_array($valeurs[$c['code']] ?? null, [null, '', []], true))->count();
+                    $options = $groupe === \App\Support\Redaction\VariablesDecision::OPTIONS;
+                    $dynamique = $liste->contains(fn ($c) => ! empty($c['si']));
+                    // Les choix du jugement restent ouverts même préremplis ; l'identité et la composition se referment quand elles sont complètes.
+                    $decisoire = in_array($groupe, ['Propres à ce modèle', 'Dommages-intérêts', 'Avant-dire-droit (expertise)', 'La décision (jugement civil)'], true);
+                    $ouvert = ! $options && ($loop->first || $decisoire || $remplis < $visibles->count());
                   @endphp
-                  <details class="red-bloc" @if ($ouvert) open @endif>
+                  <details class="red-bloc" @if ($ouvert) open @endif @if ($dynamique) data-dynamique @endif @if ($dynamique && $visibles->isEmpty()) hidden @endif>
                     <summary>
-                      <span class="red-bloc__titre">{{ $groupe }}</span>
-                      <span class="red-bloc__etat {{ $remplis === $liste->count() ? 'red-bloc__etat--ok' : '' }}">{{ $remplis }} / {{ $liste->count() }}</span>
+                      <span class="red-bloc__titre">{{ $groupe }}@if ($options) <small class="red-bloc__aide">rarement utilisées</small>@endif</span>
+                      <span class="red-bloc__etat {{ $remplis === $visibles->count() ? 'red-bloc__etat--ok' : '' }}">{{ $remplis }} / {{ $visibles->count() }}</span>
                     </summary>
                     <div class="red-lignes">
                       @if ($loop->first)
@@ -170,8 +180,8 @@
   @if ($peutSigner && $decision->statut === 'validee')
     @include('decisions.redaction.form_signature')
   @endif
-  @if ($peutDelivrer && $decision->estSignee())
-    @include('decisions.redaction.form_delivrance')
+  @if ($peutTransmettre && $decision->statut === 'signee' && ! $decision->estTransmise())
+    @include('decisions.redaction.form_transmission')
   @endif
   @include('decisions.redaction.js_script')
 @endsection

@@ -112,7 +112,7 @@
         <div class="el-c12 aff-derogation">
           <label class="form-label" for="f_derogation"><b>Dérogation de la Présidente</b> — motif</label>
           <textarea class="form-control" id="f_derogation" name="derogation_motif" rows="2" maxlength="300" placeholder="Ex. : affaire urgente, autorisée par la Présidente">{{ old('derogation_motif') }}</textarea>
-          <small class="text-muted">La date limite d'enrôlement est dépassée : en indiquant un motif et en enregistrant à nouveau, l'affaire est enrôlée à cette date. La dérogation est tracée.</small>
+          <small class="text-muted">La date limite d'enregistrement est dépassée : en indiquant un motif et en enregistrant à nouveau, l'affaire est enregistrée à cette date. La dérogation est tracée.</small>
         </div>
       @endif
     @endif

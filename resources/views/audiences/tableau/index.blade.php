@@ -57,7 +57,7 @@
         <div class="au-s4">
           <div class="au-sombre">
             <h5>Où en sont les affaires</h5>
-            <small>Toutes les affaires enrôlées du périmètre</small>
+            <small>Toutes les affaires enregistrées du périmètre</small>
             <div id="donut" style="margin-top:8px"></div>
             <div class="au-legende" id="legende"></div>
           </div>

@@ -59,7 +59,7 @@ class NotePdf
         return $parts;
     }
 
-    /** Les douze derniers mois : affaires enrôlées (vert) et terminées (orange), en colonnes. Dessin SVG, sans aucune bibliothèque de navigateur. */
+    /** Les douze derniers mois : affaires enregistrées (vert) et terminées (orange), en colonnes. Dessin SVG, sans aucune bibliothèque de navigateur. */
     private static function courbeMensuelle(array $m): string
     {
         $l = 720; $h = 180; $g = 34; $b = 38; $hautUtile = $h - $g - $b; $n = count($m['mois']);
@@ -81,7 +81,7 @@ class NotePdf
             $svg .= '<text x="'.($x + $zone / 2).'" y="'.($h - 20).'" font-size="8" fill="#4A5670" text-anchor="middle" font-family="DejaVu Sans">'.htmlspecialchars(mb_substr($m['mois'][$i], 0, 4)).'</text>'
                 .'<text x="'.($x + $zone / 2).'" y="'.($h - 9).'" font-size="8" fill="#4A5670" text-anchor="middle" font-family="DejaVu Sans">'.htmlspecialchars(mb_substr($m['mois'][$i], -4)).'</text>';
         }
-        $svg .= '<rect x="40" y="6" width="10" height="10" fill="#00794C"/><text x="55" y="15" font-size="10" fill="#1F2A44" font-family="DejaVu Sans">Affaires enrôlées</text>'
+        $svg .= '<rect x="40" y="6" width="10" height="10" fill="#00794C"/><text x="55" y="15" font-size="10" fill="#1F2A44" font-family="DejaVu Sans">Affaires enregistrées</text>'
             .'<rect x="160" y="6" width="10" height="10" fill="#E8710A"/><text x="175" y="15" font-size="10" fill="#1F2A44" font-family="DejaVu Sans">Affaires terminées</text></svg>';
 
         return 'data:image/svg+xml;base64,'.base64_encode($svg);

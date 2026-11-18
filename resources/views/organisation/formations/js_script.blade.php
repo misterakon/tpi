@@ -1,10 +1,12 @@
 <script type="text/javascript">
 
-	/* Formations d'une chambre (page « Composition »). APP_NOM est défini par le script des affectations, inclus avant celui-ci. */
+	/* Formations d'une chambre (page « Chambres »). APP_NOM est défini par le script de la page, inclus avant celui-ci. */
 
-	function add_formation() {
+	function add_formation(chambre_id) {
 		$('#form-formation')[0].reset();
 		$('#form-formation [name="id_"]').val('');
+		$('#form-formation [name="chambre_id"]').val(chambre_id);
+		$('#btn-supprimer-formation').addClass('d-none').off('click');
 		$('#form-formation input[type="checkbox"][data-defaut="1"]').prop('checked', true);
 		$('#titre-modal-formation').text('Nouvelle formation');
 		$('#modal-formation').modal('show');
@@ -21,6 +23,8 @@
 			success: function (data) {
 				const $f = $('#form-formation');
 				$f.find('[name="id_"]').val(data.id);
+				$f.find('[name="chambre_id"]').val(data.chambre_id);
+				$('#btn-supprimer-formation').removeClass('d-none').off('click').on('click', function () { $('#modal-formation').modal('hide'); delete_formation(data.id); });
 				$f.find('[name="nom"]').val(data.nom || '');
 				$f.find('[name="intitule"]').val(data.intitule || '');
 				$f.find('[name="attributions"]').val(data.attributions || '');

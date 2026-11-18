@@ -14,6 +14,7 @@
         <x-slot:extra>
           <span><i class="fa-solid fa-calendar-days"></i> {{ $annee?->libelle ?? 'Aucune année' }}</span>
           <span><i class="fa-solid fa-list"></i> {{ $lignes->count() }} élément(s)</span>
+          <x-ordonnance-en-vigueur :annee="$annee?->id" />
         </x-slot:extra>
         @can('services.creer')
           <x-slot:actions>

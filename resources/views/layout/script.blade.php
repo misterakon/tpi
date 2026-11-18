@@ -158,16 +158,23 @@
             const $el = $(this);
 
             if (action === 'hide') {
+                const etaitOuverte = $el.hasClass('show');
                 document.activeElement?.blur();
                 $el.removeClass('show').css('display', 'none');
-                $('body').removeClass('modal-open');
-                $('.modal-backdrop').remove();
+                // Une fenêtre ouverte par-dessus une autre : tant qu'il en reste une d'ouverte, on garde le fond et le blocage du défilement.
+                if (!$('.modal.show').length) {
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                }
+                if (etaitOuverte) { $el.trigger('hidden.bs.modal'); }
             } else {
+                $el.trigger('show.bs.modal');
                 $el.addClass('show').css('display', 'block');
                 $('body').addClass('modal-open');
                 if (!$('.modal-backdrop').length) {
                     $('body').append('<div class="modal-backdrop fade show" style="opacity: 0.35;"></div>');
                 }
+                $el.trigger('shown.bs.modal');
             }
         });
     };

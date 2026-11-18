@@ -25,9 +25,9 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 
 /*
- | Enrôlement d'une affaire civile (série RG) : mode de saisine, objet du litige saisi librement (l'application propose nature, matière
+ | Enregistrement d'une affaire civile (série RG) : mode de saisine, objet du litige saisi librement (l'application propose nature, matière
  | et chambre par mots-clés), parties (demandeurs et défendeurs de natures différentes, avec leur avocat), date de première audience
- | contrôlée par la date limite d'enrôlement, puis attribution du numéro RG-0001/26. Droits : enrolement.voir / creer / deroger.
+ | contrôlée par la date limite d'enregistrement, puis attribution du numéro RG-0001/26. Droits : enrolement.voir / creer / deroger.
  */
 class EnrolementController extends Controller
 {
@@ -56,7 +56,7 @@ class EnrolementController extends Controller
         return response()->json(['status' => true, 'propositions' => RapprochementObjet::proposer($v['objet'], 5, RegistreAffaire::depuis($v['registre'] ?? 'civil')['natures'])]);
     }
 
-    /** Prochaines audiences de la chambre avec leur date limite d'enrôlement. */
+    /** Prochaines audiences de la chambre avec leur date limite d'enregistrement. */
     public function dates(Request $request): JsonResponse
     {
         abort_unless(Gate::allows('enrolement.creer') || Gate::allows('affaires.modifier'), 403);
@@ -109,11 +109,16 @@ class EnrolementController extends Controller
         if (! $jonction && filled($donnees['numero_parquet'] ?? null)) {
             $existante = Affaire::where('numero_parquet', trim($donnees['numero_parquet']))->where('statut', '!=', 'annulee')->first();
             if ($existante) {
-                throw ValidationException::withMessages(['numero_parquet' => 'Ce numéro du parquet est déjà enrôlé sous '.$existante->numeroAffichage().'. Pour la même affaire, utilisez la jonction.']);
+                throw ValidationException::withMessages(['numero_parquet' => 'Ce numéro du parquet est déjà enregistré sous '.$existante->numeroAffichage().'. Pour la même affaire, utilisez la jonction.']);
             }
         }
 
-        [$dateAudience, $derogation] = EnrolementAffaire::dateAudience($donnees, $request, Chambre::findOrFail($donnees['chambre_id']), $def);
+        $chambreChoisie = Chambre::findOrFail($donnees['chambre_id']);
+        if (! $chambreChoisie->affectablePar($request->user())) {
+            throw ValidationException::withMessages(['chambre_id' => "L'affectation à cette chambre est faite par la Présidente (affaires de plus de 100 000 000 FCFA). Enregistrez l'affaire dans une autre chambre : la Présidente la réattribuera."]);
+        }
+
+        [$dateAudience, $derogation] = EnrolementAffaire::dateAudience($donnees, $request, $chambreChoisie, $def);
 
         $affaire = DB::transaction(function () use ($donnees, $parties, $request, $dateAudience, $derogation, $manuel, $jonction, $serie) {
             $principale = null;
@@ -149,10 +154,10 @@ class EnrolementController extends Controller
             'jointe_a' => $affaire->principale?->numeroAffichage(),
         ]);
 
-        // L'enrôleur peut inscrire dans une chambre hors de son périmètre : il n'en ouvre alors pas la fiche.
+        // L'greffier qui enregistre peut inscrire dans une chambre hors de son périmètre : il n'en ouvre alors pas la fiche.
         $destination = \App\Support\PerimetreChambres::voit($request->user(), (int) $affaire->chambre_id) ? route('affaires.liste.fiche', $affaire->id) : route('affaires.liste');
 
-        return redirect($destination)->with('success', ($manuel ? 'Affaire enregistrée' : 'Affaire enrôlée').' sous le numéro '.$affaire->numeroAffichage().($jonction ? ' (jonction avec l\'affaire principale)' : '').'.');
+        return redirect($destination)->with('success', ($manuel ? 'Affaire enregistrée' : 'Affaire enregistrée').' sous le numéro '.$affaire->numeroAffichage().($jonction ? ' (jonction avec l\'affaire principale)' : '').'.');
     }
 
     /** « 1391/25 » devient [1391, 2025]. @return array{0: int, 1: int} */
@@ -171,7 +176,7 @@ class EnrolementController extends Controller
     private static function controlerNumero(string $serie, int $numero, int $annee, bool $jonction, int $chambreId): ?Affaire
     {
         $existantes = Affaire::where('serie', $serie)->where('annee', $annee)->where('numero', $numero)->get();
-        $libelle = $numero.'/'.sprintf('%02d', $annee % 100);
+        $libelle = sprintf('%02d', $numero).'/'.sprintf('%02d', $annee % 100);
         $actives = $existantes->where('statut', '!=', 'annulee');
 
         if ($existantes->isEmpty()) {
@@ -200,6 +205,7 @@ class EnrolementController extends Controller
     /** @return \Illuminate\Support\Collection<int, Chambre> */
     public static function chambres()
     {
-        return Chambre::whereIn('annee_judiciaire_id', AnneeJudiciaire::where('courante', true)->select('id'))->where('actif', true)->orderBy('ordre')->get(['id', 'libelle', 'intitule']);
+        return Chambre::whereIn('annee_judiciaire_id', AnneeJudiciaire::where('courante', true)->select('id'))->where('actif', true)->orderBy('ordre')->get(['id', 'libelle', 'intitule'])
+            ->filter(fn (Chambre $c) => $c->affectablePar(auth()->user()))->values();
     }
 }

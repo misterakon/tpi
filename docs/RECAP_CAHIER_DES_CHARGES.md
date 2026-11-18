@@ -90,7 +90,7 @@ Application de gestion du **Tribunal de première instance de Bingerville** (Lar
 3. Autres actes du greffe (lot S).
 4. Décision pénale rédigée avec son modèle (jugement pénal).
 5. Répertoire manuscrit.
-6. Export Word des décisions (les rôles l'ont déjà).
+6. ~~Export Word des décisions~~ (fait : bouton Word, droit « redaction.word »).
 7. Ordres d'extraction (lot R).
 8. Profil « Gestionnaire ».
 9. Reprise des autres classeurs Excel du tribunal.

@@ -24,7 +24,7 @@ class SuitesAudience
     /** Valeur du filtre « suite » qui montre les affaires en retard au lieu des suites notées. */
     public const RETARD = 'retard';
 
-    public const COLONNES = ['Audience du', 'Chambre', 'Affaire', 'Enrôlée le', '1re audience', 'Parties', 'Objet', 'Suite', 'Détail'];
+    public const COLONNES = ['Audience du', 'Chambre', 'Affaire', 'Enregistrée le', '1re audience', 'Parties', 'Objet', 'Suite', 'Détail'];
 
     /** Les filtres reconnus, nettoyés. @return array{suite: ?string, chambre: ?int, du: ?string, au: ?string, q: string} */
     public static function filtres(array $entree): array

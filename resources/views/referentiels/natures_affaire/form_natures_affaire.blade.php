@@ -36,7 +36,7 @@
               <label class="el-switch el-switch--lg" for="f_exclue_enrolement">
                 <input type="checkbox" id="f_exclue_enrolement" name="exclue_enrolement" value="1">
                 <span class="el-switch__piste"><i></i></span>
-                <span class="el-switch__texte">Exclue des dates limites d'enrôlement (référés, voies d'exécution)</span>
+                <span class="el-switch__texte">Exclue des dates limites d'enregistrement (référés, voies d'exécution)</span>
               </label>
             </div>
           </div>

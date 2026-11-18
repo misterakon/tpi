@@ -19,9 +19,9 @@ use Illuminate\Support\Collection;
 
 /*
  | Les chiffres de la page « Analyse et pilotage » : une vue de tout le tribunal (ou des chambres de l'utilisateur) sur une période.
- |   stock       affaires en cours aujourd'hui           entrées  affaires enrôlées sur la période
+ |   stock       affaires en cours aujourd'hui           entrées  affaires enregistrées sur la période
  |   sorties     affaires jugées, radiées, jointes ou désistées sur la période (une affaire compte une fois)
- |   délai moyen jours entre l'enrôlement et la sortie   retards  affaires dont une échéance est dépassée
+ |   délai moyen jours entre l'enregistrement et la sortie   retards  affaires dont une échéance est dépassée
  | Tout est calculé à partir de ce que l'application sait déjà. Aucun nom de partie ni numéro d'affaire ne sort de cette classe vers l'IA
  | (voir RedacteurIA::charge) : seuls des totaux, par chambre.
  */
@@ -59,7 +59,7 @@ class DonneesPilotage
         $etats = SuiviAffaires::etats($perimetre, today());
         $enCours = $etats->where('en_cours', true);
 
-        // Entrées : affaires enrôlées sur la période.
+        // Entrées : affaires enregistrées sur la période.
         $entrees = Affaire::visiblesPour($user)->where('statut', 'enrolee')->whereBetween('date_rg', [$debut, $fin])->whereNotNull('chambre_id')->get(['id', 'chambre_id'])->groupBy('chambre_id')->map->count();
 
         // Sorties : une affaire sort quand sa dernière suite finale est notée sur un rôle publié de la période.

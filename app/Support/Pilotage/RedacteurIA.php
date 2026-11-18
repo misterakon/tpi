@@ -24,7 +24,7 @@ class RedacteurIA
         ."« ## Points forts » avec 1 à 4 puces commençant par « - » ; « ## Points d'attention » avec 2 à 5 puces, du plus grave au moins grave ; « ## Recommandations » avec 3 à 5 puces d'actions concrètes, "
         ."chacune commençant par un verbe à l'infinitif et reliée à un chiffre précis ou à une chambre précise. "
         ."Ne remplis jamais une section pour faire nombre : un fait banal n'est pas un point fort ; s'il n'y a aucun point fort notable, écris une seule puce « - Aucun point fort notable sur la période. ». "
-        ."Vocabulaire : une affaire « enrôlée » est une affaire enregistrée au tribunal ; une affaire « terminée » est jugée, radiée, jointe à une autre ou désistée ; le taux de traitement est le nombre d'affaires terminées pour 100 enrôlées. Compare les chambres entre elles quand les écarts sont nets. N'utilise ni tableau, ni émoji, ni autre mise en forme que ces titres et ces puces. Termine toujours par la section Recommandations.";
+        ."Vocabulaire : une affaire « enregistrée » est une affaire enregistrée au tribunal ; une affaire « terminée » est jugée, radiée, jointe à une autre ou désistée ; le taux de traitement est le nombre d'affaires terminées pour 100 enregistrées. Compare les chambres entre elles quand les écarts sont nets. N'utilise ni tableau, ni émoji, ni autre mise en forme que ces titres et ces puces. Termine toujours par la section Recommandations.";
 
     public static function disponible(): bool
     {
@@ -53,7 +53,7 @@ class RedacteurIA
         ];
     }
 
-    /** Les noms des indicateurs envoyés à l'IA sont ceux de l'application : une affaire « enrôlée » est enregistrée au tribunal, « terminée » est jugée, radiée, jointe ou désistée. */
+    /** Les noms des indicateurs envoyés à l'IA sont ceux de l'application : une affaire « enregistrée » est enregistrée au tribunal, « terminée » est jugée, radiée, jointe ou désistée. */
     private static function renommer(array $kpis): array
     {
         $noms = ['stock' => 'affaires_en_cours', 'entrees' => 'affaires_enrolees', 'sorties' => 'affaires_terminees', 'taux_sortie' => 'taux_de_traitement_pct', 'retards' => 'affaires_en_retard'];

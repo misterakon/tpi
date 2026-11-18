@@ -19,7 +19,7 @@ class Accords
         'présent' => 'présente', 'absent' => 'absente', 'greffier' => 'greffière', 'président' => 'présidente', 'célibataire' => 'célibataire',
         'divorcé' => 'divorcée', 'marié' => 'mariée', 'mineur' => 'mineure', 'majeur' => 'majeure', 'condamné' => 'condamnée', 'détenu' => 'détenue',
         'cultivateur' => 'cultivatrice', 'commerçant' => 'commerçante', 'employeur' => 'employeuse', 'travailleur' => 'travailleuse', 'enseignant' => 'enseignante',
-        'propriétaire' => 'propriétaire', 'juge' => 'juge', 'assesseur' => 'assesseur', 'témoin' => 'témoin', 'victime' => 'victime', 'feu' => 'feue', 'décédé' => 'décédée', 'le' => 'la', 'son' => 'sa', 'il' => 'elle',
+        'constructeur' => 'constructrice', 'bailleur' => 'bailleresse', 'preneur' => 'preneuse', 'débiteur' => 'débitrice', 'occupant' => 'occupante', 'propriétaire' => 'propriétaire', 'juge' => 'juge', 'assesseur' => 'assesseur', 'témoin' => 'témoin', 'victime' => 'victime', 'feu' => 'feue', 'décédé' => 'décédée', 'le' => 'la', 'son' => 'sa', 'il' => 'elle',
     ];
 
     /** Termes invariables en genre ET en nombre : participes présents et locutions. */

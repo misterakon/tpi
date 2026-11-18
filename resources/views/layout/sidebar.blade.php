@@ -18,16 +18,22 @@
                 ['titre' => 'Profils et droits', 'route' => 'profils.index', 'droit' => 'profils.voir'],
             ]],
             ['titre' => 'Organisation du tribunal', 'enfants' => [
-                ['titre' => 'Année judiciaire', 'route' => 'organisation.annees', 'droit' => 'annees.voir'],
-                ['titre' => 'Salles', 'route' => 'organisation.salles', 'droit' => 'salles.voir'],
-                ['titre' => 'Magistrats et greffiers', 'route' => 'organisation.personnel', 'droit' => 'personnel.voir'],
+                ['rubrique' => 'Ordonnance'],
+                ['titre' => 'Ordonnances', 'route' => 'organisation.ordonnances', 'droit' => 'ordonnances.voir'],
+                ['rubrique' => 'Structure'],
                 ['titre' => 'Sections', 'route' => 'organisation.sections', 'droit' => 'sections.voir'],
                 ['titre' => 'Chambres', 'route' => 'organisation.chambres', 'droit' => 'chambres.voir'],
+                ['titre' => 'Salles', 'route' => 'organisation.salles', 'droit' => 'salles.voir'],
+                ['rubrique' => 'Affectations'],
+                ['titre' => 'Composition des chambres', 'route' => 'organisation.composition', 'aussi' => ['organisation.affectations', 'organisation.affectations.*'], 'droit' => 'affectations.voir'],
                 ['titre' => 'Services et responsabilités', 'route' => 'organisation.services', 'droit' => 'services.voir'],
+                ['rubrique' => 'Personnel'],
+                ['titre' => 'Personnel du tribunal', 'route' => 'organisation.personnel', 'droit' => 'personnel.voir'],
+                ['rubrique' => 'Calendrier'],
+                ['titre' => 'Année judiciaire', 'route' => 'organisation.annees', 'droit' => 'annees.voir'],
                 ['titre' => 'Jours fériés et vacances', 'route' => 'organisation.fermetures', 'droit' => 'fermetures.voir'],
-                ['titre' => "Dates limites d'enrôlement", 'route' => 'organisation.enrolement', 'droit' => 'delais.voir'],
+                ['titre' => "Dates limites d'enregistrement", 'route' => 'organisation.enrolement', 'droit' => 'delais.voir'],
                 ['titre' => 'Reconduire une année', 'route' => 'organisation.reconduction', 'droit' => 'reconduction.voir'],
-                ['titre' => 'Archive des ordonnances', 'route' => 'organisation.ordonnances', 'droit' => 'ordonnances.voir'],
             ]],
             ['titre' => 'Référentiels', 'enfants' => [
                 ['titre' => 'Types d\'audience', 'route' => 'referentiels.types_audience', 'droit' => 'types_audience.voir'],
@@ -67,6 +73,7 @@
             ['titre' => 'Modèles de décision', 'route' => 'decisions.modeles', 'droit' => 'modeles.voir'],
             ['titre' => 'Blocs de texte', 'route' => 'decisions.blocs', 'droit' => 'blocs.voir'],
             ['titre' => 'Rédaction', 'route' => 'decisions.redaction', 'droit' => 'redaction.voir'],
+            ['titre' => 'Transmission au greffe', 'route' => 'decisions.transmission', 'droit' => 'redaction.transmettre'],
             ['titre' => 'Registre des décisions', 'route' => 'decisions.registre', 'droit' => 'registre_decisions.voir'],
             ['titre' => 'Répertoire pénal', 'route' => 'decisions.repertoire_penal', 'droit' => 'repertoire_penal.voir'],
             ['titre' => 'Recours et certificats', 'route' => 'decisions.recours', 'droit' => 'recours.voir'],
@@ -93,14 +100,14 @@
     ];
 
     // Entrée active = celle de la page affichée (le script du thème ne le fait que pour le menu vertical).
-    $actif = fn (array $entree) => ! empty($entree['route']) && request()->routeIs($entree['route'], $entree['route'].'.*') && (empty($entree['sauf']) || ! request()->routeIs(...$entree['sauf']));
+    $actif = fn (array $entree) => ! empty($entree['route']) && request()->routeIs($entree['route'], $entree['route'].'.*', ...($entree['aussi'] ?? [])) && (empty($entree['sauf']) || ! request()->routeIs(...$entree['sauf']));
 
     // « droit » : un droit, ou une liste de droits dont un seul suffit.
     $permis = fn (array $entree) => empty($entree['droit']) || collect((array) $entree['droit'])->contains(fn ($d) => $moi->can($d));
-    $existe = fn (array $entree) => ! empty($entree['test']) || (! empty($entree['route']) && \Illuminate\Support\Facades\Route::has($entree['route']));
+    $existe = fn (array $entree) => ! empty($entree['rubrique']) || ! empty($entree['test']) || (! empty($entree['route']) && \Illuminate\Support\Facades\Route::has($entree['route']));
     // Filtre une liste d'entrées (et ses sous-menus) selon les droits ; un groupe sans entrée visible disparaît.
     $filtrer = function (array $liste) use (&$filtrer, $moi, $permis, $existe) {
-        return collect($liste)->map(function ($e) use (&$filtrer, $permis, $existe) {
+        $visibles = collect($liste)->map(function ($e) use (&$filtrer, $permis, $existe) {
             if (isset($e['enfants'])) {
                 $e['enfants'] = $filtrer($e['enfants'])->all();
 
@@ -109,12 +116,22 @@
 
             return $permis($e) && $existe($e) ? $e : null;
         })->filter()->values();
+
+        // Un intitulé de rubrique (« rubrique ») disparaît s'il ne précède aucune entrée visible.
+        return $visibles->filter(fn ($e, $i) => empty($e['rubrique']) || (isset($visibles[$i + 1]) && empty($visibles[$i + 1]['rubrique'])))->values();
     };
     $contientActif = function ($e) use (&$contientActif, $actif) {
         return isset($e['enfants']) ? collect($e['enfants'])->contains(fn ($x) => $contientActif($x)) : $actif($e);
     };
 @endphp
 
+<style>
+    /* Intitulés de rubrique dans les sous-menus (non cliquables) */
+    /* Séparateur fin : ——— Titre ——— (le titre est petit, la rubrique ne prend presque pas de place) */
+    .sidebar-submenu .submenu-rubrique { display: flex !important; align-items: center; gap: 7px; margin: 0; padding: 3px 14px 0; font-size: 10px; line-height: 1; font-weight: 600; letter-spacing: .04em; color: #6B8B7B; pointer-events: none; cursor: default; }
+    .sidebar-submenu .submenu-rubrique::before, .sidebar-submenu .submenu-rubrique::after { content: ""; flex: 1; height: 1px; background: rgba(0, 0, 0, .15); }
+    .sidebar-submenu .submenu-rubrique::before { flex: 0 0 12px; }
+</style>
 <!-- Page Sidebar Start-->
 <div class="sidebar-wrapper" data-sidebar-layout="stroke-svg">
     <div>

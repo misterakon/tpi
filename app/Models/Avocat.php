@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 /*
- | Référentiel des avocats et cabinets. À l'enrôlement on choisit l'avocat dans la liste ; s'il n'y figure pas, on tape son nom et une fiche
+ | Référentiel des avocats et cabinets. À l'enregistrement on choisit l'avocat dans la liste ; s'il n'y figure pas, on tape son nom et une fiche
  | « à compléter » est créée (si l'utilisateur a le droit avocats.creer). La clé normalisée évite les doublons : « Me YAO Aminata »,
  | « YAO Aminata » et « Aminata Yao » désignent la même fiche.
  */

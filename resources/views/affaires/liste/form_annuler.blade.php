@@ -13,7 +13,7 @@
           <div class="el-formgrid" style="margin-top:14px">
             <div class="el-c12">
               <label class="form-label" for="f_motif_annulation"><b>Motif de l'annulation</b></label>
-              <textarea class="form-control" id="f_motif_annulation" name="motif" rows="3" maxlength="300" required placeholder="Ex. : enrôlement en double de l'affaire RG-0012/26"></textarea>
+              <textarea class="form-control" id="f_motif_annulation" name="motif" rows="3" maxlength="300" required placeholder="Ex. : enregistrement en double de l'affaire RG-0012/26"></textarea>
             </div>
           </div>
         </div>

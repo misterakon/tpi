@@ -79,7 +79,7 @@
 				success: function (response) {
 					if (response.status) {
 						Swal.fire({ icon: 'success', title: APP_NOM, text: response.message });
-						$("#creneau-" + id).fadeOut(500, function () { $(this).remove(); });
+						window.compositionModifiee = true; $("#creneau-" + id).fadeOut(500, function () { $(this).remove(); });
 					} else {
 						Swal.fire({ icon: 'error', title: 'Erreur', text: response.message });
 					}

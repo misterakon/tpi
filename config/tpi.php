@@ -8,14 +8,37 @@ return [
     // Nom complet (courriels, écrans) ; sigle et ville composent la marque de l'en-tête.
     'juridiction' => env('TPI_JURIDICTION', 'Tribunal de Première Instance de Bingerville'),
     // Listes proposées dans le formulaire de rédaction pour certaines variables (le texte choisi s'insère tel quel dans la décision).
-    // Elles seront remplacées par les données de l'enrôlement ; en attendant, on peut les adapter ici.
+    // Elles seront remplacées par les données de l'enregistrement ; en attendant, on peut les adapter ici.
     'listes_decision' => [
         'matiere' => ["civile d'état des personnes", 'civile', 'commerciale', 'sociale', 'correctionnelle', 'criminelle', 'administrative et fiscale', "de l'enfance délinquante"],
         'regime_matrimonial' => ['la communauté de biens', 'la séparation de biens'],
         'type_audience' => ['ordinaire', 'extraordinaire', 'foraine'],
+        // Choix des jugements civils (modèles « Paiement et contrats », « Foncier », « Bail d'habitation »). Les conditions des modèles comparent ces mots.
+        'type_jugement' => ['au fond', 'avant-dire-droit'],
+        'demandeurs_comparution' => ['Comparaissant', 'Ne comparaissant pas'],
+        'defendeurs_comparution' => ['Comparaissant', 'Ne comparaissant pas'],
+        'fnr_issue' => ['rejetée', 'accueillie'],
+        'fnr_rappel' => ['article 1351 (chose jugée)', 'article 3 (qualité et intérêt à agir)', 'aucun'],
+        'reconventionnelle' => ['oui', 'non'],
+        'issue_fond' => ['bien fondé', 'partiellement fondé', 'mal fondé'],
+        'execution_provisoire' => ['ordonnée', 'refusée', 'non demandée'],
+        'depens' => ['à la charge du défendeur', 'à la charge du demandeur', 'réservés'],
+        'di' => ['accordés', 'accordés en partie', 'rejetés', 'non demandés'],
+        'di_fondement' => ['retard de paiement (article 1153)', 'inexécution du contrat (article 1184)', 'responsabilité délictuelle (article 1382)'],
+        'propriete' => ['accordée', 'rejetée', 'non demandée'],
+        'deguerpissement' => ['ordonné', 'rejeté', 'non demandé'],
+        'demolition' => ['ordonnée', 'rejetée', 'non demandée'],
+        'paiement' => ['accordé', 'accordé en partie', 'rejeté'],
+        'rappel_1315' => ['oui', 'non'],
+        'loyers_bail' => ['oui', 'non'],
+        'resolution' => ['prononcée', 'rejetée', 'non demandée'],
+        'grace' => ['accordé', 'refusé', 'non demandé'],
+        'conge' => ['validé', 'déclaré nul', 'sans objet', 'rejeté'],
+        'expulsion' => ['ordonnée', 'rejetée', 'non demandée'],
+        'quittances' => ['ordonnées', 'rejetées', 'non demandées'],
     ],
-    // Numéro RG des affaires : « manuel » (le greffe a son propre logiciel d'enrôlement, on reporte son numéro, ex. Bingerville)
-    // ou « automatique » (l'application attribue le numéro et contrôle la date limite d'enrôlement).
+    // Numéro RG des affaires : « manuel » (le greffe a son propre logiciel d'enregistrement, on reporte son numéro, ex. Bingerville)
+    // ou « automatique » (l'application attribue le numéro et contrôle la date limite d'enregistrement).
     // Un mode par série (RG civil, RP pénal, RI et RE instruction). Réglable dans Réglages > Affaires.
     'enrolement' => ['numero' => [
         'rg' => env('TPI_NUMERO_RG', 'manuel'), 'rp' => env('TPI_NUMERO_RP', 'manuel'),
@@ -28,7 +51,7 @@ return [
     // Requêtes : au-delà de ce délai sans répartition, la requête est signalée en retard (secrétariat de la Présidente).
     'requetes' => ['delai_repartition_jours' => env('TPI_REQUETES_DELAI', 2)],
     // Décisions : moment où le numéro est attribué, sans trou ni doublon dans l'année ('validation' ou 'signature'). À confirmer avec la greffière en chef.
-    'decisions' => ['numero_moment' => env('TPI_DECISION_NUMERO', 'validation')],
+    'decisions' => ['numero_moment' => env('TPI_DECISION_NUMERO', 'validation'), 'email_greffier_en_chef' => env('TPI_EMAIL_GREFFIER_EN_CHEF')],
     // Reprise de l'existant : taille maximale d'un classeur Excel en Mo (le serveur PHP peut en accepter moins : php.ini).
     'reprise' => ['taille_max_mo' => env('TPI_REPRISE_MAX_MO', 10)],
     'cour_appel' => env('TPI_COUR_APPEL', "Cour d'appel d'Abidjan"),
@@ -51,6 +74,7 @@ return [
         'timbre_gauche_mm' => (int) env('TPI_ACTES_TIMBRE_GAUCHE_MM', 8),
         'timbre_haut_mm' => (int) env('TPI_ACTES_TIMBRE_HAUT_MM', 18),
         'retrait_qualite_mm' => (int) env('TPI_ACTES_RETRAIT_QUALITE_MM', 45),
+        'retrait_factum_mm' => (int) env('TPI_ACTES_RETRAIT_FACTUM_MM', 45),   // le factum reste dans la colonne de la qualité (0 : toute la largeur)
         'interligne_qualite_pct' => (int) env('TPI_ACTES_INTERLIGNE_QUALITE_PCT', 100),
         'interligne_factum_pct' => (int) env('TPI_ACTES_INTERLIGNE_FACTUM_PCT', 110),
     ],

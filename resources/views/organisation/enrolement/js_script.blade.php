@@ -10,7 +10,7 @@
 		$('[name="id_"]').val('');
 		$('#f_jour_audience, #f_jour_limite').val('1').trigger('change.select2');
 		$('#f_heure').val('16:00');
-		$('#titre-modal-enrolement').text("Nouvelle règle d'enrôlement");
+		$('#titre-modal-enrolement').text("Nouvelle règle d'enregistrement");
 		$('#BtnEnregistrer').html('ENREGISTRER');
 		$('.submit').attr('disabled', false);
 		$('#modal-enrolement').modal('show');
@@ -18,7 +18,7 @@
 
 	function edit_enrolement(id) {
 		$('.modal_form')[0].reset();
-		$('#titre-modal-enrolement').text("Modifier la règle d'enrôlement");
+		$('#titre-modal-enrolement').text("Modifier la règle d'enregistrement");
 		$('#BtnEnregistrer').html('MODIFIER');
 
 		$.ajax({
@@ -46,7 +46,7 @@
 	function delete_enrolement(id) {
 		Swal.fire({
 			title: APP_NOM,
-			text: "Supprimer cette règle d'enrôlement ?",
+			text: "Supprimer cette règle d'enregistrement ?",
 			icon: 'warning',
 			showCancelButton: true,
 			confirmButtonColor: '#00794C',

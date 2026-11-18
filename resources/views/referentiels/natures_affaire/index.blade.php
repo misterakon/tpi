@@ -9,7 +9,7 @@
   <div class="page-body">
     <div class="el-page">
 
-      <x-hero tag="Référentiels" title="Natures d'affaire" subtitle="Les catégories des états statistiques du Ministère (civile ordinaire, état des personnes, matrimoniale, référé…). Les référés et les voies d'exécution sont exclus des dates limites d'enrôlement (art. 7 de l'ordonnance)." icon="fa-solid fa-folder-tree">
+      <x-hero tag="Référentiels" title="Natures d'affaire" subtitle="Les catégories des états statistiques du Ministère (civile ordinaire, état des personnes, matrimoniale, référé…). Les référés et les voies d'exécution sont exclus des dates limites d'enregistrement (art. 7 de l'ordonnance)." icon="fa-solid fa-folder-tree">
         <x-slot:extra>
           <span><i class="fa-solid fa-list"></i> {{ $lignes->count() }} élément(s)</span>
         </x-slot:extra>
@@ -33,7 +33,7 @@
           <table class="el-tbl el-tbl--fixe" id="tbl-natures_affaire">
             <colgroup><col><col style="width:150px"><col style="width:130px"><col style="width:96px"><col style="width:112px"></colgroup>
             <thead>
-              <tr><th>Nature d'affaire</th><th>Registre</th><th>Enrôlement</th><th>État</th>@canany(['natures_affaire.modifier', 'natures_affaire.supprimer'])<th>Actions</th>@endcanany</tr>
+              <tr><th>Nature d'affaire</th><th>Registre</th><th>Enregistrement</th><th>État</th>@canany(['natures_affaire.modifier', 'natures_affaire.supprimer'])<th>Actions</th>@endcanany</tr>
             </thead>
             <tbody>
               @foreach ($lignes as $l)

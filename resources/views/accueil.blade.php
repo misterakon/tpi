@@ -23,7 +23,7 @@
       <div class="ac-ligne ac-ligne--a" id="ac-ligne-a">
         <section class="pi-carte" id="ac-bloc-courbe" hidden>
           <div class="pi-carte__tete">
-            <div><h3>Affaires enrôlées et terminées</h3><small>Mois par mois, dans votre périmètre</small></div>
+            <div><h3>Affaires enregistrées et terminées</h3><small>Mois par mois, dans votre périmètre</small></div>
             <div class="au-onglets" id="ac-mois" role="tablist" data-no-print>
               <button type="button" role="tab" data-mois="6">6 mois</button><button type="button" role="tab" data-mois="12" class="is-actif">12 mois</button>
             </div>
@@ -55,7 +55,7 @@
       </div>
 
       <section class="au-cadre" id="ac-bloc-recentes" hidden>
-        <div class="ac-cadre__tete"><div><h3>Affaires récentes</h3><small>Les dernières affaires enrôlées</small></div><a class="ac-lien" id="ac-lien-affaires" href="#">Toutes les affaires</a></div>
+        <div class="ac-cadre__tete"><div><h3>Affaires récentes</h3><small>Les dernières affaires enregistrées</small></div><a class="ac-lien" id="ac-lien-affaires" href="#">Toutes les affaires</a></div>
         <div class="au-fond"><div class="ac-cartes" id="ac-recentes"></div></div>
       </section>
 

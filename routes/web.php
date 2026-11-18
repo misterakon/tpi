@@ -59,6 +59,7 @@ use App\Http\Controllers\Organisation\{
     AgentController,
     AnneeJudiciaireController,
     ChambreController,
+    CompositionController,
     CreneauController,
     DelaiEnrolementController,
     FermetureController,
@@ -179,7 +180,7 @@ Route::middleware(['auth', 'auth.session', 'inactivite'])->group(function () {
     /* Organisation du tribunal (lot D) : écrans de liste + fenêtre de saisie, droits {cle}.voir / creer / modifier / supprimer */
     // Lot E : référentiels judiciaires. Chaque page a son propre contrôleur ; seules les routes sont déclarées ici.
 
-    // Lot H (début) : enrôlement des affaires civiles (série RG) et liste des affaires.
+    // Lot H (début) : enregistrement des affaires civiles (série RG) et liste des affaires.
     Route::prefix('affaires')->group(function () {
         Route::post('/enrolement', [EnrolementController::class, 'store'])->middleware('throttle:60,1')->name('affaires.enrolement.store');
         Route::post('/enrolement/suggestions', [EnrolementController::class, 'suggestions'])->middleware('throttle:120,1')->name('affaires.enrolement.suggestions');
@@ -222,6 +223,9 @@ Route::middleware(['auth', 'auth.session', 'inactivite'])->group(function () {
         Route::post('/modeles/{id}/versions/{numero}/restaurer', [ModeleDecisionController::class, 'restaurer'])->whereNumber(['id', 'numero'])->name('decisions.modeles.restaurer');
         Route::delete('/modeles/{id}', [ModeleDecisionController::class, 'destroy'])->whereNumber('id')->name('decisions.modeles.delete');
 
+        Route::get('/transmission', [\App\Http\Controllers\Decisions\TransmissionController::class, 'index'])->middleware('can:redaction.transmettre')->name('decisions.transmission');
+        Route::post('/transmission', [\App\Http\Controllers\Decisions\TransmissionController::class, 'store'])->middleware('can:redaction.transmettre')->name('decisions.transmission.store');
+
         Route::get('/redaction', [RedactionController::class, 'index'])->middleware('can:redaction.voir')->name('decisions.redaction');
         Route::get('/redaction/donnees', [RedactionController::class, 'donnees'])->middleware(['can:redaction.voir', 'throttle:240,1'])->name('decisions.redaction.donnees');
         Route::get('/redaction/affaires', [RedactionController::class, 'affaires'])->middleware('throttle:120,1')->name('decisions.redaction.affaires');
@@ -234,7 +238,8 @@ Route::middleware(['auth', 'auth.session', 'inactivite'])->group(function () {
         Route::post('/redaction/{id}/redigee', [RedactionController::class, 'redigee'])->whereNumber('id')->name('decisions.redaction.redigee');
         Route::post('/redaction/{id}/renvoyer', [RedactionController::class, 'renvoyer'])->whereNumber('id')->name('decisions.redaction.renvoyer');
         Route::post('/redaction/{id}/signer', [RedactionController::class, 'signer'])->whereNumber('id')->name('decisions.redaction.signer');
-        Route::post('/redaction/{id}/delivrer', [RedactionController::class, 'delivrer'])->whereNumber('id')->name('decisions.redaction.delivrer');
+        Route::post('/redaction/{id}/transmettre', [RedactionController::class, 'transmettre'])->whereNumber('id')->name('decisions.redaction.transmettre');
+        Route::get('/redaction/{id}/word', [RedactionController::class, 'word'])->whereNumber('id')->middleware('throttle:60,1')->name('decisions.redaction.word');
         Route::post('/redaction/{id}/numeroter', [RedactionController::class, 'numeroter'])->whereNumber('id')->name('decisions.redaction.numeroter');
         Route::post('/redaction/{id}/valider', [RedactionController::class, 'valider'])->whereNumber('id')->name('decisions.redaction.valider');
         Route::post('/redaction/{id}/corriger', [RedactionController::class, 'corriger'])->whereNumber('id')->name('decisions.redaction.corriger');
@@ -442,6 +447,8 @@ Route::middleware(['auth', 'auth.session', 'inactivite'])->group(function () {
         Route::get('/chambres/{id}', [ChambreController::class, 'show'])->whereNumber('id')->name('organisation.chambres.get');
         Route::post('/chambres', [ChambreController::class, 'store'])->name('organisation.chambres.store');
         Route::delete('/chambres/{id}', [ChambreController::class, 'destroy'])->whereNumber('id')->name('organisation.chambres.delete');
+        Route::get('/composition', [CompositionController::class, 'index'])->middleware('can:affectations.voir')->name('organisation.composition');
+        Route::get('/personnel/{id}/fiche', [AgentController::class, 'fiche'])->whereNumber('id')->middleware('can:personnel.voir')->name('organisation.personnel.fiche');
         Route::get('/chambres/{chambre}/composition', [AffectationController::class, 'index'])->whereNumber('chambre')->middleware('can:affectations.voir')->name('organisation.affectations');
 
         Route::get('/formations/{id}', [FormationController::class, 'show'])->whereNumber('id')->name('organisation.formations.get');

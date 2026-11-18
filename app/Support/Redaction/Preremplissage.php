@@ -69,6 +69,40 @@ class Preremplissage
             $v += self::chambre($chambre) + self::composition($chambre, $dateAudience);
         }
 
+        // Les choix les plus courants sont déjà faits : le juge ne touche que ce qui change.
+        return $v + self::DEFAUTS;
+    }
+
+    /**
+     * Choix préremplis des jugements civils. Un champ que le modèle n'utilise pas est écarté ensuite ; un choix « non demandé » masque les
+     * champs de son motif, si bien que le formulaire ne montre que ce que le jugement exige.
+     */
+    public const DEFAUTS = [
+        'type_jugement' => 'au fond', 'depens' => 'à la charge du défendeur', 'reconventionnelle' => 'non', 'rappel_1315' => 'non', 'loyers_bail' => 'non',
+        'propriete' => 'non demandée', 'deguerpissement' => 'non demandé', 'demolition' => 'non demandée', 'di' => 'non demandés',
+        'paiement' => 'accordé', 'resolution' => 'non demandée', 'grace' => 'non demandé', 'expulsion' => 'non demandée', 'quittances' => 'non demandées',
+    ];
+
+    /**
+     * Ce que les feuilles d'audience apprennent du déroulement de la procédure : date de la première audience, premier renvoi et son motif.
+     * Le texte « renvoyée au … pour … » se complète alors tout seul.
+     */
+    private static function deroulement(Affaire $affaire): array
+    {
+        $lignes = RoleLigne::query()->select('role_lignes.issue', 'role_lignes.motif', 'roles_audience.date_audience as jour')
+            ->join('roles_audience', 'roles_audience.id', '=', 'role_lignes.role_id')->where('roles_audience.statut', 'publie')
+            ->where('role_lignes.affaire_id', $affaire->id)->orderBy('roles_audience.date_audience')->orderBy('role_lignes.id')->get();
+        if ($lignes->isEmpty()) {
+            return [];
+        }
+        $v = ['date_premiere_evocation' => substr((string) $lignes[0]->jour, 0, 10)];
+        if ($lignes[0]->issue === 'renvoi' && isset($lignes[1])) {
+            $v['date_premier_renvoi'] = substr((string) $lignes[1]->jour, 0, 10);
+            if (trim((string) $lignes[0]->motif) !== '') {
+                $v['motif_premier_renvoi'] = mb_strtolower(trim((string) $lignes[0]->motif));
+            }
+        }
+
         return $v;
     }
 
@@ -133,6 +167,15 @@ class Preremplissage
         if ($nature) {
             $v['nature_decision'] = $nature;
         }
+        // La présence des parties notée à l'audience dit qui comparaissait (jugement civil).
+        $comparution = match ($ligne?->presence) {
+            'toutes' => ['Comparaissant', 'Comparaissant'], 'demandeur' => ['Comparaissant', 'Ne comparaissant pas'], 'defendeur' => ['Ne comparaissant pas', 'Comparaissant'],
+            'absentes' => ['Ne comparaissant pas', 'Ne comparaissant pas'], default => null,
+        };
+        if ($comparution) {
+            $v['demandeurs_comparution'] = $comparution[0];
+            $v['defendeurs_comparution'] = $comparution[1];
+        }
 
         return $v + self::compositionTenue($role);
     }
@@ -183,10 +226,64 @@ class Preremplissage
         return $v;
     }
 
-    /** Ce que l'enrôlement a déjà saisi : date du RG et premier demandeur. */
+    /**
+     * Les parties de l'affaire pour un jugement civil : demandeurs et défendeurs (une ligne par partie), leurs conseils et la date de la
+     * première audience. Le Ministère public n'est pas une partie à désigner dans les qualités.
+     */
+    private static function partiesCivil(Affaire $affaire): array
+    {
+        $v = [];
+        foreach (['demandeur' => 'demandeurs', 'defendeur' => 'defendeurs'] as $role => $code) {
+            $parties = $affaire->parties->where('role', $role)->where('nature', '!=', 'mp')->values();
+            if ($parties->isEmpty()) {
+                continue;
+            }
+            $v[$code] = $parties->map(fn ($p) => self::lignePartie($p))->all();
+
+            $conseils = $parties->pluck('avocat')->map(fn ($a) => trim((string) $a))->filter()->unique()->values();
+            if ($conseils->isNotEmpty()) {
+                $v[$code.'_conseil'] = $conseils->map(fn ($c) => preg_replace('/^Maître\s+/u', 'Me ', $c))->implode(' ; ');
+                $genres = Parties::genres($v[$code]);
+                $v[$code.'_representation'] = Accords::accorder('Représenté', $genres).' par '.(count($genres) > 1 ? 'leur' : 'son').' conseil, '.Accords::enumerer($conseils->all());
+            }
+        }
+        if ($affaire->date_premiere_audience) {
+            $v['date_premiere_evocation'] = $affaire->date_premiere_audience->toDateString();
+        }
+
+        return self::deroulement($affaire) + $v;
+    }
+
+    /** Une partie de l'affaire sous la forme d'une ligne du formulaire. @return array<string, mixed> */
+    private static function lignePartie(\App\Models\Partie $p): array
+    {
+        if (! $p->estPersonnePhysique()) {
+            $ligne = ['nom' => (string) ($p->denomination ?: $p->nom), 'genre' => in_array($p->nature, ['morale', 'etat'], true) ? 's' : 'm'];
+            if ($p->domicile) {
+                $ligne['domicile'] = $p->domicile;
+            }
+
+            return $ligne;
+        }
+        $ligne = ['nom' => trim(mb_strtoupper((string) $p->nom).' '.$p->prenoms), 'genre' => $p->nature === 'femme' ? 'f' : 'm'];
+        if ($p->naissance_mode === 'date' && $p->naissance_date) {
+            $ligne['naissance'] = ['mode' => 'date', 'date' => $p->naissance_date->toDateString()];
+        } elseif ($p->naissance_mode === 'annee' && $p->naissance_annee) {
+            $ligne['naissance'] = ['mode' => 'annee', 'annee' => (string) $p->naissance_annee];
+        }
+        foreach (['lieu_naissance' => $p->lieu_naissance, 'nationalite' => $p->nationalite ? mb_strtolower($p->nationalite) : null, 'profession' => $p->profession ? mb_strtolower($p->profession) : null, 'domicile' => $p->domicile] as $cle => $valeur) {
+            if ($valeur) {
+                $ligne[$cle] = $valeur;
+            }
+        }
+
+        return $ligne;
+    }
+
+    /** Ce que l'enregistrement a déjà saisi : date du RG et premier demandeur. */
     private static function affaire(Affaire $affaire): array
     {
-        $v = ['date_rg' => $affaire->date_rg->toDateString()];
+        $v = ['date_rg' => $affaire->date_rg->toDateString()] + self::partiesCivil($affaire);
         $d = $affaire->parties->firstWhere('role', 'demandeur');
         if (! $d) {
             return $v;
@@ -260,6 +357,12 @@ class Preremplissage
         foreach ($affectations->filter(fn ($a) => ! in_array($a->role, ['president', 'greffier'], true))->values() as $a) {
             $assesseurs[] = ['nom' => $a->agent->nomComplet(), 'genre' => $a->agent->sexe ? strtolower($a->agent->sexe) : ''];
         }
+        // Un même magistrat siège parfois dans plusieurs formations de la chambre : il n'est cité qu'une fois.
+        $assesseurs = array_values(array_reduce($assesseurs, function ($uniques, $a) {
+            $uniques[mb_strtolower($a['nom'])] ??= $a;
+
+            return $uniques;
+        }, []));
         if ($assesseurs) {
             $v['assesseurs'] = $assesseurs;
         }

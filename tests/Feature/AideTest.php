@@ -39,11 +39,11 @@ class AideTest extends TestCase
         }
         // Les ancres du parcours de la page d'accueil de l'aide existent bien.
         $ancres = fn ($slug) => array_column($tous[$slug]['sections'], 'ancre');
-        $this->assertContains('enroler-une-affaire', $ancres('affaires'));
+        $this->assertContains('enregistrer-une-affaire', $ancres('affaires'));
         $this->assertContains('preparer-les-roles', $ancres('audiences'));
         $this->assertContains('tenir-laudience', $ancres('audiences'));
         $this->assertContains('rediger-une-decision', $ancres('decisions'));
-        $this->assertContains('signer-et-delivrer', $ancres('decisions'));
+        $this->assertContains('signer-et-transmettre', $ancres('decisions'));
         $this->assertContains('recours-et-certificats', $ancres('decisions'));
     }
 
@@ -62,7 +62,7 @@ class AideTest extends TestCase
         $this->connecte($this->sansDroit())->get(route('aide.chapitre', 'demarrer'))->assertOk()->assertSee('Se connecter');
 
         $greffier = $this->avecDroits(['affaires.voir']);
-        $this->connecte($greffier)->get(route('aide.chapitre', 'affaires'))->assertOk()->assertSee('Enrôler une affaire');
+        $this->connecte($greffier)->get(route('aide.chapitre', 'affaires'))->assertOk()->assertSee('Enregistrer une affaire');
         $this->connecte($greffier)->get(route('aide.chapitre', 'decisions'))->assertNotFound();
         $this->connecte($greffier)->get(route('aide.chapitre', 'inexistant'))->assertNotFound();
 
@@ -79,7 +79,7 @@ class AideTest extends TestCase
         $this->assertStringContainsString('/aide/', $r[0]['url']);
 
         // Un compte sans droit ne trouve rien dans les chapitres qui lui sont fermés.
-        $sans = $this->connecte($this->sansDroit())->getJson(route('aide.recherche', ['q' => 'jonction numéro enrôlement']))->assertOk()->json('resultats');
+        $sans = $this->connecte($this->sansDroit())->getJson(route('aide.recherche', ['q' => 'jonction numéro enregistrement']))->assertOk()->json('resultats');
         foreach ($sans as $x) {
             $this->assertNotSame('affaires', $x['slug']);
         }
@@ -92,7 +92,7 @@ class AideTest extends TestCase
     public function test_le_panneau_donne_l_aide_de_la_page_courante(): void
     {
         $admin = User::factory()->create();
-        $this->connecte($admin)->get(route('aide.contexte', ['page' => 'affaires.liste']))->assertOk()->assertSee('data-titre="Affaires"', false)->assertSee('Enrôler une affaire');
+        $this->connecte($admin)->get(route('aide.contexte', ['page' => 'affaires.liste']))->assertOk()->assertSee('data-titre="Affaires"', false)->assertSee('Enregistrer une affaire');
         $this->connecte($admin)->get(route('aide.contexte', ['page' => 'decisions.redaction']))->assertOk()->assertSee('data-titre="Décisions"', false);
         $this->connecte($admin)->get(route('aide.contexte', ['page' => 'page.inconnue']))->assertOk()->assertSee('data-titre="Aide"', false);
         // Un paramètre qui n'est pas un nom de route est ignoré (jamais interprété).

@@ -78,6 +78,7 @@
 				success: function (response) {
 					if (response.status) {
 						Swal.fire({ icon: 'success', title: APP_NOM, text: response.message });
+						window.compositionModifiee = true;   // la page « Composition des chambres » met ses chiffres à jour à la fermeture du panneau
 						$("#row-" + id).fadeOut(500, function () { $(this).remove(); });
 					} else {
 						Swal.fire({ icon: 'error', title: 'Erreur', text: response.message });

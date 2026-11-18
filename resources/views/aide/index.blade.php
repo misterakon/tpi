@@ -8,11 +8,11 @@
 @section('main-content')
   @php
     $parcours = [
-      ['affaires', 'enroler-une-affaire', 'fa-solid fa-file-circle-plus', 'Enrôler', "Saisir l'affaire et ses parties", 'vert'],
+      ['affaires', 'enroler-une-affaire', 'fa-solid fa-file-circle-plus', 'Enregistrer', "Saisir l'affaire et ses parties", 'vert'],
       ['audiences', 'preparer-les-roles', 'fa-solid fa-calendar-check', 'Mettre au rôle', 'Composer et publier le rôle', 'bleu'],
       ['audiences', 'tenir-laudience', 'fa-solid fa-gavel', "Tenir l'audience", 'Noter renvoi, délibéré, jugement', 'orange'],
       ['decisions', 'rediger-une-decision', 'fa-solid fa-pen-nib', 'Rédiger', 'Du brouillon à la validation', 'violet'],
-      ['decisions', 'signer-et-delivrer', 'fa-solid fa-stamp', 'Signer et délivrer', 'Numéro, signature, remise', 'vert'],
+      ['decisions', 'signer-et-transmettre', 'fa-solid fa-stamp', 'Signer et transmettre', 'Numéro, signature, transmission au greffe', 'vert'],
       ['decisions', 'recours-et-certificats', 'fa-solid fa-scale-balanced', 'Recours', 'Signification et certificat', 'orange'],
     ];
   @endphp
@@ -34,7 +34,7 @@
       </x-hero>
 
       <section class="aide-parcours">
-        <h2><i class="fa-solid fa-route" style="color:#f97316"></i> Le parcours d'un dossier, de l'enrôlement au recours</h2>
+        <h2><i class="fa-solid fa-route" style="color:#f97316"></i> Le parcours d'un dossier, de l'enregistrement au recours</h2>
         <p>Cliquez sur une étape pour ouvrir l'explication.</p>
         <div class="aide-etapes">
           @foreach ($parcours as [$slug, $ancre, $icone, $titre, $sous, $couleur])

@@ -72,10 +72,10 @@ class Requete extends Model
         return in_array($this->statut, ['recue', 'repartie'], true);
     }
 
-    /** « RQ 12/26 ». */
+    /** « RQ 01/26 », « RQ 12/26 » : deux chiffres au moins. */
     public function numeroAffichage(): string
     {
-        return 'RQ '.$this->numero.'/'.sprintf('%02d', $this->annee % 100);
+        return 'RQ '.sprintf('%02d', $this->numero).'/'.sprintf('%02d', $this->annee % 100);
     }
 
     /** Requérants, un par ligne. @return list<string> */

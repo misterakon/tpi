@@ -15,5 +15,6 @@ class DatabaseSeeder extends Seeder
         $this->call(OrdonnanceBingerville2026Seeder::class);
         $this->call(ReferentielsJudiciairesSeeder::class);
         $this->call(ModelesDecisionSeeder::class);
+        $this->call(ModelesJugementsCivilsSeeder::class);
     }
 }

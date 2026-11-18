@@ -19,12 +19,11 @@ class NumeroDecision
         'signature' => 'À la signature de la décision',
     ];
 
-    /** Le numéro s'écrit « D-N/AAAA » : D comme décision, N le numéro dans l'année, AAAA l'année de la décision (D-145/2026). */
-    public const PREFIXE = 'D-';
+    /** Le numéro s'écrit comme celui des registres : « 01/26 », « 12/26 », « 145/26 » (numéro dans l'année sur deux chiffres au moins, année sur deux chiffres). */
 
     public static function libelle(int $numero, int $annee): string
     {
-        return self::PREFIXE.$numero.'/'.$annee;
+        return sprintf('%02d/%02d', $numero, $annee % 100);
     }
 
     public static function moment(): string

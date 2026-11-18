@@ -193,7 +193,7 @@ class MiseEnEtatController extends Controller
         return redirect()->route('affaires.mise_en_etat')->with('success', 'Affaire retirée de la mise en état.');
     }
 
-    /** Seules les affaires civiles (registre RG), enrôlées, non jointes, pas déjà en mise en état. */
+    /** Seules les affaires civiles (registre RG), enregistrées, non jointes, pas déjà en mise en état. */
     private function verifierEligible(Affaire $a): void
     {
         $motif = match (true) {

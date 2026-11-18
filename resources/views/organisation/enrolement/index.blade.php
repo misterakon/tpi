@@ -1,5 +1,5 @@
 @extends('layout.master')
-@section('title', "Dates limites d'enrôlement")
+@section('title', "Dates limites d'enregistrement")
 
 @section('css')
   <link rel="stylesheet" href="{{ asset('assets/css/elouange-theme.css') }}?v={{ filemtime(public_path('assets/css/elouange-theme.css')) }}">
@@ -9,7 +9,7 @@
   <div class="page-body">
     <div class="el-page">
 
-      <x-hero tag="Organisation" title="Dates limites d'enrôlement" subtitle="Article 7 de l'ordonnance : pour les chambres civiles, commerciales et administratives, l'enrôlement d'une affaire se clôt à un jour et une heure de la semaine précédant l'audience, sauf dérogation du Président. Les référés et les voies d'exécution sont exclus." icon="fa-solid fa-hourglass-half">
+      <x-hero tag="Organisation" title="Dates limites d'enregistrement" subtitle="Article 7 de l'ordonnance : pour les chambres civiles, commerciales et administratives, l'enregistrement d'une affaire se clôt à un jour et une heure de la semaine précédant l'audience, sauf dérogation du Président. Les référés et les voies d'exécution sont exclus." icon="fa-solid fa-hourglass-half">
         <x-slot:extra>
           <span><i class="fa-solid fa-list"></i> {{ $lignes->count() }} règle(s)</span>
         </x-slot:extra>
@@ -22,14 +22,14 @@
 
       <div class="el-card">
         <div class="el-toolbar">
-          <span class="el-muted">Règles d'enrôlement</span>
+          <span class="el-muted">Règles d'enregistrement</span>
         </div>
 
         <div class="el-tblwrap">
           <table class="el-tbl el-tbl--fixe" id="tbl-enrolement">
             <colgroup><col style="width:25%"><col><col style="width:16%"><col style="width:112px"></colgroup>
             <thead>
-              <tr><th>Audience le</th><th>Enrôlement clos le</th><th>À</th>@canany(['delais.modifier', 'delais.supprimer'])<th>Actions</th>@endcanany</tr>
+              <tr><th>Audience le</th><th>Enregistrement clos le</th><th>À</th>@canany(['delais.modifier', 'delais.supprimer'])<th>Actions</th>@endcanany</tr>
             </thead>
             <tbody>
               @foreach ($lignes as $l)

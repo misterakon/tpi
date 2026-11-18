@@ -2,14 +2,14 @@
 titre: Affaires
 icone: fa-solid fa-folder-open
 couleur: vert
-resume: Enrôler une affaire, gérer ses parties, ses pièces, les requêtes, la mise en état et les détenus.
+resume: Enregistrer une affaire, gérer ses parties, ses pièces, les requêtes, la mise en état et les détenus.
 droit: affaires.voir, dossiers.voir, mise_en_etat.voir, requetes.voir, detenus.voir, avocats.voir, reprise.voir
 routes: affaires.*
 ordre: 2
 ---
 Le menu **Affaires** est le cœur de l'application : c'est là que naît et que vit chaque dossier. Une affaire a un **numéro** (RG civil, RP pénal, RI et RE instruction), des **parties**, une **chambre**, une **première audience** et un **dossier numérique**.
 
-## Enrôler une affaire
+## Enregistrer une affaire
 
 *Affaires > Liste des affaires > bouton orange « Saisir une affaire ».*
 
@@ -22,7 +22,9 @@ Le menu **Affaires** est le cœur de l'application : c'est là que naît et que 
 
 > **Attention** Un **numéro déjà utilisé** est refusé, sauf s'il s'agit d'une **jonction** (cochez « Jonction ») : elle doit viser une affaire **existante**, de **la même chambre**, et **non annulée**. Un numéro d'affaire annulée n'est **jamais réutilisé**.
 
-> **À savoir** Il faut au moins **un demandeur** (ou un prévenu au pénal). La date du RG ne peut pas être dans le futur, et la première audience ne peut pas être trop proche de l'enrôlement, sauf **dérogation de la Présidente**.
+> **À savoir** Il faut au moins **un demandeur** (ou un prévenu au pénal). La date du RG ne peut pas être dans le futur, et la première audience ne peut pas être trop proche de l'enregistrement, sauf **dérogation de la Présidente**.
+
+> **Chambre présidentielle** L'affectation d'une affaire à la **chambre présidentielle** (intérêt pécuniaire de plus de **100 000 000 FCFA**) est faite par la **Présidente** : cette chambre n'apparaît pas dans la liste des autres utilisateurs. Enregistrez l'affaire dans une autre chambre ; la Présidente la **réattribue** avec un motif tracé.
 
 ## La fiche d'une affaire
 

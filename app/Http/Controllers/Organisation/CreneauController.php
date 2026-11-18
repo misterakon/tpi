@@ -86,7 +86,8 @@ class CreneauController extends Controller
         $formation = Formation::with('chambre')->find($c->formation_id);
         Journal::audit($avant ? 'creneau_modifie' : 'creneau_cree', $c, $formation->chambre->libelle.' : '.$c->type, $avant, $this->valeurs($c->refresh()));
 
-        return redirect()->back()->with('success', $avant ? 'Audience modifiée.' : 'Audience ajoutée.');
+        return redirect()->route('organisation.composition', ['annee' => $formation->chambre->annee_judiciaire_id, 'ouvrir' => $formation->chambre_id])
+            ->with('success', $avant ? 'Audience modifiée.' : 'Audience ajoutée.');
     }
 
     public function destroy(int $id): JsonResponse

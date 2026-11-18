@@ -12,10 +12,10 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 /*
- | Les échéances du circuit, calculées d'après ce que l'application sait déjà (enrôlement, rôles, feuilles d'audience, délibérés, décisions,
+ | Les échéances du circuit, calculées d'après ce que l'application sait déjà (enregistrement, rôles, feuilles d'audience, délibérés, décisions,
  | délais de procédure, détention). Rien n'est saisi à part : si l'action est faite, l'échéance disparaît de cette liste et l'alerte se referme.
  |
- |   mise_au_role     affaire enrôlée dont la première audience approche sans figurer sur un rôle
+ |   mise_au_role     affaire enregistrée dont la première audience approche sans figurer sur un rôle
  |   publication_role rôle d'audience non publié
  |   feuille_a_saisir audience passée dont des affaires n'ont pas de suite notée (une alerte par audience)
  |   renvoi           affaire renvoyée : elle doit revenir sur un rôle à la date de renvoi

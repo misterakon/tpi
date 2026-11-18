@@ -32,7 +32,7 @@ class ModeleReprise
 
         return [
             'numero' => ['titre' => 'N° '.$serie, 'obligatoire' => true, 'aide' => 'Numéro du registre, avec l\'année : 1391/25. Le préfixe « '.$serie.' » est accepté.'],
-            'date' => ['titre' => "Date d'enrôlement", 'obligatoire' => true, 'aide' => 'jj/mm/aaaa. Pas de date dans le futur.'],
+            'date' => ['titre' => "Date d'enregistrement", 'obligatoire' => true, 'aide' => 'jj/mm/aaaa. Pas de date dans le futur.'],
             'objet' => ['titre' => $def['objet'], 'obligatoire' => true, 'aide' => 'Texte libre, 1 000 caractères au plus.'],
             'demandeur' => ['titre' => $libellesA[$roleA], 'obligatoire' => true, 'aide' => 'Plusieurs parties : séparez-les par un point-virgule. Exemple : KOUASSI Yao ; Mme TRAORE Awa.'],
             'defendeur' => ['titre' => $libellesB[$roleB] ?? 'Autres parties', 'obligatoire' => false, 'aide' => 'Facultatif. Même règle que la colonne précédente.'],

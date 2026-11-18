@@ -31,9 +31,9 @@ Le menu vert en haut regroupe les modules. Vous ne voyez **que ce que votre prof
 
 | Menu | Pour quoi faire |
 |---|---|
-| **Affaires** | enrôler, suivre les dossiers, requêtes, mise en état, détenus, avocats |
+| **Affaires** | enregistrer, suivre les dossiers, requêtes, mise en état, détenus, avocats |
 | **Audiences** | rôles, feuille d'audience, renvois et délibérés, séances hors audience |
-| **Décisions** | rédiger, valider, signer, délivrer, recours et certificats |
+| **Décisions** | rédiger, valider, signer, transmettre au greffe, recours et certificats |
 | **Instruction et annexes** | cabinets d'instruction, assistance judiciaire, juge de l'application des peines |
 | **Statistiques** | chiffres, graphiques et registres Excel du tribunal |
 | **Alertes** | ce qui doit être fait, et par qui |

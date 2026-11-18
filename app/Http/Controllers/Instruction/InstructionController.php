@@ -27,7 +27,7 @@ use Illuminate\View\View;
 /*
  | Instruction (lot R) : le suivi des dossiers des cabinets d'instruction et du cabinet du juge des enfants, comme dans les classeurs « INFO JI » et « INFO JE » :
  | dossier (réquisitoire, textes visés, faits, clôture), inculpés (statut, détention, renouvellements, liberté provisoire), victimes (auditions) et commissions rogatoires.
- | L'enrôlement (RI ou RE, parties, mandat de dépôt) se fait déjà dans « Affaires » ; ici on complète. Droits : instruction.voir et instruction.modifier ;
+ | L'enregistrement (RI ou RE, parties, mandat de dépôt) se fait déjà dans « Affaires » ; ici on complète. Droits : instruction.voir et instruction.modifier ;
  | les dossiers d'instruction et de mineurs restent protégés (droits spéciaux de la famille d'affaires, voir FamillesAffaires).
  */
 class InstructionController extends Controller

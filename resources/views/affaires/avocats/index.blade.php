@@ -9,7 +9,7 @@
   <div class="page-body">
     <div class="el-page">
 
-      <x-hero tag="Affaires" title="Avocats et cabinets" subtitle="La liste des avocats proposée à l'enrôlement. Un avocat ajouté à la volée par un greffier apparaît « À compléter » : complétez sa fiche (barreau, téléphone, e-mail) quand vous avez le temps." icon="fa-solid fa-user-tie">
+      <x-hero tag="Affaires" title="Avocats et cabinets" subtitle="La liste des avocats proposée à l'enregistrement. Un avocat ajouté à la volée par un greffier apparaît « À compléter » : complétez sa fiche (barreau, téléphone, e-mail) quand vous avez le temps." icon="fa-solid fa-user-tie">
         <x-slot:extra>
           <span><i class="fa-solid fa-list"></i> {{ $total }} fiche(s)</span>
           @if ($acompleter)<span><i class="fa-solid fa-pen-ruler"></i> {{ $acompleter }} à compléter</span>@endif

@@ -369,8 +369,7 @@ class FormationDonnees extends Command
             return $d;
         }
 
-        Delivrance::create(['decision_id' => $d->id, 'type' => 'expedition', 'delivre_a' => 'KOFFI Adjoua', 'qualite' => 'demandeur', 'delivre_le' => today()->subDays(max(0, $joursSignature - 1))->toDateString(), 'delivre_par' => $this->auteur]);
-        $d->forceFill(['statut' => 'delivree', 'delivree_le' => now()->subDays(max(0, $joursSignature - 1))])->save();
+        $d->forceFill(['statut' => 'transmise', 'transmise_le' => now()->subDays(max(0, $joursSignature - 1)), 'transmise_par' => $this->auteur, 'delivree_le' => now()->subDays(max(0, $joursSignature - 1))])->save();
 
         return $d;
     }

@@ -24,7 +24,7 @@ class ChoixAffaire
         $base = Affaire::visiblesPour($user)->with(['parties', 'chambre:id,libelle'])->where('statut', '!=', 'annulee');
 
         if ($terme === '') {
-            // D'abord les jugées à rédiger, puis les affaires les plus récemment enrôlées pour compléter la liste.
+            // D'abord les jugées à rédiger, puis les affaires les plus récemment enregistrées pour compléter la liste.
             $affaires = self::enAttente($user, clone $base);
             $reste = self::LIMITE - $affaires->count();
             if ($reste > 0) {
@@ -41,7 +41,9 @@ class ChoixAffaire
         $derniers = self::derniers($ids);
         $aRediger = self::aRediger($derniers);
 
-        return $affaires->map(fn (Affaire $a) => self::fiche($a, $derniers[$a->id] ?? null, isset($aRediger[$a->id])))
+        $liens = ModelePropose::liens();
+
+        return $affaires->map(fn (Affaire $a) => self::fiche($a, $derniers[$a->id] ?? null, isset($aRediger[$a->id]), $liens))
             ->sortByDesc('a_rediger')->values()->all();
     }
 
@@ -93,7 +95,7 @@ class ChoixAffaire
     }
 
     /** @param  array{issue: ?string, date: string, role_id: int}|null  $dernier @return array<string, mixed> */
-    public static function fiche(Affaire $a, ?array $dernier, bool $aRediger): array
+    public static function fiche(Affaire $a, ?array $dernier, bool $aRediger, ?array $liens = null): array
     {
         $intitule = $a->intitule();
         $audience = $dernier['date'] ?? $a->date_premiere_audience?->toDateString();
@@ -102,6 +104,8 @@ class ChoixAffaire
             'id' => $a->id, 'numero' => $a->numeroAffichage(), 'intitule' => $intitule, 'text' => $a->numeroAffichage().' — '.$intitule,
             'chambre_id' => $a->chambre_id, 'chambre' => (string) $a->chambre?->libelle, 'audience' => $audience,
             'a_rediger' => $aRediger, 'suite' => $dernier && $dernier['issue'] ? (RoleLigne::ISSUES[$dernier['issue']] ?? null) : null,
+            // Les modèles de décision qui conviennent à l'objet de l'affaire, le plus précis d'abord.
+            'modeles' => ModelePropose::pour($a->objet, $liens),
         ];
     }
 

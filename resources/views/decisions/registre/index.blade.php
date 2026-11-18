@@ -11,7 +11,7 @@
   <div class="page-body">
     <div class="el-page au-page al-page">
 
-      <x-hero tag="Décisions" title="Registre des décisions" subtitle="Toutes les décisions dont le texte est figé : numéro, date, chambre, signature et remises. Filtrez par année, chambre ou statut, retrouvez une décision par son numéro ou sa référence, puis exportez la liste en Excel ou en PDF." icon="fa-solid fa-book">
+      <x-hero tag="Décisions" title="Registre des décisions" subtitle="Toutes les décisions dont le texte est figé : numéro, date, chambre, signature et transmission au greffe. Filtrez par année, chambre ou statut, retrouvez une décision par son numéro ou sa référence, puis exportez la liste en Excel ou en PDF." icon="fa-solid fa-book">
         <x-slot:actions>
           @if ($peutExporter)
             <a class="el-btn el-btn--ghost" id="export-xlsx" href="#"><i class="fa-solid fa-file-excel"></i> Excel</a>
@@ -40,7 +40,7 @@
         <div class="au-fond"><div class="au-tbl-carte">
           <table class="au-tbl">
             <colgroup><col style="width:128px"><col style="width:120px"><col><col style="width:20%"><col style="width:17%"><col style="width:128px"><col style="width:84px"><col style="width:58px"></colgroup>
-            <thead><tr><th>N° de décision</th><th>Date</th><th>Référence et type</th><th>Chambre</th><th>Signature</th><th>Statut</th><th>Remises</th><th></th></tr></thead>
+            <thead><tr><th>N° de décision</th><th>Date</th><th>Référence et type</th><th>Chambre</th><th>Signature</th><th>Statut</th><th>Transmise le</th><th></th></tr></thead>
             <tbody id="registre-corps"></tbody>
           </table>
         </div></div>
@@ -59,7 +59,7 @@
     const URL_EXPORT = @js(route('decisions.registre.export'));
     const URL_DECISION = @js($urlDecision);
     const STATUTS = @js($statuts);
-    const COULEURS = { validee: 'vert', signee: 'violet', delivree: 'orange' };
+    const COULEURS = { validee: 'vert', signee: 'violet', transmise: 'orange' };
     const reduit = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const f = { statut: '', annee: '', chambre: '', q: '', page: 1 };
     let compteurs = {}, requete = 0, minuteur = null;
@@ -69,7 +69,7 @@
 
     function kpis() {
       const total = Object.keys(STATUTS).reduce(function (a, k) { return a + (compteurs[k] || 0); }, 0);
-      const cartes = [['ardoise', 'fa-book', 'Décisions au registre', total, 'fa-filter', 'avec les filtres en cours'], ['vert', 'fa-circle-check', 'Validées', compteurs.validee || 0, 'fa-hourglass-half', 'en attente de signature'], ['sarcelle', 'fa-signature', 'Signées', compteurs.signee || 0, 'fa-hashtag', 'numérotées, à délivrer'], ['orange', 'fa-paper-plane', 'Délivrées', compteurs.delivree || 0, 'fa-box-archive', 'remises aux parties']];
+      const cartes = [['ardoise', 'fa-book', 'Décisions au registre', total, 'fa-filter', 'avec les filtres en cours'], ['vert', 'fa-circle-check', 'Validées', compteurs.validee || 0, 'fa-hourglass-half', 'en attente de signature'], ['sarcelle', 'fa-signature', 'Signées', compteurs.signee || 0, 'fa-hashtag', 'à transmettre au greffe'], ['orange', 'fa-paper-plane', 'Transmises', compteurs.transmise || 0, 'fa-box-archive', 'au greffe (délivrées)']];
       $('#kpis-registre').html(cartes.map(function (k) { return '<div class="au-kpi au-kpi--' + k[0] + '"><div class="au-kpi__icone"><i class="fa-solid ' + k[1] + '"></i></div><span class="au-kpi__label">' + esc(k[2]) + '</span><div><div class="au-kpi__valeur"><span>' + k[3] + '</span></div><div class="au-chip"><i class="fa-solid ' + k[4] + '"></i><span>' + esc(k[5]) + '</span></div></div></div>'; }).join(''));
     }
 
@@ -87,7 +87,7 @@
         + '<td>' + (d.date_decision ? '<span class="au-badge au-badge--date"><i class="fa-regular fa-calendar"></i>' + esc(d.date_decision) + '</span>' : '<span class="au-tbl__vide">—</span>') + '</td>'
         + '<td><div class="au-tbl__parties">' + esc(d.reference) + '</div><small>' + esc(d.type) + '</small></td><td>' + esc(d.chambre) + '</td>'
         + '<td>' + (d.date_signature ? esc(d.date_signature) : '<span class="au-tbl__vide">pas encore signée</span>') + '</td>'
-        + '<td><span class="au-badge au-badge--' + COULEURS[d.statut] + '">' + esc(d.statut_libelle) + '</span></td><td>' + (d.remises ? '<b>' + d.remises + '</b>' : '<span class="au-tbl__vide">0</span>') + '</td><td class="au-tbl__act">' + voir + '</td></tr>';
+        + '<td><span class="au-badge au-badge--' + COULEURS[d.statut] + '">' + esc(d.statut_libelle) + '</span></td><td>' + (d.transmise_le ? '<b>' + esc(d.transmise_le) + '</b>' : '<span class="au-tbl__vide">—</span>') + '</td><td class="au-tbl__act">' + voir + '</td></tr>';
     }
 
     function squelette() { let h = ''; for (let i = 0; i < 6; i++) { h += '<tr class="au-sq"><td><i style="width:70px"></i></td><td><i style="width:84px"></i></td><td><i style="width:80%"></i><i style="width:50%"></i></td><td><i style="width:70%"></i></td><td><i style="width:60%"></i></td><td><i style="width:80px;height:22px;border-radius:99px"></i></td><td></td><td></td></tr>'; } return h; }

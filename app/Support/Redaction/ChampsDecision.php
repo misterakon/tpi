@@ -68,12 +68,45 @@ class ChampsDecision
         return $champs;
     }
 
+    /**
+     * Le champ est-il à remplir avec ces valeurs ? Un champ sans condition l'est toujours ; sinon sa condition d'affichage
+     * (« code = valeur », « code != valeur », « code in a|b », « code » renseigné ; plusieurs séparées par « && ») doit être vraie.
+     * Le formulaire applique la même règle à l'écran, sans recharger la page. $champs (indexés par code) permet de suivre la chaîne des choix.
+     */
+    public static function visible(array $champ, array $valeurs, array $champs = []): bool
+    {
+        foreach (array_filter(array_map('trim', explode('&&', (string) ($champ['si'] ?? '')))) as $condition) {
+            if (! preg_match('/^([a-z0-9_.]+)(?:\s+(=|!=|in)\s+(.+))?$/iu', $condition, $m)) {
+                continue;
+            }
+            // Le choix dont dépend ce champ doit lui-même être demandé : sans motif « déguerpissement », pas de champs de déguerpissement.
+            if (isset($champs[$m[1]]) && ! self::visible($champs[$m[1]], $valeurs, $champs)) {
+                return false;
+            }
+            $brut = $valeurs[$m[1]] ?? null;
+            $reel = is_array($brut) ? ($brut === [] ? '' : 'x') : mb_strtolower(trim((string) $brut));
+            $attendu = mb_strtolower(trim($m[3] ?? ''));
+            $vrai = match ($m[2] ?? '') {
+                '=' => $reel === $attendu,
+                '!=' => $reel !== $attendu,
+                'in' => in_array($reel, array_map('trim', explode('|', $attendu)), true),
+                default => $reel !== '' && ! in_array($reel, ['non', 'false', '0'], true),
+            };
+            if (! $vrai) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /** Liste de choix d'un champ (fonctions et modes de comparution viennent de la base, le reste de la configuration), ou null. */
     private static function options(string $code): ?array
     {
         $liste = match ($code) {
             'president.fonction' => \App\Models\Agent::FONCTIONS,
             'demandeur.nationalite' => config('nationalites'),
+            'formation' => \App\Models\Formation::where('actif', true)->orderBy('nom')->pluck('nom')->unique()->values()->all(),
             'nature_decision' => \App\Models\CaractereDecision::where('actif', true)->orderBy('ordre')->pluck('libelle')->map(fn ($l) => mb_strtolower($l))->all(),
             'demandeur.comparution' => \App\Models\ModeComparution::where('actif', true)->orderBy('ordre')->pluck('libelle')->map(fn ($l) => mb_strtolower($l))->all(),
             default => config('tpi.listes_decision.'.$code),
@@ -91,8 +124,11 @@ class ChampsDecision
                 $libelles[$v['code']] = $v['libelle'];
             }
         }
+        // La pastille d'un champ vide reste courte : « Nature de la décision (contradictoire, par défaut…) » devient « Nature de la décision ».
+        $court = fn (string $libelle) => trim(explode(' (', $libelle)[0]) ?: $libelle;
+        $libelles = array_map($court, $libelles);
         foreach ($champs as $c) {
-            $libelles[$c['code']] = $c['libelle'];
+            $libelles[$c['code']] = $court($c['libelle']);
             if (str_ends_with($c['code'], '.nom') && str_contains($c['libelle'], ' : ')) {
                 $libelles[substr($c['code'], 0, -4)] = explode(' : ', $c['libelle'])[0];
             }
@@ -197,28 +233,13 @@ class ChampsDecision
 
                 return array_values(array_filter(array_map(fn ($l) => self::texte($l), $lignes), fn ($l) => $l !== ''));
             case 'naissance':
-                // Date exacte (« le 01 mars 1970 ») ou année seulement (« vers 1970 ») quand le jour est inconnu.
-                $brut = is_array($brut) ? $brut : [];
-                if (($brut['mode'] ?? '') === 'annee') {
-                    $annee = trim((string) ($brut['annee'] ?? ''));
-                    if ($annee === '') {
-                        return null;
-                    }
-                    if (! preg_match('/^\d{4}$/', $annee) || (int) $annee < 1800 || (int) $annee > (int) date('Y')) {
-                        throw new \InvalidArgumentException("année invalide (quatre chiffres, par exemple 1970).");
-                    }
-
-                    return ['mode' => 'annee', 'annee' => $annee];
-                }
-                $date = trim((string) ($brut['date'] ?? ''));
-                if ($date === '') {
-                    return null;
-                }
-                if (! preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || ! checkdate((int) substr($date, 5, 2), (int) substr($date, 8, 2), (int) substr($date, 0, 4))) {
-                    throw new \InvalidArgumentException('date invalide.');
-                }
-
-                return ['mode' => 'date', 'date' => $date];
+                return self::naissance($brut);
+            case 'paragraphes':
+                return self::textesLongs($brut, 20000);
+            case 'parties':
+                return self::parties($brut);
+            case 'sections':
+                return self::rubriques($brut);
             case 'personne':
                 return self::personne($brut);
             case 'personnes':
@@ -235,6 +256,94 @@ class ChampsDecision
 
                 return $t === '' ? null : $t;
         }
+    }
+
+    /** Date exacte (« le 01 mars 1970 ») ou année seulement (« vers 1970 ») quand le jour est inconnu. */
+    private static function naissance(mixed $brut): ?array
+    {
+        $brut = is_array($brut) ? $brut : [];
+        if (($brut['mode'] ?? '') === 'annee') {
+            $annee = trim((string) ($brut['annee'] ?? ''));
+            if ($annee === '') {
+                return null;
+            }
+            if (! preg_match('/^\d{4}$/', $annee) || (int) $annee < 1800 || (int) $annee > (int) date('Y')) {
+                throw new \InvalidArgumentException('année invalide (quatre chiffres, par exemple 1970).');
+            }
+
+            return ['mode' => 'annee', 'annee' => $annee];
+        }
+        $date = trim((string) ($brut['date'] ?? ''));
+        if ($date === '') {
+            return null;
+        }
+        if (! preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || ! checkdate((int) substr($date, 5, 2), (int) substr($date, 8, 2), (int) substr($date, 0, 4))) {
+            throw new \InvalidArgumentException('date invalide.');
+        }
+
+        return ['mode' => 'date', 'date' => $date];
+    }
+
+    /** Texte long : un paragraphe par ligne, sans balise ni ligne vide, jusqu'à $max caractères. Retourne null s'il est vide. */
+    private static function textesLongs(mixed $brut, int $max): ?string
+    {
+        $source = is_array($brut) ? implode("\n", $brut) : (string) $brut;
+        $lignes = array_map(fn ($l) => trim((string) preg_replace('/[ \t\x{00A0}]+/u', ' ', strip_tags($l))), preg_split('/\r\n|\r|\n/', $source) ?: []);
+        $texte = mb_substr(implode("\n", array_filter($lignes, fn ($l) => $l !== '')), 0, $max);
+
+        return $texte === '' ? null : $texte;
+    }
+
+    /**
+     * Les parties d'un jugement : une ligne par partie (nom, genre, naissance, lieu, nationalité, profession, domicile, autres mentions).
+     *
+     * @return list<array<string, mixed>>
+     */
+    private static function parties(mixed $brut): array
+    {
+        $parties = [];
+        foreach (array_slice(is_array($brut) ? array_values($brut) : [], 0, 8) as $ligne) {
+            $ligne = is_array($ligne) ? $ligne : [];
+            $nom = self::texte($ligne['nom'] ?? '');
+            if ($nom === '') {
+                continue;
+            }
+            $genre = trim((string) ($ligne['genre'] ?? ''));
+            if (! in_array($genre, ['m', 'f', 's'], true)) {
+                throw new \InvalidArgumentException('indiquez si '.$nom.' est un homme, une femme ou une société.');
+            }
+            $partie = ['nom' => $nom, 'genre' => $genre];
+            if ($naissance = self::naissance($ligne['naissance'] ?? null)) {
+                $partie['naissance'] = $naissance;
+            }
+            foreach (['lieu_naissance' => 120, 'nationalite' => 80, 'profession' => 200, 'domicile' => 300, 'details' => 500] as $cle => $max) {
+                $valeur = mb_substr(self::texte($ligne[$cle] ?? ''), 0, $max);
+                if ($valeur !== '') {
+                    $partie[$cle] = $valeur;
+                }
+            }
+            $parties[] = $partie;
+        }
+
+        return $parties;
+    }
+
+    /** Rubriques de motifs : un titre, un texte (un paragraphe par ligne) et, si besoin, les lignes du dispositif. @return list<array<string, string>> */
+    private static function rubriques(mixed $brut): array
+    {
+        $rubriques = [];
+        foreach (array_slice(is_array($brut) ? array_values($brut) : [], 0, 8) as $ligne) {
+            $ligne = is_array($ligne) ? $ligne : [];
+            $titre = mb_substr(self::texte($ligne['titre'] ?? ''), 0, 200);
+            $texte = self::textesLongs($ligne['texte'] ?? '', 10000);
+            $dispositif = self::textesLongs($ligne['dispositif'] ?? '', 3000);
+            if ($titre === '' && $texte === null) {
+                continue;
+            }
+            $rubriques[] = array_filter(['titre' => $titre, 'texte' => $texte, 'dispositif' => $dispositif], fn ($v) => $v !== null && $v !== '');
+        }
+
+        return $rubriques;
     }
 
     private static function personne(mixed $brut): ?array
@@ -288,6 +397,11 @@ class ChampsDecision
                 if ($cle) {
                     $exemples[$c['code']] = $cle;
                 }
+
+                continue;
+            }
+            if (in_array($c['type'], ['parties', 'sections'], true)) {
+                $exemples[$c['code']] = is_string($c['exemple']) ? (json_decode($c['exemple'], true) ?: []) : $c['exemple'];
 
                 continue;
             }

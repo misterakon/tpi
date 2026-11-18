@@ -133,7 +133,7 @@
         </div>
 
         @if ($affaire->derogation_motif)
-          <div class="aff-derogation-fiche"><i class="fa-solid fa-triangle-exclamation"></i> <b>Dérogation à la date limite d'enrôlement</b> accordée par {{ $affaire->derogant?->name ?? '—' }} : {{ $affaire->derogation_motif }}</div>
+          <div class="aff-derogation-fiche"><i class="fa-solid fa-triangle-exclamation"></i> <b>Dérogation à la date limite d'enregistrement</b> accordée par {{ $affaire->derogant?->name ?? '—' }} : {{ $affaire->derogation_motif }}</div>
         @endif
       </div>
 
@@ -177,6 +177,9 @@
           </section>
         @endforeach
       </div>
+
+      {{-- Les actions de l'affaire et le temps écoulé entre chacune --}}
+      @include('affaires.liste._chronologie', ['chronologie' => $chronologie])
 
       {{-- Jonction des causes et réattributions, côte à côte --}}
       @php

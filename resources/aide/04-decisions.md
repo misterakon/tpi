@@ -2,12 +2,12 @@
 titre: Décisions
 icone: fa-solid fa-pen-nib
 couleur: violet
-resume: Rédiger avec un modèle, valider, numéroter, signer, délivrer, puis suivre les recours et certificats.
+resume: Rédiger avec un modèle, valider, numéroter, signer, transmettre au greffe, puis suivre les recours et certificats.
 droit: modeles.voir, blocs.voir, redaction.voir, registre_decisions.voir, repertoire_penal.voir, recours.voir
 routes: decisions.*
 ordre: 4
 ---
-Une décision suit un **circuit** : **brouillon → rédigée → validée → signée → délivrée**. À chaque étape, la bonne personne agit et l'application **vérifie** que l'étape précédente est faite.
+Une décision suit un **circuit** : **brouillon → rédigée → validée → signée → transmise au greffe**. Le greffier de la chambre prépare la **qualité**, le juge rédige le **factum**, valide, signe puis **transmet au greffe** : le travail du juge s'arrête là, et la **date de transmission vaut date de délivrance** au greffe. À chaque étape, la bonne personne agit et l'application **vérifie** que l'étape précédente est faite.
 
 ## Modèles et blocs de texte
 
@@ -31,22 +31,24 @@ Une décision suit un **circuit** : **brouillon → rédigée → validée → s
 
 > **Attention** Si des champs obligatoires manquent, le message liste **exactement ce qu'il manque**. Vous ne pouvez rédiger que pour les affaires **de votre chambre**.
 
-## Signer et délivrer
+## Signer et transmettre
 
 | Étape | Qui | Comment |
 |---|---|---|
-| **Numéro** | le greffier de la chambre, **ou** automatique | selon le réglage du tribunal : à la rédaction, à la **validation** (par défaut) ou à la signature ; format **D-N/année**, sans trou |
+| **Numéro** | le greffier de la chambre, **ou** automatique | selon le réglage du tribunal : à la rédaction, à la **validation** (par défaut) ou à la signature ; format **12/26** (deux chiffres au moins, puis l'année sur deux chiffres, comme les registres : 01/26, 12/26, 145/26), sans trou |
 | **Valider** | le magistrat | le **texte est figé** ; la décision doit être complète (et numérotée si le réglage l'exige) |
 | **Signer** | le magistrat | indiquez la **date de signature** (jamais dans le futur) ; seule une décision **validée** se signe |
-| **Délivrer** | le greffier | choisissez **expédition**, **grosse** ou **copie simple**, **à qui** et la **date de remise** |
+| **Transmettre au greffe** | le magistrat | une fois la décision **signée** : indiquez la **date de transmission** (jamais dans le futur) ; **elle vaut date de délivrance** au greffe. L'interrupteur **« Envoyer une copie au greffier en chef »** (facultatif) lui envoie la décision **en Word** par e-mail |
+| **Transmettre en lot** | le magistrat | *Décisions > Transmission au greffe* : cochez plusieurs décisions signées (ou toutes celles d'une **période**), fixez la date et, si vous le voulez, l'envoi de la copie ; un seul e-mail rassemble les fichiers Word |
+| **Word** | juges et greffiers | le bouton **Word** (fiche de la décision et liste) télécharge la décision avec la mise en page de la feuille (droit « Télécharger la décision en Word ») |
 
-> **Attention** Une **grosse** ne se délivre **qu'une fois à la même personne** (copie et expédition restent possibles). Une décision **non signée** ne se délivre pas. Après validation, le texte **ne se modifie plus** : seule une **correction** tracée (avec motif) crée une nouvelle version.
+> **Attention** Une décision **non signée** ne se transmet pas. L'adresse e-mail du **greffier en chef** se règle dans *Paramètres > Réglages > Décisions* : sans elle, la décision est transmise mais la copie ne part pas (un message le dit). Après validation, le texte **ne se modifie plus** : seule une **correction** tracée (avec motif) crée une nouvelle version.
 
 > **Astuce** Pour **imprimer**, utilisez l'icône imprimante : le corps est en **Centaur 16** et le timbre en 12 (réglables par l'administration). Choisissez « Enregistrer au format PDF » pour garder une copie.
 
 ## Registre des décisions
 
-*Décisions > Registre des décisions.* Toutes les décisions **dont le texte est figé**. Filtrez par **année**, **chambre** et **statut** ; cherchez par **numéro** ou référence. La colonne **Remises** compte les délivrances. Les boutons **Excel** et **PDF** exportent la liste **avec vos filtres** (droit d'exportation).
+*Décisions > Registre des décisions.* Toutes les décisions **dont le texte est figé**. Filtrez par **année**, **chambre** et **statut** ; cherchez par **numéro** ou référence. La colonne **Transmise le** donne la date de transmission au greffe (qui vaut délivrance). Les boutons **Excel** et **PDF** exportent la liste **avec vos filtres** (droit d'exportation).
 
 ## Répertoire pénal
 

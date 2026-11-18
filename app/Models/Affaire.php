@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use LogicException;
 
 /*
- | Affaire enrôlée. Son numéro (RG-0001/26) est attribué une fois pour toutes : il ne se modifie pas, l'affaire ne se supprime pas
+ | Affaire enregistrée. Son numéro (RG-0001/26) est attribué une fois pour toutes : il ne se modifie pas, l'affaire ne se supprime pas
  | (une annulation est un statut) et le numéro n'est jamais réutilisé.
  */
 class Affaire extends Model
@@ -110,7 +110,7 @@ class Affaire extends Model
         return $this->hasMany(self::class, 'jointe_a_id')->orderBy('annee')->orderBy('numero');
     }
 
-    /** Qui a accordé la dérogation à la date limite d'enrôlement. */
+    /** Qui a accordé la dérogation à la date limite d'enregistrement. */
     public function derogant(): BelongsTo
     {
         return $this->belongsTo(User::class, 'derogation_par');
@@ -170,11 +170,11 @@ class Affaire extends Model
         return $f === '' ? $d : $d.' c/ '.$f;
     }
 
-    /** Le numéro tel que le greffe l'écrit : 1391/25, sans zéros. Le format du cahier des charges (RG-1391/25) reste en base dans « numero_complet ». */
+    /** Le numéro tel que le greffe l'écrit : 01/26, 12/26, 1391/26 (deux chiffres au moins). Le format du cahier des charges (RG-1391/25) reste en base dans « numero_complet ». */
     public function numeroAffichage(): string
     {
-        // Au civil le numéro s'écrit seul (1391/25) ; les autres séries gardent leur sigle (RP 1334/26).
-        $numero = $this->numero.'/'.sprintf('%02d', $this->annee % 100);
+        // Au civil le numéro s'écrit seul (01/26, 12/26, 1391/26) ; les autres séries gardent leur sigle (RP 01/26). Deux chiffres au moins.
+        $numero = sprintf('%02d', $this->numero).'/'.sprintf('%02d', $this->annee % 100);
 
         return $this->serie === 'RG' ? $numero : $this->serie.' '.$numero;
     }
