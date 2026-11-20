@@ -62,6 +62,7 @@
                 </div>
             </div>
             <ul class="profile-dropdown onhover-show-div">
+                <li><a class="flex items-center" href="{{ route('travail.jour') }}"><i class="fa-solid fa-list-check" style="width:18px;text-align:center"></i><span>Travail du jour</span><span class="tj-badge" id="badge-travail" hidden></span></a></li>
                 <li><a class="flex items-center" href="{{ route('profile.edit') }}"><i data-feather="user"></i><span>Mon compte</span></a></li>
                 <li>
                     <form method="POST" action="{{ route('verrouillage.lock') }}" class="w-full">
@@ -88,3 +89,15 @@
         </div>
     </div>
 </div>
+
+{{-- Total des tâches du jour, lu après le chargement (jamais bloquant) --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var b = document.getElementById('badge-travail');
+        if (!b || !window.fetch) { return; }
+        fetch(@json(route('travail.jour.compte')), { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (j) { if (j && j.n > 0) { b.textContent = j.n > 99 ? '99+' : j.n; b.hidden = false; } })
+            .catch(function () { /* le menu reste utilisable sans le total */ });
+    });
+</script>

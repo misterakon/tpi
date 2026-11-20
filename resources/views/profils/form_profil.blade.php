@@ -52,7 +52,12 @@
                   </header>
 
                   <div class="el-droits__pages">
+                    @php $dernierGroupe = null; @endphp
                     @foreach ($menu['pages'] as $clePage => $page)
+                      @if (! empty($page['groupe']) && $page['groupe'] !== $dernierGroupe)
+                        <div class="el-droits__groupe">{{ $page['groupe'] }}</div>
+                        @php $dernierGroupe = $page['groupe']; @endphp
+                      @endif
                       <div class="el-droits__ligne" data-page="{{ $clePage }}">
                         <div class="el-droits__page">
                           {{ $page['libelle'] }}

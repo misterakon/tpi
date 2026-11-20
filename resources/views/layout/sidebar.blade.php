@@ -43,6 +43,10 @@
                 ['titre' => 'Natures d\'affaire', 'route' => 'referentiels.natures_affaire', 'droit' => 'natures_affaire.voir'],
                 ['titre' => 'Objets du litige', 'route' => 'referentiels.objets_litige', 'droit' => 'objets_litige.voir'],
             ]],
+            ['titre' => 'Modèles et textes', 'enfants' => [
+                ['titre' => 'Modèles de décision', 'route' => 'decisions.modeles', 'droit' => 'modeles.voir'],
+                ['titre' => 'Blocs de texte', 'route' => 'decisions.blocs', 'droit' => 'blocs.voir'],
+            ]],
             ['titre' => 'Paramètres et journaux', 'enfants' => [
                 ['titre' => 'Réglages', 'route' => 'reglages.index', 'droit' => 'reglages.voir'],
                 ['titre' => 'Journal de connexion', 'route' => 'journal.connexions', 'droit' => 'journaux.connexion'],
@@ -50,51 +54,52 @@
             ]],
         ]],
         // Entrées de TEST (test => true : affichées même sans page, avec un lien « # »)
-        ['titre' => 'Affaires', 'icone' => 'file', 'test' => true, 'enfants' => [
-            ['titre' => 'Liste des affaires', 'route' => 'affaires.liste', 'droit' => 'affaires.voir'],
-            ['titre' => 'Dossier numérique', 'route' => 'affaires.dossiers', 'droit' => 'dossiers.voir'],
-            ['titre' => 'Mise en état', 'route' => 'affaires.mise_en_etat', 'droit' => 'mise_en_etat.voir'],
-            ['titre' => 'Requêtes et hérédité', 'route' => 'affaires.requetes', 'droit' => 'requetes.voir'],
-            ['titre' => 'Détenus', 'route' => 'affaires.detenus', 'droit' => 'detenus.voir'],
-            ['titre' => 'Avocats', 'route' => 'affaires.avocats', 'droit' => 'avocats.voir'],
-            ['titre' => "Importation affaire", 'route' => 'affaires.reprise', 'droit' => 'reprise.voir'],
+        ['titre' => 'Dossiers', 'icone' => 'file', 'test' => true, 'enfants' => [
+            ['titre' => 'Affaires', 'enfants' => [
+                ['titre' => 'Liste des affaires', 'route' => 'affaires.liste', 'droit' => 'affaires.voir'],
+                ['titre' => 'Dossier numérique', 'route' => 'affaires.dossiers', 'droit' => 'dossiers.voir'],
+                ['titre' => 'Mise en état', 'route' => 'affaires.mise_en_etat', 'droit' => 'mise_en_etat.voir'],
+                ['titre' => 'Requêtes et hérédité', 'route' => 'affaires.requetes', 'droit' => 'requetes.voir'],
+                ['titre' => 'Détenus', 'route' => 'affaires.detenus', 'droit' => 'detenus.voir'],
+                ['titre' => 'Avocats', 'route' => 'affaires.avocats', 'droit' => 'avocats.voir'],
+                ['titre' => 'Importation affaire', 'route' => 'affaires.reprise', 'droit' => 'reprise.voir'],
+            ]],
+            ['titre' => 'Instruction', 'route' => 'instruction', 'droit' => 'instruction.voir'],
+            ['titre' => 'Annexes', 'enfants' => [
+                ['titre' => 'Assistance judiciaire', 'route' => 'assistance', 'droit' => 'assistance.voir'],
+                ['titre' => 'Activités du JAP', 'route' => 'jap', 'droit' => 'jap.voir'],
+            ]],
         ]],
         ['titre' => 'Audiences', 'icone' => 'audience-tribunal', 'test' => true, 'enfants' => [
             ['titre' => 'Rôle du jour', 'route' => 'audiences.jour', 'droit' => 'roles.voir'],
-            ['titre' => "Rôles d'audience", 'route' => 'audiences.roles', 'sauf' => ['audiences.roles.planning'], 'droit' => 'roles.voir'],
-            ['titre' => 'Planning des salles', 'route' => 'audiences.roles.planning', 'droit' => 'roles.voir'],
+            ['titre' => "Rôles d'audience", 'route' => 'audiences.roles', 'aussi' => ['audiences.roles.planning'], 'droit' => 'roles.voir'],
             ['titre' => "Feuille d'audience", 'route' => 'audiences.feuille', 'droit' => 'feuille.voir'],
             ['titre' => 'Renvois et délibérés', 'route' => 'audiences.renvois', 'droit' => 'renvois.voir'],
             ['titre' => 'Séances hors audience', 'route' => 'audiences.seances', 'droit' => 'seances.voir'],
             ['titre' => "Suites d'audience", 'route' => 'audiences.suites', 'droit' => 'suites.voir'],
-            ['titre' => 'Analyse et pilotage', 'route' => 'audiences.pilotage', 'droit' => 'tableau.voir'],
         ]],
         ['titre' => 'Décisions', 'icone' => 'decision', 'test' => true, 'enfants' => [
-            ['titre' => 'Modèles de décision', 'route' => 'decisions.modeles', 'droit' => 'modeles.voir'],
-            ['titre' => 'Blocs de texte', 'route' => 'decisions.blocs', 'droit' => 'blocs.voir'],
             ['titre' => 'Rédaction', 'route' => 'decisions.redaction', 'droit' => 'redaction.voir'],
             ['titre' => 'Transmission au greffe', 'route' => 'decisions.transmission', 'droit' => 'redaction.transmettre'],
             ['titre' => 'Registre des décisions', 'route' => 'decisions.registre', 'droit' => 'registre_decisions.voir'],
             ['titre' => 'Répertoire pénal', 'route' => 'decisions.repertoire_penal', 'droit' => 'repertoire_penal.voir'],
             ['titre' => 'Recours et certificats', 'route' => 'decisions.recours', 'droit' => 'recours.voir'],
         ]],
-        ['titre' => 'Instruction et annexes', 'icone' => 'instruction', 'test' => true, 'enfants' => [
-            ['titre' => "Dossiers d'instruction", 'route' => 'instruction', 'droit' => 'instruction.voir'],
-            ['titre' => 'Assistance judiciaire', 'route' => 'assistance', 'droit' => 'assistance.voir'],
-            ['titre' => 'Activités du JAP', 'route' => 'jap', 'droit' => 'jap.voir'],
-        ]],
-        ['titre' => 'Statistiques', 'icone' => 'statistique', 'test' => true, 'enfants' => [
-            ['titre' => 'Statistiques civiles', 'route' => 'statistiques.civil', 'droit' => 'stats_civil.voir'],
-            ['titre' => 'Statistiques pénales', 'route' => 'statistiques.penal', 'droit' => 'stats_penal.voir'],
-            ['titre' => 'Statistiques de l’instruction', 'route' => 'statistiques.instruction', 'droit' => 'stats_instruction.voir'],
-            ['titre' => 'Registres du tribunal', 'route' => 'statistiques.registres', 'droit' => 'stats_registres.voir'],
-        ]],
-        ['titre' => 'Alertes', 'icone' => 'alerte', 'enfants' => [
-            ['titre' => 'Mes notifications', 'route' => 'notifications.index'],
-            ['titre' => 'Suivi des alertes', 'route' => 'alertes.suivi', 'droit' => 'alertes.voir'],
-            ['titre' => "Règles d'alerte", 'route' => 'alertes.regles', 'droit' => 'regles_alerte.voir'],
-            ['titre' => 'Destinataires', 'route' => 'alertes.destinataires', 'droit' => 'regles_alerte.voir'],
-            ['titre' => 'Délais', 'route' => 'alertes.delais', 'droit' => ['delais_etape.voir', 'delais_procedure.voir']],
+        ['titre' => 'Pilotage', 'icone' => 'statistique', 'test' => true, 'enfants' => [
+            ['titre' => 'Alertes', 'enfants' => [
+                ['titre' => 'Mes notifications', 'route' => 'notifications.index'],
+                ['titre' => 'Suivi des alertes', 'route' => 'alertes.suivi', 'droit' => 'alertes.voir'],
+                ['titre' => "Règles d'alerte", 'route' => 'alertes.regles', 'droit' => 'regles_alerte.voir'],
+                ['titre' => 'Destinataires', 'route' => 'alertes.destinataires', 'droit' => 'regles_alerte.voir'],
+                ['titre' => 'Délais', 'route' => 'alertes.delais', 'droit' => ['delais_etape.voir', 'delais_procedure.voir']],
+            ]],
+            ['titre' => 'Analyse et pilotage', 'route' => 'audiences.pilotage', 'droit' => 'tableau.voir'],
+            ['titre' => 'Statistiques', 'enfants' => [
+                ['titre' => 'Statistiques civiles', 'route' => 'statistiques.civil', 'droit' => 'stats_civil.voir'],
+                ['titre' => 'Statistiques pénales', 'route' => 'statistiques.penal', 'droit' => 'stats_penal.voir'],
+                ['titre' => 'Statistiques de l’instruction', 'route' => 'statistiques.instruction', 'droit' => 'stats_instruction.voir'],
+                ['titre' => 'Registres du siège', 'route' => 'statistiques.registres', 'droit' => 'stats_registres.voir'],
+            ]],
         ]],
         ['titre' => 'Aide', 'icone' => 'aide', 'route' => 'aide.index'],
     ];

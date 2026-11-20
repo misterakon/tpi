@@ -36,6 +36,36 @@ class OrdonnanceController extends Controller
         return view('organisation.ordonnances.index', [
             'lignes' => Ordonnance::with(['annee', 'deposePar'])->orderByDesc('date_signature')->orderByDesc('id')->get(),
             'annees' => AnneeJudiciaire::orderByDesc('debut')->get(),
+            'annee' => AnneeJudiciaire::where('courante', true)->first(),
+            'nbArticles' => \App\Models\ArticleOrdonnance::count(),
+            'dernierImport' => \App\Models\ImportOrdonnance::whereIn('statut', ['brouillon', 'applique'])->orderByDesc('id')->first(),
+        ]);
+    }
+
+    /** Le classeur Excel de l'organisation de l'année judiciaire courante (ou de celle demandée) : modèle de départ du chargement par fichier. */
+    public function modeleExcel(Request $request): StreamedResponse
+    {
+        Gate::authorize('ordonnances.voir');
+        $annee = ($request->filled('annee') && ctype_digit((string) $request->query('annee')) ? AnneeJudiciaire::find((int) $request->query('annee')) : null)
+            ?? AnneeJudiciaire::where('courante', true)->first() ?? AnneeJudiciaire::orderByDesc('debut')->firstOrFail();
+
+        $chemin = \App\Support\Organisation\ExportOrdonnance::generer($annee);
+        Journal::audit('ordonnance_excel_exporte', $annee, "Fichier Excel de l'ordonnance ".$annee->libelle, [], ['annee' => $annee->libelle]);
+
+        return response()->streamDownload(function () use ($chemin) {
+            readfile($chemin);
+            @unlink($chemin);
+        }, \App\Support\Organisation\ExportOrdonnance::nomFichier($annee), ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'X-Content-Type-Options' => 'nosniff']);
+    }
+
+    /** Le texte des articles de l'ordonnance de l'année en cours. */
+    public function articles(): View
+    {
+        Gate::authorize('ordonnances.voir');
+        $annee = AnneeJudiciaire::where('courante', true)->first() ?? AnneeJudiciaire::orderByDesc('debut')->first();
+
+        return view('organisation.ordonnances.articles', [
+            'annee' => $annee, 'articles' => $annee ? \App\Models\ArticleOrdonnance::where('annee_judiciaire_id', $annee->id)->orderBy('ordre')->orderBy('id')->get() : collect(),
         ]);
     }
 

@@ -106,11 +106,12 @@ class UtilisateursTest extends TestCase
     public function test_on_peut_creer_autant_de_profils_que_l_on_veut(): void
     {
         $this->connecte($this->admin());
+        $avant = Profil::count();   // Admin et les profils créés par les migrations
         foreach (range(1, 12) as $n) {
             $this->post('/utilisateurs/profils', ['nom' => "Profil $n"])->assertRedirect();
         }
 
-        $this->assertSame(13, Profil::count());   // 12 + Admin
+        $this->assertSame($avant + 12, Profil::count());
     }
 
     public function test_un_niveau_inconnu_est_refuse(): void

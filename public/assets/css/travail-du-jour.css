@@ -1,0 +1,133 @@
+/* « Mon travail du jour » : tâches de la personne connectée. Couleurs de l'application : vert, orange, blanc ; le rouge ne sert qu'à l'urgence. */
+.tj-page { --tj-vert: #00794C; --tj-vert-fonce: #0B3D2A; --tj-orange: #E8741A; --tj-rouge: #B42318; --tj-bleu: #1D4E89; --tj-gris: #2F3A34; --tj-trait: #E3EBE6; }
+.tj-section { margin-bottom: 26px; }
+.tj-titre { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font: 800 17px var(--police-app); color: var(--tj-vert-fonce); }
+.tj-titre--discret { font-size: 14px; color: var(--tj-gris); }
+.tj-page .tj-titre__ic { display: inline-flex !important; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; font-size: 14px; color: var(--tj-vert); background: #EAF6F0; }
+.tj-lien { margin-left: auto; font: 700 13px var(--police-app); color: var(--tj-vert); text-decoration: none; }
+.tj-lien:hover { text-decoration: underline; }
+
+/* audiences du jour */
+.tj-audiences { display: grid; gap: 10px; }
+.tj-audience { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding: 14px 18px; border-radius: 16px; background: #fff; border: 1px solid var(--tj-trait); border-left: 5px solid var(--tj-orange); box-shadow: 0 2px 10px rgba(15, 42, 91, .05); }
+.tj-audience__heure { flex: none; min-width: 64px; font: 800 22px var(--police-app); font-variant-numeric: tabular-nums; color: var(--tj-orange); }
+.tj-audience__corps { flex: 1 1 220px; display: flex; flex-direction: column; gap: 2px; font: 500 13.5px var(--police-app); color: #26302B; }
+.tj-audience__corps b { font: 800 15px var(--police-app); color: #10241B; }
+.tj-audience__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* cartes de tâches */
+.tj-cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.tj-carte { position: relative; display: grid; grid-template-columns: 1fr auto; grid-template-areas: "ic n" "corps corps" "go go"; align-items: center; gap: 4px 12px; padding: 16px 18px 14px 22px; border-radius: 16px; background: #fff; text-decoration: none; color: inherit; overflow: hidden; box-shadow: 0 2px 12px rgba(15, 42, 91, .06); transition: transform .15s, box-shadow .15s; }
+.tj-carte::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--tj-orange); }
+.tj-carte:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(15, 42, 91, .12); }
+.tj-carte--rouge::before { background: var(--tj-rouge); } .tj-carte--bleu::before { background: var(--tj-bleu); }
+.tj-page .tj-carte__ic { grid-area: ic; justify-self: start; display: inline-flex !important; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 12px; font-size: 16px; color: var(--tj-orange); background: #FFF3E6; }
+.tj-carte--rouge .tj-carte__ic { color: var(--tj-rouge); background: #FDECEA; } .tj-carte--bleu .tj-carte__ic { color: var(--tj-bleu); background: #E7F0FA; }
+.tj-carte__n { grid-area: n; font: 800 34px/1 var(--police-app); font-variant-numeric: tabular-nums; color: #10241B; }
+.tj-carte--rouge .tj-carte__n { color: var(--tj-rouge); }
+.tj-carte__corps { grid-area: corps; display: flex; flex-direction: column; gap: 2px; margin-top: 4px; }
+.tj-carte__corps b { font: 800 15px var(--police-app); color: #10241B; }
+.tj-carte__corps small { font: 500 13px/1.4 var(--police-app); color: #26302B; }
+.tj-carte__go { grid-area: go; margin-top: 6px; font: 700 13px var(--police-app); color: var(--tj-vert); }
+.tj-carte__go i { margin-left: 4px; font-size: 11px; transition: transform .15s; }
+.tj-carte:hover .tj-carte__go i { transform: translateX(4px); }
+
+/* tout est à jour */
+.tj-vide { display: flex; align-items: center; gap: 16px; padding: 22px 24px; margin-bottom: 26px; border-radius: 16px; background: #EAF6F0; color: var(--tj-vert-fonce); }
+.tj-vide i { font-size: 32px; color: var(--tj-vert); }
+.tj-vide b { display: block; font: 800 16px var(--police-app); }
+.tj-vide span { font: 500 13.5px var(--police-app); }
+.tj-puces { display: flex; flex-wrap: wrap; gap: 8px; }
+.tj-puce { display: inline-flex !important; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 99px; background: #EAF6F0; color: var(--tj-vert); font: 600 12.5px var(--police-app); }
+.tj-puce i { font-size: 11px; }
+
+/* alertes */
+.tj-alerte { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid #F0F4F2; text-decoration: none; color: #10241B; font: 600 14px var(--police-app); transition: background .12s; }
+.tj-alerte:last-child { border-bottom: 0; }
+.tj-alerte:hover { background: #F7FBF9; }
+.tj-page .tj-alerte__pt { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--tj-orange); display: block !important; }
+.tj-alerte--critique .tj-alerte__pt { background: var(--tj-rouge); } .tj-alerte--info .tj-alerte__pt { background: var(--tj-bleu); }
+.tj-alerte__titre { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.tj-alerte__quand { flex: none; font: 500 12px var(--police-app); color: var(--tj-gris); }
+
+/* pastille du total, dans le menu du profil (en-tête) */
+.tj-badge { margin-left: auto; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 99px; display: inline-flex; align-items: center; justify-content: center; font: 800 12px/1 var(--police-app, system-ui); color: #fff; background: #E8741A; }
+.tj-badge[hidden] { display: none; }
+
+/* Des styles globaux imposent display: block aux span : on rétablit la mise en page des cartes. */
+.tj-page .tj-carte__corps, .tj-page .tj-audience__corps { display: flex !important; flex-direction: column; gap: 2px; }
+.tj-page .tj-carte__corps b, .tj-page .tj-carte__corps small { display: block; }
+.tj-page .tj-carte__n, .tj-page .tj-carte__go { display: block !important; }
+
+/* ---- relief : fond dégradé, panneaux par thème, cartes teintées ---- */
+.tj-page { position: relative; min-height: calc(100vh - 160px); background:
+  radial-gradient(900px 420px at 8% -4%, rgba(0, 121, 76, .13), transparent 60%),
+  radial-gradient(760px 380px at 96% 12%, rgba(232, 116, 26, .13), transparent 62%),
+  radial-gradient(700px 500px at 50% 108%, rgba(0, 121, 76, .08), transparent 60%),
+  linear-gradient(180deg, #EEF6F1 0%, #F7FAF8 46%, #FDF8F2 100%); }
+.tj-section { padding: 18px 20px 20px; margin-bottom: 22px; border-radius: 22px; background: #FBFDFC; border: 1px solid rgba(0, 121, 76, .12); box-shadow: 0 10px 30px rgba(11, 61, 42, .07); }
+.tj-titre { padding-bottom: 12px; margin-bottom: 14px; border-bottom: 1px dashed rgba(0, 121, 76, .22); }
+.tj-page .tj-titre__ic { background: linear-gradient(135deg, #00794C, #2BAE76); color: #fff; box-shadow: 0 6px 14px rgba(0, 121, 76, .28); }
+.tj-titre--discret { border-bottom: 0; padding-bottom: 0; margin-bottom: 10px; }
+.tj-page .tj-titre--discret .tj-titre__ic { background: #E1F0E8; color: var(--tj-vert); box-shadow: none; }
+
+.tj-carte { box-shadow: 0 6px 18px rgba(15, 42, 91, .09); background: linear-gradient(160deg, #fff 55%, #FFF8F0 100%); border: 1px solid rgba(232, 116, 26, .14); }
+.tj-carte--rouge { background: linear-gradient(160deg, #fff 50%, #FEF1EF 100%); border-color: rgba(180, 35, 24, .16); }
+.tj-carte--bleu { background: linear-gradient(160deg, #fff 55%, #EFF5FC 100%); border-color: rgba(29, 78, 137, .14); }
+.tj-carte:hover { box-shadow: 0 16px 34px rgba(15, 42, 91, .16); }
+.tj-carte__n { font-size: 38px; }
+
+.tj-audience { background: linear-gradient(100deg, #FFF6EC 0%, #fff 45%); box-shadow: 0 6px 18px rgba(232, 116, 26, .1); }
+.tj-vide { background: linear-gradient(120deg, #E3F4EA, #F6FBF8); box-shadow: 0 8px 22px rgba(0, 121, 76, .1); border: 1px solid rgba(0, 121, 76, .15); }
+.tj-puce { background: #E3F4EA; border: 1px solid rgba(0, 121, 76, .15); }
+.tj-section .el-card { box-shadow: none; border: 1px solid rgba(0, 121, 76, .1); border-radius: 16px; background: #fff; }
+@media (max-width: 767px) { .tj-section { padding: 14px; } }
+
+/* Netteté du texte : pas de flou d'arrière-plan, pas de transformation au repos, lissage des polices. */
+.tj-page { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+.tj-page .tj-section, .tj-page .tj-carte, .tj-page .tj-audience { backdrop-filter: none; -webkit-backdrop-filter: none; transform: none; will-change: auto; }
+.tj-page .tj-carte:hover { transform: translateY(-2px); }
+
+/* ---- version compacte : blocs plus petits, « À jour » sur une seule ligne ---- */
+.tj-section { padding: 12px 14px 14px; margin-bottom: 14px; border-radius: 18px; }
+.tj-titre { gap: 8px; padding-bottom: 8px; margin-bottom: 10px; font-size: 15px; }
+.tj-page .tj-titre__ic { width: 26px; height: 26px; border-radius: 8px; font-size: 12px; }
+.tj-cartes { grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 8px; }
+.tj-carte { grid-template-columns: auto 1fr auto auto; grid-template-areas: "ic corps n fl"; gap: 12px; padding: 10px 12px 10px 18px; border-radius: 13px; }
+.tj-carte::before { width: 5px; }
+.tj-page .tj-carte__ic { width: 34px; height: 34px; border-radius: 10px; font-size: 14px; }
+.tj-carte__corps { margin-top: 0; min-width: 0; }
+.tj-carte__corps b { font-size: 13.5px; }
+.tj-carte__corps small { font-size: 12.5px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tj-carte__n { font-size: 26px; }
+.tj-carte__fl { grid-area: fl; font-size: 11px; color: #5E6B64; transition: transform .15s, color .15s; }
+.tj-carte:hover .tj-carte__fl { color: var(--tj-vert); transform: translateX(3px); }
+.tj-audience { padding: 9px 14px; gap: 12px; border-radius: 13px; }
+.tj-audience__heure { font-size: 18px; min-width: 52px; }
+.tj-audience__corps b { font-size: 14px; }
+.tj-alerte { padding: 8px 14px; font-size: 13px; }
+
+.tj-ajour { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 0 2px 14px; padding: 8px 14px; border-radius: 14px; background: #F1F8F4; border: 1px solid rgba(0, 121, 76, .12); }
+.tj-ajour__t { display: inline-flex !important; align-items: center; gap: 6px; margin-right: 4px; font: 800 12.5px var(--police-app); color: var(--tj-vert); }
+.tj-ajour .tj-puce { padding: 3px 10px; font-size: 12.5px; background: #fff; border: 1px solid rgba(0, 121, 76, .14); color: #26302B; }
+.tj-vide { padding: 14px 18px; gap: 12px; margin-bottom: 14px; }
+.tj-vide i { font-size: 22px; }
+.tj-page .tj-carte__corps small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Les panneaux de tâches se rangent côte à côte (un seul quand il n'y en a qu'un), chaque panneau en liste verticale. */
+.tj-groupes { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; align-items: start; margin-bottom: 14px; }
+.tj-groupes .tj-section { margin-bottom: 0; }
+.tj-groupes .tj-cartes { grid-template-columns: 1fr; }
+
+/* Lisibilité : noir léger (jamais de gris pour le texte), un peu d'air sous l'en-tête, textes courants à 13 px au moins. */
+.tj-page { --tj-texte: #1E2723; --tj-texte-2: #2A332E; padding-top: 26px; color: var(--tj-texte); }
+.tj-carte__corps b, .tj-audience__corps b, .tj-alerte { color: var(--tj-texte); }
+.tj-carte__corps small, .tj-audience__corps, .tj-alerte__quand, .tj-vide span { color: var(--tj-texte-2); }
+.tj-page .tj-carte__corps small { font-size: 12.5px; line-height: 1.35; }
+.tj-carte__corps b { font-size: 14px; }
+.tj-alerte__quand { font-size: 12.5px; }
+.tj-page .el-hero__sub, .tj-page .el-hero__extra { color: var(--tj-texte-2); }
+
+/* Un style global annule la marge des titres h2 : on la rétablit pour que le filet du titre ne touche plus la première carte. */
+.tj-page .tj-titre { margin-top: 0 !important; margin-bottom: 14px !important; padding-bottom: 10px; }
+.tj-page .tj-titre--discret { margin-bottom: 10px !important; }

@@ -20,6 +20,8 @@
         </x-slot:actions>
       </x-hero>
 
+      @include('audiences.roles._onglets')
+
       <div class="rl-kpis">
         <div class="rl-kpi rl-kpi--vert"><span class="rl-kpi__icone"><i class="fa-solid fa-calendar-check"></i></span><div><b>{{ $compte['avenir'] }}</b><h5>audience{{ $compte['avenir'] > 1 ? 's' : '' }} à venir</h5></div></div>
         <div class="rl-kpi rl-kpi--orange"><span class="rl-kpi__icone"><i class="fa-solid fa-pen-ruler"></i></span><div><b>{{ $compte['brouillons'] }}</b><h5>en préparation</h5></div></div>

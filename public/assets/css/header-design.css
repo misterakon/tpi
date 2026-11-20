@@ -127,7 +127,7 @@
 /* Menu contextuel du compte (Mon compte, Déconnexion) : sans majuscules forcées, en gras,
    juste assez large pour que chaque titre tienne sur une seule ligne. */
 #pageWrapper .page-header .nav-right .profile-dropdown {
-  width: 10.5rem;
+  width: 13.5rem;   /* assez large pour « Travail du jour » et sa pastille, sans excès */
   left: auto;
   right: 0;   /* aligné sur le bord droit de l'en-tête : ne dépasse plus de l'écran */
 }
@@ -171,3 +171,8 @@
 /* Un sous-sous-menu ne s'affiche qu'au survol de son titre (même celui de la page active) : il ne reste plus de cadre gris ouvert derrière les autres. */
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links .sidebar-submenu li > .sidebar-submenu { display: none !important; }
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-links .sidebar-submenu li:hover > .sidebar-submenu { display: block !important; }
+
+/* Entrée « Travail du jour » du menu du compte : icône, libellé et pastille bien espacés. */
+#pageWrapper .page-header .nav-right .profile-dropdown li a { display: flex; align-items: center; gap: 10px; }
+#pageWrapper .page-header .nav-right .profile-dropdown li a span.tj-badge { margin-left: auto; display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 7px; border-radius: 99px; background: #E8741A; color: #fff !important; font-size: 12.5px; font-weight: 800; line-height: 1; }
+#pageWrapper .page-header .nav-right .profile-dropdown li a span.tj-badge[hidden] { display: none; }

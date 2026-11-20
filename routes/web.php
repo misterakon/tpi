@@ -127,6 +127,8 @@ Route::middleware(['auth', 'auth.session', 'inactivite'])->group(function () {
     Route::post('/session/actif', [VerrouillageController::class, 'ping'])->name('session.ping');
 
     Route::get('/accueil', [AccueilController::class, 'index'])->name('dashboard');
+    Route::get('/travail-du-jour', [\App\Http\Controllers\TravailDuJourController::class, 'index'])->name('travail.jour');
+    Route::get('/travail-du-jour/compte', [\App\Http\Controllers\TravailDuJourController::class, 'compte'])->middleware('throttle:120,1')->name('travail.jour.compte');
     Route::get('/accueil/donnees', [AccueilController::class, 'donnees'])->middleware('throttle:60,1')->name('dashboard.donnees');
 
     /* Notifications de l'utilisateur (cloche de l'en-tête) : chacun ne voit que les siennes. */
@@ -484,6 +486,20 @@ Route::middleware(['auth', 'auth.session', 'inactivite'])->group(function () {
         Route::get('/reconduction', [ReconductionController::class, 'index'])->middleware('can:reconduction.voir')->name('organisation.reconduction');
         Route::post('/reconduction', [ReconductionController::class, 'executer'])->name('organisation.reconduction.executer');
 
+        Route::get('/ordonnances/import', [\App\Http\Controllers\Organisation\ImportOrdonnanceController::class, 'index'])->middleware('can:ordonnances.importer')->name('organisation.ordonnances.import');
+        Route::post('/ordonnances/import', [\App\Http\Controllers\Organisation\ImportOrdonnanceController::class, 'store'])->middleware(['can:ordonnances.importer', 'throttle:20,1'])->name('organisation.ordonnances.import.store');
+        Route::get('/ordonnances/import/{id}', [\App\Http\Controllers\Organisation\ImportOrdonnanceController::class, 'show'])->whereNumber('id')->middleware('can:ordonnances.importer')->name('organisation.ordonnances.import.show');
+        Route::post('/ordonnances/import/{id}/rapprocher', [\App\Http\Controllers\Organisation\ImportOrdonnanceController::class, 'rapprocher'])->whereNumber('id')->middleware('can:ordonnances.importer')->name('organisation.ordonnances.import.rapprocher');
+        Route::post('/ordonnances/import/{id}/mode', [\App\Http\Controllers\Organisation\ImportOrdonnanceController::class, 'mode'])->whereNumber('id')->middleware('can:ordonnances.importer')->name('organisation.ordonnances.import.mode');
+        Route::post('/ordonnances/import/{id}/recontroler', [\App\Http\Controllers\Organisation\ImportOrdonnanceController::class, 'recontroler'])->whereNumber('id')->middleware('can:ordonnances.importer')->name('organisation.ordonnances.import.recontroler');
+        Route::post('/ordonnances/import/{id}/analyser', [\App\Http\Controllers\Organisation\ImportOrdonnanceController::class, 'analyserFichier'])->whereNumber('id')->middleware(['can:ordonnances.importer', 'throttle:30,1'])->name('organisation.ordonnances.import.analyser');
+        Route::get('/ordonnances/import/{id}/progression', [\App\Http\Controllers\Organisation\ImportOrdonnanceController::class, 'progression'])->whereNumber('id')->middleware(['can:ordonnances.importer', 'throttle:600,1'])->name('organisation.ordonnances.import.progression');
+        Route::get('/ordonnances/import/{id}/comparer', [\App\Http\Controllers\Organisation\ImportOrdonnanceController::class, 'comparer'])->whereNumber('id')->middleware('can:ordonnances.importer')->name('organisation.ordonnances.import.comparer');
+        Route::post('/ordonnances/import/{id}/appliquer', [\App\Http\Controllers\Organisation\ImportOrdonnanceController::class, 'appliquer'])->whereNumber('id')->middleware(['can:ordonnances.importer', 'throttle:10,1'])->name('organisation.ordonnances.import.appliquer');
+        Route::post('/ordonnances/import/{id}/annuler', [\App\Http\Controllers\Organisation\ImportOrdonnanceController::class, 'annuler'])->whereNumber('id')->middleware(['can:ordonnances.importer', 'throttle:10,1'])->name('organisation.ordonnances.import.annuler');
+        Route::post('/ordonnances/import/{id}/abandonner', [\App\Http\Controllers\Organisation\ImportOrdonnanceController::class, 'abandonner'])->whereNumber('id')->middleware('can:ordonnances.importer')->name('organisation.ordonnances.import.abandonner');
+        Route::get('/ordonnances/articles', [OrdonnanceController::class, 'articles'])->middleware('can:ordonnances.voir')->name('organisation.ordonnances.articles');
+        Route::get('/ordonnances/fichier-excel', [OrdonnanceController::class, 'modeleExcel'])->middleware(['can:ordonnances.voir', 'throttle:20,1'])->name('organisation.ordonnances.excel');
         Route::get('/ordonnances', [OrdonnanceController::class, 'index'])->middleware('can:ordonnances.voir')->name('organisation.ordonnances');
         Route::get('/ordonnances/{id}', [OrdonnanceController::class, 'show'])->whereNumber('id')->name('organisation.ordonnances.get');
         Route::get('/ordonnances/{id}/consulter', [OrdonnanceController::class, 'consulter'])->whereNumber('id')->name('organisation.ordonnances.consulter');

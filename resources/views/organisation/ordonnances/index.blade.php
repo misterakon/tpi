@@ -4,22 +4,57 @@
 @section('css')
   <link rel="stylesheet" href="{{ asset('assets/css/elouange-theme.css') }}?v={{ filemtime(public_path('assets/css/elouange-theme.css')) }}">
   <link rel="stylesheet" href="{{ asset('assets/css/vendors/quill.snow.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/css/import-ordonnance.css') }}?v={{ filemtime(public_path('assets/css/import-ordonnance.css')) }}">
 @endsection
 
 @section('main-content')
-  <div class="page-body">
+  <div class="page-body io-page">
     <div class="el-page">
 
       <x-hero tag="Organisation" title="Archive des ordonnances" subtitle="Les ordonnances signées par la Présidente (ordonnance de l'année et ordonnances modificatives) sont conservées ici en PDF : on les lit directement dans l'application ou on les télécharge. Un fichier archivé ne peut pas être modifié." icon="fa-solid fa-file-signature">
         <x-slot:extra>
           <span><i class="fa-solid fa-box-archive"></i> {{ $lignes->count() }} ordonnance(s) archivée(s)</span>
         </x-slot:extra>
-        @can('ordonnances.creer')
-          <x-slot:actions>
-            <button class="el-btn el-btn--accent" type="button" onclick="add_form()"><i class="fa-solid fa-plus"></i> Archiver une ordonnance</button>
-          </x-slot:actions>
-        @endcan
+        <x-slot:actions>
+          @can('ordonnances.importer')
+            <a class="el-btn el-btn--accent" href="{{ route('organisation.ordonnances.import') }}"><i class="fa-solid fa-file-import"></i> Charger un fichier Excel</a>
+          @endcan
+          @can('ordonnances.creer')
+            <button class="el-btn el-btn--ghost" type="button" onclick="add_form()"><i class="fa-solid fa-file-pdf"></i> Archiver une ordonnance (PDF)</button>
+          @endcan
+        </x-slot:actions>
       </x-hero>
+
+      @include('organisation.ordonnances._onglets', ['actif' => 'archive'])
+
+      <div class="io-blocs io-blocs--compact" style="margin-bottom:20px">
+        <div class="io-bloc">
+          <span class="io-bloc__icone"><i class="fa-solid fa-calendar-check"></i></span>
+          <span class="io-bloc__valeur" style="font-size:22px">{{ $annee?->libelle ?? '—' }}</span>
+          <span class="io-bloc__libelle">Année en vigueur</span>
+          <span class="io-bloc__etat" style="color:#3F4D66">{{ $annee?->ordonnance ?? 'ordonnance non renseignée' }}</span>
+        </div>
+        <div class="io-bloc">
+          <span class="io-bloc__icone"><i class="fa-solid fa-box-archive"></i></span>
+          <span class="io-bloc__valeur">{{ $lignes->count() }}</span>
+          <span class="io-bloc__libelle">Ordonnances archivées</span>
+          <span class="io-bloc__etat" style="color:#3F4D66">{{ $lignes->where('type', 'modificative')->count() }} modificative(s)</span>
+        </div>
+        <div class="io-bloc">
+          <span class="io-bloc__icone"><i class="fa-solid fa-scroll"></i></span>
+          <span class="io-bloc__valeur">{{ $nbArticles }}</span>
+          <span class="io-bloc__libelle">Articles enregistrés</span>
+          <a class="io-bloc__etat" href="{{ route('organisation.ordonnances.articles') }}">Lire les articles <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        @can('ordonnances.importer')
+          <div class="io-bloc {{ $dernierImport?->statut === 'brouillon' ? 'io-bloc--orange' : '' }}">
+            <span class="io-bloc__icone"><i class="fa-solid fa-file-import"></i></span>
+            <span class="io-bloc__valeur" style="font-size:22px">{{ $dernierImport ? ($dernierImport->applique_le ?? $dernierImport->created_at)?->format('d/m/Y') : '—' }}</span>
+            <span class="io-bloc__libelle">Dernier chargement Excel</span>
+            <span class="io-bloc__etat" style="color:#3F4D66">{{ $dernierImport ? (\App\Models\ImportOrdonnance::STATUTS[$dernierImport->statut] ?? $dernierImport->statut) : 'aucun fichier chargé' }}</span>
+          </div>
+        @endcan
+      </div>
 
       <div class="el-card">
         <div class="el-toolbar">

@@ -17,6 +17,8 @@
         </x-slot:actions>
       </x-hero>
 
+      @include('audiences.roles._onglets')
+
       <div class="el-card rl-planning" id="planning-zone" data-url="{{ route('audiences.roles.planning') }}">
         @include('audiences.roles.planning_semaine')
       </div>

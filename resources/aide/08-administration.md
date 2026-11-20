@@ -31,6 +31,23 @@ Ce menu est réservé à l'administration et au greffe en chef. Il pose les **r�
 6. **Dates limites d'enregistrement** (art. 7 de l'ordonnance) et **Services et responsabilités**.
 7. **Archive des ordonnances** : téléversez l'ordonnance signée (PDF) pour la consulter dans l'application.
 
+## Charger l'ordonnance par fichier Excel
+
+*Organisation > Ordonnances > « Charger un fichier Excel ». Réservé à la Présidente et à l'administrateur (droit « Charger l'ordonnance par fichier Excel »).* Au lieu de remplir les formulaires un à un, on corrige un classeur puis on le recharge.
+
+1. **Télécharger le fichier** (bouton « Fichier Excel de l'ordonnance ») : il contient l'organisation en cours, une feuille par notion (sections, chambres, formations, composition, audiences, services, responsables, membres extérieurs, dates limites, articles). La feuille **Lisez-moi** explique comment le remplir.
+2. **Corriger dans Excel** : les colonnes à en-tête **vert** sont lues, celles à en-tête **gris** ne servent qu'à la lecture. La colonne **N°** est le numéro de la base : ne la changez pas. Pour un **nouvel élément**, laissez le N° **vide** et écrivez son **nom** dans les feuilles qui s'y rapportent. Dans Composition et Responsables, l'agent s'écrit par son **N° ou son nom**.
+3. **Charger** le fichier et choisir le mode : **Mise à jour** (ajoute et modifie, le reste ne bouge pas) ou **Ordonnance complète** (ce qui n'y figure plus est retiré : affectations et audiences reçoivent une **date de fin**, chambres et formations sont désactivées, rien n'est supprimé de l'historique).
+4. **Contrôler** : l'application signale les erreurs **ligne par ligne** (rôle inconnu, date impossible, N° inexistant…). Rien n'est modifié à ce stade ; corrigez le fichier et rechargez-le.
+5. **Rapprocher les noms** : un nom douteux (« KOUADJO » pour « KOUADIO », un titre, un ordre différent) n'est **jamais deviné**. L'écran propose les agents les plus proches : choisissez, créez un nouvel agent ou ignorez la ligne. Votre choix est **mémorisé** pour les fichiers suivants.
+6. **Comparer** : chaque ajout, modification ou retrait est listé avec l'**avant → après**. **Décochez** ce que vous ne voulez pas appliquer.
+7. **Appliquer** : tout est écrit en **une seule opération** (tout ou rien) et tracé au journal d'audit.
+8. **Annuler** si besoin : l'import le plus récent peut être défait (ce qu'il a ajouté est ôté, ce qu'il a modifié retrouve sa valeur d'avant).
+
+> **Attention** Un fichier téléchargé depuis **une autre base** (démonstration, autre tribunal) est refusé : ses N° ne correspondent pas aux personnes de cette base. Téléchargez toujours le fichier depuis cette application.
+
+> **À savoir** Remplacer une personne sur une ligne de Composition **clôture** son affectation (date de fin) et en crée une nouvelle : les rôles et décisions déjà établis gardent leur composition. Le texte des **articles** est conservé en entier (page « Articles ») ; le numéro d'article n'est qu'une étiquette.
+
 ## Reconduire une année
 
 *Organisation > Reconduire une année.* Au début d'une année judiciaire, repartez de l'année précédente plutôt que de tout ressaisir.

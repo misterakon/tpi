@@ -1,0 +1,162 @@
+/* Chargement de l'ordonnance par fichier Excel (assistant en étapes). Couleurs de l'application : vert, orange, blanc. */
+.io-page { --io-vert: #00794C; --io-vert-fonce: #0B3D2A; --io-orange: #E8741A; --io-rouge: #B42318; --io-gris: #2F3A34; --io-trait: #E3EBE6; --io-fond-vert: #EAF6F0; --io-fond-orange: #FFF3E6; --io-fond-rouge: #FDECEA; }
+
+/* ---- étapes ---- */
+.io-etapes { list-style: none; margin: 0; padding: 6px 4px; display: flex; align-items: flex-start; }
+.io-etape { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; color: var(--io-gris); }
+.io-etape::after { content: ''; position: absolute; top: 19px; left: calc(50% + 26px); right: calc(-50% + 26px); height: 3px; border-radius: 2px; background: var(--io-trait); }
+.io-etape:last-child::after { display: none; }
+.io-etape__rond { position: relative; z-index: 1; width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font: 800 15px var(--police-app); background: var(--io-trait); color: var(--io-gris); transition: background .25s, box-shadow .25s; }
+.io-etape__libelle { margin-top: 8px; font: 700 13.5px var(--police-app); }
+.io-etape__aide { margin-top: 2px; font: 500 12px var(--police-app); opacity: .85; }
+.io-etape.is-fait { color: var(--io-vert); }
+.io-etape.is-fait::after { background: var(--io-vert); }
+.io-etape.is-fait .io-etape__rond { background: var(--io-vert); color: #fff; }
+.io-etape.is-actif { color: #8A3A00; }
+.io-etape.is-actif .io-etape__rond { background: var(--io-orange); color: #fff; box-shadow: 0 0 0 6px rgba(232, 116, 26, .18); }
+.io-etape.is-erreur { color: var(--io-rouge); }
+.io-etape.is-erreur .io-etape__rond { background: var(--io-rouge); color: #fff; box-shadow: 0 0 0 6px rgba(180, 35, 24, .15); }
+
+/* ---- cartes de bloc ---- */
+.io-blocs { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+.io-bloc { position: relative; display: flex; flex-direction: column; gap: 2px; padding: 14px 16px 14px 20px; border-radius: 14px; background: #fff; box-shadow: 0 2px 10px rgba(15, 42, 91, .06); overflow: hidden; }
+.io-bloc::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--io-vert); }
+.io-bloc--orange::before { background: var(--io-orange); } .io-bloc--rouge::before { background: var(--io-rouge); } .io-bloc--gris::before { background: #C8D0DC; }
+.io-bloc--rouge { background: var(--io-fond-rouge); } .io-bloc--orange { background: var(--io-fond-orange); }
+.io-bloc__valeur { font: 800 28px/1.1 var(--police-app); font-variant-numeric: tabular-nums; color: #10241B; }
+.io-bloc__libelle { font: 700 13px var(--police-app); color: #26302B; }
+.io-bloc__etat { margin-top: 4px; font: 600 12px var(--police-app); display: inline-flex; align-items: center; gap: 6px; color: var(--io-vert); }
+.io-bloc--orange .io-bloc__etat { color: #8A3A00; } .io-bloc--rouge .io-bloc__etat { color: var(--io-rouge); } .io-bloc--gris .io-bloc__etat { color: var(--io-gris); }
+
+/* ---- messages de contrôle ---- */
+.io-groupe { margin-bottom: 16px; }
+.io-groupe__titre { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font: 800 14px var(--police-app); color: var(--io-vert-fonce); }
+.io-pastille { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 99px; font: 800 12px var(--police-app); color: #fff; background: var(--io-rouge); }
+.io-pastille--orange { background: var(--io-orange); } .io-pastille--vert { background: var(--io-vert); }
+.io-ligne { display: flex; gap: 12px; align-items: flex-start; padding: 9px 14px; margin-bottom: 6px; border-radius: 10px; font: 500 14px/1.45 var(--police-app); background: var(--io-fond-rouge); color: #6B1A12; }
+.io-ligne--orange { background: var(--io-fond-orange); color: #6B3500; }
+.io-ligne__ou { flex: none; min-width: 74px; font: 800 12px var(--police-app); text-transform: uppercase; letter-spacing: .3px; opacity: .85; padding-top: 2px; }
+.io-vide { padding: 16px; border-radius: 12px; background: var(--io-fond-vert); color: var(--io-vert-fonce); font: 600 14px var(--police-app); }
+
+/* ---- rapprochement des noms ---- */
+.io-nom { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(260px, 1.2fr); gap: 14px 22px; align-items: center; padding: 14px 16px; margin-bottom: 10px; border: 1px solid var(--io-trait); border-left: 5px solid var(--io-orange); border-radius: 12px; background: #fff; }
+.io-nom__texte { font: 800 15px var(--police-app); color: #10241B; }
+.io-nom__ou { margin-top: 3px; font: 500 13px var(--police-app); color: var(--io-gris); }
+.io-nom__prop { margin-top: 6px; font: 600 12.5px var(--police-app); color: var(--io-vert); }
+@media (max-width: 767px) { .io-nom { grid-template-columns: 1fr; } .io-etape__aide { display: none; } }
+
+/* ---- dépôt du fichier ---- */
+.io-depot { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 30px 20px; border: 2px dashed #5E6B64; border-radius: 16px; background: #FAFCFB; text-align: center; transition: border-color .15s, background .15s; cursor: pointer; }
+.io-depot:hover, .io-depot.is-survol { border-color: var(--io-vert); background: var(--io-fond-vert); }
+.io-depot__icone { font-size: 38px; color: var(--io-vert); }
+.io-depot__titre { font: 800 16px var(--police-app); color: var(--io-vert-fonce); }
+.io-depot__aide { font: 500 13px var(--police-app); color: #26302B; }
+.io-depot__nom { font: 700 14px var(--police-app); color: var(--io-orange); }
+.io-depot input[type=file] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.io-modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 16px 0; }
+.io-mode { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border: 2px solid var(--io-trait); border-radius: 14px; cursor: pointer; background: #fff; transition: border-color .15s, background .15s; }
+.io-mode:hover { border-color: #9FD4BC; }
+.io-mode input { margin-top: 4px; accent-color: var(--io-vert); }
+.io-mode:has(input:checked) { border-color: var(--io-vert); background: var(--io-fond-vert); }
+.io-mode__titre { display: block; font: 800 14.5px var(--police-app); color: var(--io-vert-fonce); }
+.io-mode__aide { display: block; margin-top: 3px; font: 500 13px/1.4 var(--police-app); color: #26302B; }
+
+.io-resume { display: flex; flex-wrap: wrap; gap: 10px 28px; font: 500 14px var(--police-app); color: #26302B; }
+.io-resume b { color: #10241B; }
+.io-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-top: 18px; }
+
+/* ---- comparaison ---- */
+.io-case-tout { display: inline-flex; align-items: center; gap: 10px; margin: 0; cursor: pointer; font: 600 14px var(--police-app); }
+.io-legende { display: flex; flex-wrap: wrap; gap: 6px 18px; font: 600 13px var(--police-app); color: #26302B; }
+.io-legende span { display: inline-flex; align-items: center; gap: 8px; }
+.io-act { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 8px; font-size: 11px; color: #fff; }
+.io-act--creer { background: var(--io-vert); } .io-act--modifier { background: var(--io-orange); } .io-act--retirer { background: var(--io-rouge); }
+.io-comp-bloc { margin-bottom: 12px; border: 1px solid var(--io-trait); border-radius: 14px; background: #fff; overflow: hidden; }
+.io-comp-bloc > summary { display: flex; align-items: center; gap: 14px; padding: 14px 18px; cursor: pointer; list-style: none; background: #FAFCFB; }
+.io-comp-bloc > summary::-webkit-details-marker { display: none; }
+.io-comp-bloc > summary::after { content: '\f078'; font: 900 12px 'Font Awesome 6 Free', 'Font Awesome 5 Free'; margin-left: auto; color: var(--io-gris); transition: transform .2s; }
+.io-comp-bloc[open] > summary::after { transform: rotate(180deg); }
+.io-comp-bloc__case { margin: 0; display: inline-flex; }
+.io-comp-bloc__titre { font: 800 15px var(--police-app); color: var(--io-vert-fonce); }
+.io-comp-bloc__nb { display: flex; flex-wrap: wrap; gap: 6px; }
+.io-puce { padding: 3px 10px; border-radius: 99px; font: 700 12px var(--police-app); }
+.io-puce--creer { background: var(--io-fond-vert); color: var(--io-vert); } .io-puce--modifier { background: var(--io-fond-orange); color: #8A3A00; } .io-puce--retirer { background: var(--io-fond-rouge); color: var(--io-rouge); }
+.io-comp-liste { border-top: 1px solid var(--io-trait); max-height: 560px; overflow-y: auto; }
+.io-comp-ligne { display: flex; align-items: flex-start; gap: 12px; padding: 11px 18px; margin: 0; border-bottom: 1px solid #F0F4F2; cursor: pointer; transition: background .12s; }
+.io-comp-ligne:hover { background: #F7FBF9; }
+.io-comp-ligne:last-child { border-bottom: 0; }
+.io-comp-ligne > .el-case { margin-top: 2px; }
+.io-comp-ligne__corps { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.io-comp-ligne__titre { font: 700 14px var(--police-app); color: #10241B; overflow-wrap: anywhere; }
+.io-comp-ligne__detail { display: block; font: 500 13px/1.4 var(--police-app); color: #26302B; overflow-wrap: anywhere; }
+.io-comp-ligne__detail s { color: #4A554F; }
+.io-comp-ligne__detail i { margin: 0 4px; font-size: 10px; color: var(--io-gris); }
+.io-apres { color: var(--io-vert-fonce); font-weight: 700; }
+
+/* ---- navigation de l'ordonnance, icônes des cartes et des étapes ---- */
+.io-onglets { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 18px; }
+.io-onglet { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 12px; border: 1px solid var(--io-trait, #E3EBE6); background: #fff; color: #26302B; font: 700 13.5px var(--police-app); text-decoration: none; transition: background .15s, color .15s, border-color .15s, box-shadow .15s; }
+.io-onglet:hover { border-color: #9FD4BC; color: #0B3D2A; }
+.io-onglet.is-actif { background: var(--io-vert, #00794C); border-color: var(--io-vert, #00794C); color: #fff; box-shadow: 0 6px 16px rgba(0, 121, 76, .25); }
+.io-onglet--droite { margin-left: auto; background: #FFF3E6; border-color: #F6D2A8; color: #8A3A00; }
+.io-onglet--droite:hover { background: #FFE8CC; color: #6B2D00; }
+@media (max-width: 767px) { .io-onglet--droite { margin-left: 0; } }
+.io-bloc__icone { position: absolute; right: 12px; top: 12px; width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 15px; color: var(--io-vert); background: rgba(0, 121, 76, .12); }
+.io-bloc--orange .io-bloc__icone { color: var(--io-orange); background: rgba(232, 116, 26, .15); }
+.io-bloc--rouge .io-bloc__icone { color: var(--io-rouge); background: rgba(180, 35, 24, .12); }
+.io-bloc--gris .io-bloc__icone { color: var(--io-gris); background: rgba(107, 119, 140, .12); }
+a.io-bloc__etat { text-decoration: none; }
+a.io-bloc__etat:hover { text-decoration: underline; }
+.io-etape__rond i { font-size: 16px; }
+.io-comp-bloc__ic { flex: none; width: 30px; height: 30px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; color: var(--io-vert); background: var(--io-fond-vert); }
+
+/* Certains styles globaux des pages (.el-page span) imposent display: block aux pastilles : on les rétablit. */
+.io-page .io-bloc__icone, .io-page .io-etape__rond, .io-page .io-comp-bloc__ic, .io-page .io-act, .io-page .io-pastille { display: inline-flex !important; align-items: center; justify-content: center; }
+.io-page .io-bloc__icone i, .io-page .io-etape__rond i, .io-page .io-comp-bloc__ic i, .io-page .io-act i { margin: 0; line-height: 1; }
+
+/* ---- cartes compactes : le nombre et le libellé sur la même ligne ---- */
+.io-blocs--compact { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+.io-blocs--compact .io-bloc { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 1px 8px; padding: 10px 52px 10px 18px; border-radius: 12px; }
+.io-blocs--compact .io-bloc__valeur { font-size: 20px; }
+.io-blocs--compact .io-bloc__libelle { font-size: 13px; }
+.io-blocs--compact .io-bloc__etat { flex-basis: 100%; margin-top: 0; font-size: 12.5px; }
+.io-blocs--compact .io-bloc__icone { width: 28px; height: 28px; font-size: 12px; top: 10px; right: 12px; }
+
+/* ---- écran d'avancement (chargeur) ---- */
+body.io-bloque { overflow: hidden; }
+.io-chargeur { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(11, 61, 42, .45); backdrop-filter: blur(3px); animation: io-fondu .2s ease; }
+.io-chargeur[hidden] { display: none; }
+@keyframes io-fondu { from { opacity: 0; } to { opacity: 1; } }
+.io-chargeur__boite { width: min(520px, 100%); padding: 26px 28px 22px; border-radius: 22px; background: #fff; box-shadow: 0 24px 60px rgba(11, 36, 27, .35); animation: io-monte .25s ease; }
+@keyframes io-monte { from { transform: translateY(14px) scale(.98); opacity: 0; } to { transform: none; opacity: 1; } }
+.io-chargeur__tete { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+.io-chargeur__tete h3 { margin: 0; font: 800 18px var(--police-app); color: var(--io-vert-fonce, #0B3D2A); }
+.io-chargeur__tete p { margin: 3px 0 0; font: 500 13.5px var(--police-app); color: #26302B; overflow-wrap: anywhere; min-height: 19px; }
+.io-spinner { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 4px solid #E3EBE6; border-top-color: var(--io-orange, #E8741A); border-right-color: var(--io-vert, #00794C); animation: io-tour .9s linear infinite; }
+@keyframes io-tour { to { transform: rotate(360deg); } }
+.io-barre { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.io-barre[hidden] { display: none; }
+.io-barre__piste { flex: 1; height: 12px; border-radius: 99px; background: #E3EBE6; overflow: hidden; }
+.io-barre__rempli { position: relative; height: 100%; width: 0; border-radius: 99px; background: linear-gradient(90deg, #00794C, #2BAE76); transition: width .3s ease; }
+.io-barre__rempli::after { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .55) 50%, transparent 70%); background-size: 200% 100%; animation: io-brille 1.4s linear infinite; }
+@keyframes io-brille { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.io-barre__pct { min-width: 46px; text-align: right; font: 800 14px var(--police-app); font-variant-numeric: tabular-nums; color: var(--io-vert-fonce, #0B3D2A); }
+.io-ch-etapes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.io-ch-etapes li { display: grid; grid-template-columns: 30px 1fr; align-items: center; gap: 2px 12px; padding: 7px 10px; border-radius: 12px; color: #4A554F; font: 600 13.5px var(--police-app); transition: background .2s, color .2s; }
+.io-ch-puce { grid-row: span 2; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; background: #EEF2F6; color: #9AA7B8; transition: background .2s, color .2s; }
+.io-ch-detail { grid-column: 2; font: 500 12px var(--police-app); color: #2F3A34; overflow-wrap: anywhere; }
+.io-ch-detail:empty { display: none; }
+.io-ch-etapes li.is-actif { background: var(--io-fond-orange, #FFF3E6); color: #8A3A00; }
+.io-ch-etapes li.is-actif .io-ch-puce { background: var(--io-orange, #E8741A); color: #fff; animation: io-pulse 1.1s ease-in-out infinite; }
+.io-ch-etapes li.is-fait { color: var(--io-vert, #00794C); }
+.io-ch-etapes li.is-fait .io-ch-puce { background: var(--io-vert, #00794C); color: #fff; }
+.io-ch-etapes li.is-fait .io-ch-puce i::before { content: '\f00c'; }
+@keyframes io-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(232, 116, 26, .45); } 50% { box-shadow: 0 0 0 7px rgba(232, 116, 26, 0); } }
+.io-chargeur__note { margin: 16px 0 0; padding-top: 12px; border-top: 1px solid #EEF2F6; font: 500 13px var(--police-app); color: #2F3A34; }
+.io-chargeur--simple .io-chargeur__note { display: none; }
+.io-chargeur--simple .io-chargeur__tete { margin-bottom: 4px; }
+@media (prefers-reduced-motion: reduce) { .io-spinner, .io-barre__rempli::after, .io-ch-etapes li.is-actif .io-ch-puce { animation: none; } }
+
+/* Le chargeur est hors de .io-page : on rétablit l'affichage des pastilles d'étapes. */
+.io-chargeur .io-ch-puce { display: inline-flex !important; align-items: center; justify-content: center; }
+.io-chargeur .io-ch-puce i { margin: 0; line-height: 1; }

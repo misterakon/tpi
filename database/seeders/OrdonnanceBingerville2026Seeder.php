@@ -48,6 +48,7 @@ class OrdonnanceBingerville2026Seeder extends Seeder
             $this->chambres($annee, $sections);
             $this->services($annee);
             $this->enrolement();
+            $this->articlesEtMembres($annee);
         });
     }
 
@@ -144,6 +145,27 @@ class OrdonnanceBingerville2026Seeder extends Seeder
                 ['jour_audience' => $jours[$audience]],
                 ['jour_limite' => $jours[explode(' ', $limite)[0]], 'heure' => $heure],
             );
+        }
+    }
+
+    /** Texte des articles et membres extérieurs des bureaux locaux (jamais écrasés s'ils existent déjà). */
+    private function articlesEtMembres(AnneeJudiciaire $annee): void
+    {
+        $plus = require __DIR__.'/data/ordonnance_600_2026_articles.php';
+        foreach ($plus['articles'] as $ordre => [$numero, $intitule, $texte, $rattache]) {
+            \App\Models\ArticleOrdonnance::firstOrCreate(
+                ['annee_judiciaire_id' => $annee->id, 'numero' => $numero],
+                ['ordre' => $ordre + 1, 'intitule' => $intitule, 'texte' => $texte, 'rattache_a' => $rattache],
+            );
+        }
+        foreach ($plus['membres_exterieurs'] as $libelle => $membres) {
+            $service = Service::where('annee_judiciaire_id', $annee->id)->where('libelle', $libelle)->first();
+            if (! $service || $service->membresExterieurs()->exists()) {
+                continue;
+            }
+            foreach ($membres as $i => [$nom, $qualite, $institution]) {
+                $service->membresExterieurs()->create(['nom' => $nom, 'qualite' => $qualite, 'institution' => $institution, 'ordre' => $i + 1]);
+            }
         }
     }
 

@@ -409,6 +409,8 @@ table.el-tbl tbody tr:hover td { background: #F4F8F5 !important; }
 .el-droits { grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); }
 .el-droits__barre { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; border: 1.5px solid #CFE5D9; border-radius: 16px; background: linear-gradient(115deg, #FFFFFF 0%, #F1F8F4 60%, #E3F1E9 100%); }
 .el-droits__pages { display: flex; flex-direction: column; }
+.el-droits__groupe { padding: 9px 16px; border-top: 1px solid var(--el-line); background: #EEF6F1; font: 700 12.5px var(--police-app); letter-spacing: .3px; text-transform: uppercase; color: #1E2723; }
+.el-droits__groupe:first-child { border-top: 0; }
 .el-droits__ligne { padding: 11px 16px 13px; border-top: 1px solid var(--el-line); }
 .el-droits__ligne:first-child { border-top: 0; }
 .el-droits__page { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font: 600 13.5px var(--police-app); color: #10241B; }

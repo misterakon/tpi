@@ -27,6 +27,11 @@ class Service extends Model
         return $this->belongsTo(AnneeJudiciaire::class, 'annee_judiciaire_id');
     }
 
+    public function membresExterieurs(): HasMany
+    {
+        return $this->hasMany(MembreExterieur::class)->orderBy('ordre');
+    }
+
     public function agents(): HasMany
     {
         return $this->hasMany(ServiceAgent::class)->orderBy('ordre');
